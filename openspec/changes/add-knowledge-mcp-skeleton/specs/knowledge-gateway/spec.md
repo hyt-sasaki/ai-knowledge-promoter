@@ -1,10 +1,11 @@
 ## ADDED Requirements
 
-### Requirement: MCP Health Check
-MCPサーバーはヘルスチェックエンドポイントを提供しなければならない（SHALL）。
+### Requirement: HTTP Health Check for Cloud Run
+MCPサーバーはCloud Runのヘルスチェック用にHTTPエンドポイントを提供しなければならない（SHALL）。
+このエンドポイントはMCPツールとは別に、FastMCPの`@custom_route`デコレータで実装される通常のHTTP/1エンドポイントである。
 
 #### Scenario: ヘルスチェック成功
-- **WHEN** GET /health にリクエストを送信する
+- **WHEN** GET /health にHTTPリクエストを送信する
 - **THEN** ステータスコード200が返される
 - **AND** レスポンスボディに `{"status": "healthy"}` が含まれる
 

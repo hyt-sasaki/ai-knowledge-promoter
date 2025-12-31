@@ -16,7 +16,7 @@
   - [ ] IAMポリシー設定
 - [ ] MCPサーバー実装
   - [ ] FastAPI + FastMCP プロジェクト構成
-  - [ ] /healthエンドポイント
+  - [ ] HTTP /health エンドポイント（Cloud Run用、MCPツールとは別）
   - [ ] save_knowledge ツール（スタブ）
   - [ ] search_knowledge ツール（スタブ）
 - [ ] Dockerfile & Cloud Runデプロイ設定
