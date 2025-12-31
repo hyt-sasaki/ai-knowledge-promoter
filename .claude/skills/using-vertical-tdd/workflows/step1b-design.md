@@ -1,4 +1,4 @@
-# Step 0.9: Design（設計文書化）
+# Step 1b: Design（設計文書化）
 
 ## 目的
 
@@ -28,12 +28,12 @@ design.mdを書く前に、不明確・不確実な箇所について最新の�
 
 ### 調査が必要な場合
 
-#### Step 0.5（技術検証）を実施した場合
+#### Step 1a（技術検証）を実施した場合
 - ✅ 技術検証で不明確・不確実性が残った箇所
 - ✅ 実装方針は決まったが、細部のパターンが不明な箇所
 - ✅ セキュリティ・パフォーマンス・保守性のベストプラクティス確認
 
-#### Step 0.5をスキップした場合
+#### Step 1aをスキップした場合
 - ✅ 技術スタックは明確だが、設計パターンの確認が必要な箇所
 - ✅ 既知の技術でも最新のベストプラクティスを確認したい箇所
 
@@ -46,7 +46,7 @@ design.mdを書く前に、不明確・不確実な箇所について最新の�
 
 ### 追加の技術検証が必要になった場合
 
-ベストプラクティス調査の過程で、以下の状況が発生した場合はStep 0.5に戻ることを検討：
+ベストプラクティス調査の過程で、以下の状況が発生した場合はStep 1aに戻ることを検討：
 
 - ❗ 新しいアプローチが発見され、比較検証が必要
 - ❗ 既存の判断に重大な懸念が浮上
@@ -337,9 +337,63 @@ design.md完成前に確認：
 - [ ] Open Questionsで未解決事項を明記
 - [ ] tasks.mdを更新済み
 
+## PR #1.5作成（任意）
+
+Tech SpikeまたはDesignを実施した場合、別ブランチでPRを作成してチームレビューを依頼します。
+
+### ブランチ作成
+
+```bash
+git checkout main
+git checkout -b design/<change-id>
+```
+
+### コミット
+
+```bash
+git add openspec/changes/<change-id>/spike/
+git add openspec/changes/<change-id>/design.md
+git commit -m "docs: add tech spike and design for <feature-name>
+
+- spike/results.md: 技術検証結果を記録
+- design.md: 設計判断を文書化
+
+🤖 Generated with Claude Code"
+```
+
+### PR作成
+
+```bash
+gh pr create \
+  --title "[Design] <feature-name>" \
+  --body "$(cat <<'EOF'
+## 技術検証結果
+<spike/results.mdの概要>
+
+## 設計判断
+<design.mdの主要決定事項>
+
+## レビュー観点
+- [ ] 技術選定は妥当か
+- [ ] 設計判断の根拠は明確か
+- [ ] Open Questionsは解決されているか
+
+🤖 Generated with Claude Code
+EOF
+)"
+```
+
+### PR #1.5をスキップする場合
+
+以下の場合はPR #1.5を作成せず、Step 2（Runbook & Red）に進みます：
+
+- 技術選定が不要（既存パターンの踏襲）
+- 設計が自明（シンプルな機能追加）
+- チームで事前合意済み
+
 ## 次のステップ
 
-design.md承認後 → **Step 1: Runbook & Red**
+design.md承認後 → **Step 2: Runbook & Red**
 
 design.mdの設計に基づき、verify.mdで期待する挙動を記述します。
 
@@ -359,16 +413,12 @@ A: 実装者が迷わない程度。コード例は最小限で、主に「な�
 
 **Q: Open Questionsが多い場合はどうするか？**
 
-A: 2-3個までなら許容。それ以上ある場合は、追加の技術検証（Step 0.5に戻る）または質問を解決してから進めます。
+A: 2-3個までなら許容。それ以上ある場合は、追加の技術検証（Step 1aに戻る）または質問を解決してから進めます。
 
 ## コミット戦略
 
 このステップでのコミットポイント：
 
-**design.md完成後**
-```bash
-git add openspec/changes/<change-id>/design.md
-git commit -m "docs: add design document for <feature-name>"
-```
+**design.md完成後 → PR #1.5作成（任意）**
 
 詳細は [commit-strategy.md](commit-strategy.md) を参照。

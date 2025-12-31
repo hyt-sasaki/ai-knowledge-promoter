@@ -25,30 +25,32 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 
 ### Stage 1: Creating Changes（提案作成）
 
-- **Step 0: Proposal** → [workflows/step0-proposal.md](workflows/step0-proposal.md)
+- **Step 1: Proposal** → [workflows/step1-proposal.md](workflows/step1-proposal.md)
   - OpenSpec提案の作成、インターフェース合意、tasks.md開始
+  - **PR #1**: proposal.md + tasks.md
 
-- **Step 0.5: Tech Spike**（任意） → [workflows/step0.5-tech-spike.md](workflows/step0.5-tech-spike.md)
+- **Step 1a: Tech Spike**（任意） → [workflows/step1a-tech-spike.md](workflows/step1a-tech-spike.md)
   - 技術的妥当性の検証、Context7でライブラリ調査
 
-- **Step 0.9: Design**（任意） → [workflows/step0.9-design.md](workflows/step0.9-design.md)
+- **Step 1b: Design**（任意） → [workflows/step1b-design.md](workflows/step1b-design.md)
   - design.mdで設計判断を文書化
+  - **PR #1.5**（任意）: spike/results.md + design.md
 
 ### Stage 2: Implementing Changes（実装）
 
-- **Step 1: Runbook & Red** → [workflows/step1-runbook-red.md](workflows/step1-runbook-red.md)
+- **Step 2: Runbook & Red** → [workflows/step2-runbook-red.md](workflows/step2-runbook-red.md)
   - Runme.dev形式でverify.md作成、RED確認
 
-- **Step 2: Skeleton Green** → [workflows/step2-skeleton-green.md](workflows/step2-skeleton-green.md)
-  - 最小実装でGREEN、PR #1マージ（フィーチャーフラグOFF）
+- **Step 3: Skeleton Green** → [workflows/step3-skeleton-green.md](workflows/step3-skeleton-green.md)
+  - 最小実装でGREEN、**PR #2**マージ（フィーチャーフラグOFF）
 
-- **Step 3: Logic Meat** → [workflows/step3-logic-meat.md](workflows/step3-logic-meat.md)
-  - ユニットTDDでロジック実装、PR #2マージ
+- **Step 4: Logic Meat** → [workflows/step4-logic-meat.md](workflows/step4-logic-meat.md)
+  - ユニットTDDでロジック実装、**PR #3**マージ
 
 ### Stage 3: Archiving Changes（アーカイブ）
 
-- **Step 4: Archive & Release** → [workflows/step4-archive-release.md](workflows/step4-archive-release.md)
-  - 全テスト検証、アーカイブ、フィーチャーフラグ有効化、PR #3
+- **Step 5: Archive & Release** → [workflows/step5-archive-release.md](workflows/step5-archive-release.md)
+  - 全テスト検証、アーカイブ、フィーチャーフラグ有効化、**PR #4**
 
 ## テンプレート
 
@@ -69,7 +71,7 @@ cat openspec/changes/<change-id>/tasks.md
 
 ## Context7統合
 
-Step 0.5（Tech Spike）でライブラリ調査、Step 0.9（Design）でベストプラクティス調査に使用。
+Step 1a（Tech Spike）でライブラリ調査、Step 1b（Design）でベストプラクティス調査に使用。
 
 ```bash
 # MCPツール: mcp__plugin_context7_context7__resolve-library-id
@@ -78,20 +80,20 @@ Step 0.5（Tech Spike）でライブラリ調査、Step 0.9（Design）でベス
 
 ## 重要な原則
 
-1. **疎通優先、ロジック後回し**: Step 2ではUIからDBまで貫通させ、ビジネスロジックは書かない
+1. **疎通優先、ロジック後回し**: Step 3ではUIからDBまで貫通させ、ビジネスロジックは書かない
 2. **フィーチャーフラグで段階的リリース**: 環境変数で制御、スケルトンはOFFでマージ
-3. **3つのPRで段階的マージ**: PR #1（スケルトン）→ PR #2（ロジック）→ PR #3（リリース）
+3. **柔軟な4-5PRで段階的マージ**: PR #1（提案）→ [PR #1.5（設計、任意）] → PR #2（スケルトン）→ PR #3（ロジック）→ PR #4（リリース）
 4. **verify.mdは実行可能なドキュメント**: Runme.devでそのまま実行可能
 
 ## 詳細ワークフロー
 
-- [Step 0: Proposal](workflows/step0-proposal.md)
-- [Step 0.5: Tech Spike](workflows/step0.5-tech-spike.md)
-- [Step 0.9: Design](workflows/step0.9-design.md)
-- [Step 1: Runbook & Red](workflows/step1-runbook-red.md)
-- [Step 2: Skeleton Green](workflows/step2-skeleton-green.md)
-- [Step 3: Logic Meat](workflows/step3-logic-meat.md)
-- [Step 4: Archive & Release](workflows/step4-archive-release.md)
+- [Step 1: Proposal](workflows/step1-proposal.md)
+- [Step 1a: Tech Spike](workflows/step1a-tech-spike.md)
+- [Step 1b: Design](workflows/step1b-design.md)
+- [Step 2: Runbook & Red](workflows/step2-runbook-red.md)
+- [Step 3: Skeleton Green](workflows/step3-skeleton-green.md)
+- [Step 4: Logic Meat](workflows/step4-logic-meat.md)
+- [Step 5: Archive & Release](workflows/step5-archive-release.md)
 
 ## よくある質問
 

@@ -1,4 +1,4 @@
-# Step 2: Skeleton Green
+# Step 3: Skeleton Green
 
 ## 目的
 
@@ -230,7 +230,7 @@ runme tui
 # すべてのテストを実行し、GREEN（成功）を視覚的に確認
 ```
 
-## PR #1 作成
+## PR #2 作成
 
 ### PR情報
 
@@ -287,9 +287,9 @@ Feature is **disabled by default** in production:
 
 ### Next Steps
 
-- [ ] PR #1: Merge skeleton (this PR)
-- [ ] PR #2: Implement business logic
-- [ ] PR #3: Archive and release
+- [ ] PR #2: Merge skeleton (this PR)
+- [ ] PR #3: Implement business logic
+- [ ] PR #4: Archive and release
 ```
 
 ### PR作成コマンド
@@ -324,7 +324,7 @@ git push -u origin skeleton/<change-id>
 gh pr create --title "[Skeleton] <feature-name>" --body "$(cat PR_BODY.md)"
 ```
 
-## PR #1レビューとマージ
+## PR #2レビューとマージ
 
 ### レビューポイント
 
@@ -346,32 +346,32 @@ git pull origin main
 
 ## tasks.md更新
 
-PR #1マージ後、tasks.mdを更新：
+PR #2マージ後、tasks.mdを更新：
 
 ```markdown
 ## 2. 実装フェーズ
 - [x] verify.md作成（Runme.dev形式）
 - [x] REDステータス確認
 - [x] スケルトン実装
-- [x] PR #1作成・マージ  ← 完了マーク
+- [x] PR #2作成・マージ  ← 完了マーク
 - [ ] ロジック実装
 ```
 
 ## チェックリスト
 
-Step 2完了前に確認：
+Step 3完了前に確認：
 
 - [ ] スケルトン実装完成（ハードコードのみ）
 - [ ] フィーチャーフラグ実装済み
 - [ ] `runme run verify-all` でGREEN確認済み
 - [ ] verify.md GREENのスクリーンショット取得済み
-- [ ] PR #1作成済み
-- [ ] PR #1レビュー・マージ済み
+- [ ] PR #2作成済み
+- [ ] PR #2レビュー・マージ済み
 - [ ] tasks.mdを更新済み
 
 ## 次のステップ
 
-PR #1マージ後 → **Step 3: Logic Meat**
+PR #2マージ後 → **Step 4: Logic Meat**
 
 スケルトンの内部を本物のロジックに置き換えます。
 

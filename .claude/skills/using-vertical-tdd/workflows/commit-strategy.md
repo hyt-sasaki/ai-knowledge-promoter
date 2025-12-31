@@ -15,17 +15,29 @@
 
 [Conventional Commits](https://www.conventionalcommits.org/) に従います。
 
+## PR戦略
+
+柔軟な4-5PRで段階的マージ:
+
+| PR | ブランチ命名 | タイミング | 必須/任意 |
+|---|---|---|---|
+| PR #1 | `proposal/<change-id>` | Step 1完了後 | 必須 |
+| PR #1.5 | `design/<change-id>` | Step 1a/1b完了後 | 任意 |
+| PR #2 | `skeleton/<change-id>` | Step 3完了後 | 必須 |
+| PR #3 | `logic/<change-id>` | Step 4完了後 | 必須 |
+| PR #4 | `release/<change-id>` | Step 5完了後 | 必須 |
+
 ## 各ステップでのコミットポイント
 
 垂直TDD各ステップでの具体的なコミットポイントは、各ワークフローファイルを参照してください：
 
-- [Step 0: Proposal](step0-proposal.md#コミット戦略)
-- [Step 0.5: Tech Spike](step0.5-tech-spike.md#コミット戦略)
-- [Step 0.9: Design](step0.9-design.md#コミット戦略)
-- [Step 1: Runbook & Red](step1-runbook-red.md#コミット戦略)
-- [Step 2: Skeleton Green](step2-skeleton-green.md#コミット戦略)
-- [Step 3: Logic Meat](step3-logic-meat.md#コミット戦略)
-- [Step 4: Archive & Release](step4-archive-release.md#コミット戦略)
+- [Step 1: Proposal](step1-proposal.md#コミット戦略) → **PR #1**
+- [Step 1a: Tech Spike](step1a-tech-spike.md#コミット戦略)
+- [Step 1b: Design](step1b-design.md#コミット戦略) → **PR #1.5**（任意）
+- [Step 2: Runbook & Red](step2-runbook-red.md#コミット戦略)
+- [Step 3: Skeleton Green](step3-skeleton-green.md#コミット戦略) → **PR #2**
+- [Step 4: Logic Meat](step4-logic-meat.md#コミット戦略) → **PR #3**
+- [Step 5: Archive & Release](step5-archive-release.md#コミット戦略) → **PR #4**
 
 ## よくある質問
 

@@ -1,4 +1,4 @@
-# Step 4: Archive & Release
+# Step 5: Archive & Release
 
 ## 目的
 
@@ -217,7 +217,7 @@ gcloud run services update <service-name> \
 vercel env add FEATURE_<NAME>_ENABLED production
 ```
 
-## Step 6: PR #3作成
+## Step 6: PR #4作成
 
 ### PR情報
 
@@ -281,9 +281,9 @@ Or feature flag code removed entirely.
 
 ### Related
 
-- PR #1: Skeleton implementation
-- PR #2: Logic implementation
-- PR #3: Archive and release (this PR)
+- PR #2: Skeleton implementation
+- PR #3: Logic implementation
+- PR #4: Archive and release (this PR)
 
 ### Deployment
 
@@ -343,7 +343,7 @@ gh pr create --title "[Release] <feature-name>" --body "$(cat PR_BODY.md)"
 
 ### デプロイ
 
-PR #3をmainブランチにマージ後、本番環境にデプロイします。
+PR #4をmainブランチにマージ後、本番環境にデプロイします。
 
 ```bash
 # mainブランチにマージ済みを確認
@@ -384,7 +384,7 @@ curl -X POST https://production.example.com/api/users \
 
 ## tasks.md最終更新
 
-PR #3マージ後、tasks.mdを更新：
+PR #4マージ後、tasks.mdを更新：
 
 ```markdown
 ## 3. リリースフェーズ
@@ -392,7 +392,7 @@ PR #3マージ後、tasks.mdを更新：
 - [x] openspec validate --strict 実行
 - [x] openspec archive <change-id> 実行
 - [x] フィーチャーフラグ有効化
-- [x] PR #3作成・マージ
+- [x] PR #4作成・マージ
 - [x] デプロイ完了  ← 完了マーク
 
 ✅✅✅ リリース完了 ✅✅✅
@@ -400,7 +400,7 @@ PR #3マージ後、tasks.mdを更新：
 
 ## 完了チェックリスト
 
-Step 4完了前に確認：
+Step 5完了前に確認：
 
 - [ ] すべてのユニットテストがパス（言語別テストフレームワーク）
 - [ ] カバレッジ80%以上（ビジネスロジック・純粋関数を対象）
@@ -411,7 +411,7 @@ Step 4完了前に確認：
 - [ ] `openspec archive <change-id>` 実行済み
 - [ ] アーカイブ後の `openspec validate --strict` がパス
 - [ ] フィーチャーフラグ有効化（または削除、フラグ使用時のみ）
-- [ ] PR #3作成・レビュー・マージ済み
+- [ ] PR #4作成・レビュー・マージ済み
 - [ ] 本番環境にデプロイ済み
 - [ ] 本番環境で機能確認済み
 - [ ] tasks.mdを最終更新済み
@@ -430,10 +430,10 @@ heroku config:set FEATURE_<NAME>_ENABLED=false
 # 即座に機能が無効化される（再デプロイ不要）
 ```
 
-### 方法2: PR #3をリバート
+### 方法2: PR #4をリバート
 
 ```bash
-# PR #3をリバート
+# PR #4をリバート
 gh pr view <pr-number> --json mergeCommit --jq '.mergeCommit.oid' | \
   xargs git revert
 

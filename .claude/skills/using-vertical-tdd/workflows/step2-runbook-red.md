@@ -1,4 +1,4 @@
-# Step 1: Runbook & Red
+# Step 2: Runbook & Red
 
 ## 目的
 

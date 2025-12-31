@@ -1,4 +1,4 @@
-# Step 0: Proposal（提案作成）
+# Step 1: Proposal（提案作成）
 
 ## 目的
 
@@ -88,25 +88,26 @@ openspec/changes/<change-id>/
 ## 1. 提案フェーズ
 - [ ] proposal.md作成
 - [ ] spec deltas作成
+- [ ] PR #1作成・マージ
 - [ ] 技術検証（spike/results.md完成） ← 必要な場合のみ
 - [ ] design.md作成 ← 必要な場合のみ
-- [ ] 提案レビュー・承認
+- [ ] PR #1.5作成・マージ ← 技術検証/design.md実施した場合のみ
 
 ## 2. 実装フェーズ
 - [ ] verify.md作成（Runme.dev形式）
 - [ ] REDステータス確認
 - [ ] スケルトン実装
-- [ ] PR #1作成・マージ
+- [ ] PR #2作成・マージ
 - [ ] ロジック実装
 - [ ] ユニットテスト実装
-- [ ] PR #2作成・マージ
+- [ ] PR #3作成・マージ
 
 ## 3. リリースフェーズ
 - [ ] 全テスト検証
 - [ ] openspec validate --strict 実行
 - [ ] openspec archive <change-id> 実行
 - [ ] フィーチャーフラグ有効化
-- [ ] PR #3作成・マージ
+- [ ] PR #4作成・マージ
 ```
 
 ### 技術検証タスクの判断基準
@@ -233,16 +234,61 @@ openspec show <change-id> --json --deltas-only
 - すべての要件に `#### Scenario:` が含まれているか確認
 - フォーマットが正確か確認（4つのハッシュ、コロン、スペース、説明）
 
-## 手順6: チームレビュー・承認
+## 手順6: PR #1作成（Proposal）
 
-提案をチームメンバーとレビューし、以下を確認：
+提案が完成したらPRを作成してチームレビューを依頼します。
 
+### ブランチ作成
+
+```bash
+git checkout -b proposal/<change-id>
+```
+
+### コミット
+
+```bash
+git add openspec/changes/<change-id>/
+git commit -m "docs: add proposal for <feature-name>
+
+- proposal.md: Why/What/Impact を記述
+- tasks.md: 実装ステップを定義
+- spec deltas: シナリオ付き要件を定義
+
+🤖 Generated with Claude Code"
+```
+
+### PR作成
+
+```bash
+gh pr create \
+  --title "[Proposal] <feature-name>" \
+  --body "$(cat <<'EOF'
+## 概要
+<proposal.mdのWhyセクションを記載>
+
+## スコープ
+<tasks.mdの主要タスクを記載>
+
+## レビュー観点
 - [ ] Why が明確で説得力がある
 - [ ] What Changes が具体的
 - [ ] Impact の範囲が適切
 - [ ] Spec deltas がシナリオ付きで記述されている
 - [ ] tasks.md が実行可能なステップに分割されている
 - [ ] openspec validate --strict がパスする
+
+🤖 Generated with Claude Code
+EOF
+)"
+```
+
+### チェックリスト
+
+PR作成前に確認：
+
+- [ ] `openspec validate <change-id> --strict` がパスする
+- [ ] proposal.mdのsummaryが明確
+- [ ] tasks.mdにステップが記載されている
 
 承認を得てから次のステップに進みます。
 
@@ -259,7 +305,7 @@ tasks.mdの内容に応じて次のステップを決定：
 - [ ] 技術検証  ← これが未完了
 ```
 
-→ **Step 0.5: Tech Spike** へ進む
+→ **Step 1a: Tech Spike** へ進む
 
 ### パターン2: design.md作成が必要
 
@@ -271,7 +317,7 @@ tasks.mdの内容に応じて次のステップを決定：
 - [ ] design.md作成  ← これが未完了
 ```
 
-→ **Step 0.9: Design** へ進む
+→ **Step 1b: Design** へ進む
 
 ### パターン3: すぐ実装開始
 
@@ -283,7 +329,7 @@ tasks.mdの内容に応じて次のステップを決定：
 （技術検証・design.mdタスクなし）
 ```
 
-→ **Step 1: Runbook & Red** へ進む
+→ **Step 2: Runbook & Red** へ進む
 
 ## チェックリスト
 
@@ -301,11 +347,7 @@ tasks.mdの内容に応じて次のステップを決定：
 
 このステップでのコミットポイント：
 
-**OpenSpec検証パス後**
-```bash
-git add openspec/changes/<change-id>/
-git commit -m "docs: add proposal for <feature-name>"
-```
+**OpenSpec検証パス後 → PR #1作成**
 
 詳細は [commit-strategy.md](commit-strategy.md) を参照。
 

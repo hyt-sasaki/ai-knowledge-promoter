@@ -1,4 +1,4 @@
-# Step 3: Logic Meat
+# Step 4: Logic Meat
 
 ## 目的
 
@@ -365,13 +365,13 @@ runme run verify-all
 
 ### Related
 
-- PR #1: Skeleton implementation (merged)
+- PR #2: Skeleton implementation (merged)
 - OpenSpec proposal: `openspec/changes/<change-id>/proposal.md`
 
 ### Next Steps
 
-- [ ] PR #2: Merge logic (this PR)
-- [ ] PR #3: Archive and release
+- [ ] PR #3: Merge logic (this PR)
+- [ ] PR #4: Archive and release
 ```
 
 ### PR作成コマンド
@@ -408,7 +408,7 @@ git push -u origin logic/<change-id>
 gh pr create --title "[Logic] <feature-name>" --body "$(cat PR_BODY.md)"
 ```
 
-## PR #2レビューとマージ
+## PR #3レビューとマージ
 
 ### レビューポイント
 
@@ -428,28 +428,28 @@ git pull origin main
 
 ## tasks.md更新
 
-PR #2マージ後、tasks.mdを更新：
+PR #3マージ後、tasks.mdを更新：
 
 ```markdown
 ## 2. 実装フェーズ
 - [x] verify.md作成
 - [x] REDステータス確認
 - [x] スケルトン実装
-- [x] PR #1作成・マージ
+- [x] PR #2作成・マージ
 - [x] ロジック実装
 - [x] ユニットテスト実装
-- [x] PR #2作成・マージ  ← 完了マーク
+- [x] PR #3作成・マージ  ← 完了マーク
 ```
 
 ## チェックリスト
 
-Step 3完了前に確認：
+Step 4完了前に確認：
 
 - [ ] すべてのハードコードを本実装に置き換え済み
 - [ ] ユニットテストがすべてパス（pytest）
 - [ ] カバレッジ80%以上
 - [ ] verify.mdがすべてGREEN（runme run verify-all）
-- [ ] PR #2作成・レビュー・マージ済み
+- [ ] PR #3作成・レビュー・マージ済み
 - [ ] tasks.mdを更新済み
 
 ## コミット戦略
@@ -471,7 +471,7 @@ git commit -m "feat: complete logic implementation for <feature-name>"
 
 ## 次のステップ
 
-PR #2マージ後 → **Step 4: Archive & Release**
+PR #3マージ後 → **Step 5: Archive & Release**
 
 全テストとverify.mdの最終検証を行い、OpenSpecアーカイブとフィーチャーフラグ有効化を実施します。
 

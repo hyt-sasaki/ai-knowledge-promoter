@@ -1,4 +1,4 @@
-# Step 0.5: Tech Spike（技術検証）
+# Step 1a: Tech Spike（技術検証）
 
 ## 目的
 
@@ -270,14 +270,16 @@ FastAPIでの認証ライブラリ選択
 spike/results.md完成後：
 
 ### design.md作成が必要な場合
-→ **Step 0.9: Design** へ進む
+→ **Step 1b: Design** へ進む
 
 spike/results.mdの推奨アプローチをdesign.mdに反映します。
 
 ### design.md不要な場合
-→ **Step 1: Runbook & Red** へ進む
+→ **Step 2: Runbook & Red** へ進む
 
 spike/results.mdの推奨アプローチで直接実装を開始します。
+
+その場合、**PR #1.5**は不要です（PR #1で提案承認済みのため）。
 
 ## よくある質問
 
