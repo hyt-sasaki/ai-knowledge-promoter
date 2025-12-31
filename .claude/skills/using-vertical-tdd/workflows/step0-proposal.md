@@ -29,14 +29,14 @@ openspec show <spec-id> --type spec
 ## 手順1: 提案作成
 
 ```bash
-# OpenSpec提案のスキャフォールド
-openspec proposal
-
-# change-idを入力（kebab-case、verb-led推奨）
+# change-idを決定（kebab-case、verb-led推奨）
 # 例: add-user-auth, update-payment-flow, remove-legacy-api
+
+# ディレクトリ構造を手動で作成
+mkdir -p openspec/changes/<change-id>/specs/<capability>
 ```
 
-これにより以下のディレクトリ構造が作成されます：
+以下のディレクトリ構造を作成します：
 
 ```
 openspec/changes/<change-id>/
@@ -233,7 +233,7 @@ openspec show <change-id> --json --deltas-only
 - すべての要件に `#### Scenario:` が含まれているか確認
 - フォーマットが正確か確認（4つのハッシュ、コロン、スペース、説明）
 
-## 手順6: 2人レビュー・承認
+## 手順6: チームレビュー・承認
 
 提案をチームメンバーとレビューし、以下を確認：
 
@@ -295,7 +295,7 @@ tasks.mdの内容に応じて次のステップを決定：
 - [ ] tasks.mdにチェックリストが記述されている
 - [ ] spec deltasにシナリオ付き要件が記述されている
 - [ ] `openspec validate <change-id> --strict` がパスする
-- [ ] 2人でレビュー・承認済み
+- [ ] チームでレビュー・承認済み
 
 ## 参考コマンド
 
