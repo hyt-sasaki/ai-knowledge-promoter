@@ -25,8 +25,7 @@ spike/results.mdの技術検証により、FastMCP + Cloud Run構成が技術的
 
 - Firestore連携（Phase 2）
 - Vertex AI Search統合（Phase 2）
-- 認証・認可機構（将来検討）
-- マルチテナント対応（将来検討）
+- Cloud IAP設定（Phase 1では開発用途のため、認証なしで進める）
 
 ## Decisions
 
@@ -233,5 +232,5 @@ async def health_check(request: Request) -> PlainTextResponse:
 ## Open Questions
 
 - [x] FastMCP + Cloud Run構成は技術的に妥当か → spike/results.mdで確認済み
-- [ ] 認証方式（Cloud Run IAM vs Firebase Auth vs カスタム）
-- [ ] マルチテナント対応の必要性と時期
+- [x] 認証方式 → Cloud IAP（ロードバランサー不要でCloud Runに直接設定可能）
+- [x] マルチテナント対応の必要性 → 不要
