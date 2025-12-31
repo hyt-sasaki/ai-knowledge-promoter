@@ -106,6 +106,8 @@ infrastructure/
 #### save_knowledge
 
 ```python
+import uuid
+
 @mcp.tool
 def save_knowledge(
     title: str,

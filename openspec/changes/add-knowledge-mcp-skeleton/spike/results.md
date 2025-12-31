@@ -70,8 +70,8 @@ if __name__ == "__main__":
    - クライアント側はHTTP経由でMCPプロトコルを使用
 
 2. **認証**
-   - Phase 1ではCloud Run IAMを使用
-   - 将来的にはFirebase Authなどを検討
+   - Phase 1では認証なし（開発用途）
+   - 将来的にはCloud IAP（ロードバランサー不要でCloud Runに直接設定可能）を使用
 
 ## 推奨構成
 
@@ -146,6 +146,6 @@ if __name__ == "__main__":
 ## 次のステップ
 
 1. ~~技術検証完了~~ ✅
-2. design.md作成（任意、シンプルな構成のため不要と判断）
+2. ~~design.md作成~~ ✅（当初不要と判断したが、Open Questionsの整理のため作成）
 3. verify.md作成（Runme.dev形式）
 4. スケルトン実装開始
