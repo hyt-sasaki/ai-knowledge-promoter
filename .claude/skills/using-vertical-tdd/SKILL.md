@@ -153,6 +153,16 @@ def determine_next_step(tasks_md):
   - spike/results.md用テンプレート
   - 技術検証結果の記録フォーマット
 
+## コミット戦略
+
+すべての安定チェックポイントでコミットし、大きなコミットを避けます：
+
+- **安定チェックポイントでのコミット**: 動作確認できた時点で即コミット
+- **Conventional Commits準拠**: コミットメッセージは[Conventional Commits](https://www.conventionalcommits.org/)に従う
+- **各ステップでのコミットポイント**: 各ワークフローファイルを参照
+
+詳細は [workflows/commit-strategy.md](workflows/commit-strategy.md) を参照。
+
 ## 実装再開時のコマンド
 
 ```bash

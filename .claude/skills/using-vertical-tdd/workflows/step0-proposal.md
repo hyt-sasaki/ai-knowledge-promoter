@@ -297,6 +297,18 @@ tasks.mdの内容に応じて次のステップを決定：
 - [ ] `openspec validate <change-id> --strict` がパスする
 - [ ] チームでレビュー・承認済み
 
+## コミット戦略
+
+このステップでのコミットポイント：
+
+**OpenSpec検証パス後**
+```bash
+git add openspec/changes/<change-id>/
+git commit -m "docs: add proposal for <feature-name>"
+```
+
+詳細は [commit-strategy.md](commit-strategy.md) を参照。
+
 ## 参考コマンド
 
 ```bash

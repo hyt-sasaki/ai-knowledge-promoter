@@ -477,6 +477,18 @@ A: いいえ。`openspec/changes/archive/YYYY-MM-DD-<change-id>/` に移動さ�
 
 A: はい。OpenSpecアーカイブ、フィーチャーフラグパターン、テストピラミッドは言語非依存です。各言語のツール（テストフレームワーク、環境変数管理等）で同じパターンを適用できます。
 
+## コミット戦略
+
+このステップでのコミットポイント：
+
+**OpenSpecアーカイブ完了後**
+```bash
+git add openspec/changes/archive/ openspec/specs/
+git commit -m "docs: archive OpenSpec change for <feature-name>"
+```
+
+詳細は [commit-strategy.md](commit-strategy.md) を参照。
+
 ## 完了
 
 🎉 機能が本番環境で利用可能になりました！

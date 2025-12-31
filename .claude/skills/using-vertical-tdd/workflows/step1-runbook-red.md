@@ -359,3 +359,15 @@ A: 既存の実装が部分的に存在する可能性があります。verify.m
 **Q: verify-allが長すぎる場合は？**
 
 A: セクションごとに `verify-setup`, `verify-normal-path`, `verify-edge-cases` に分割することを検討します。
+
+## コミット戦略
+
+このステップでのコミットポイント：
+
+**verify.md作成・RED確認後**
+```bash
+git add openspec/changes/<change-id>/verify.md
+git commit -m "test: add integration tests for <feature-name>"
+```
+
+詳細は [commit-strategy.md](commit-strategy.md) を参照。

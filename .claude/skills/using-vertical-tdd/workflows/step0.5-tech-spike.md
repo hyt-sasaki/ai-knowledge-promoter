@@ -294,3 +294,15 @@ A: 含めません。spike/配下に隔離し、後で削除またはアーカ�
 **Q: Context7で情報が見つからない場合は？**
 
 A: 公式ドキュメント、GitHub、技術ブログを直接参照します。Context7はあくまで補助ツールです。
+
+## コミット戦略
+
+このステップでのコミットポイント：
+
+**検証結果記録完了後**
+```bash
+git add openspec/changes/<change-id>/spike/
+git commit -m "docs: add tech spike results for <feature-name>"
+```
+
+詳細は [commit-strategy.md](commit-strategy.md) を参照。

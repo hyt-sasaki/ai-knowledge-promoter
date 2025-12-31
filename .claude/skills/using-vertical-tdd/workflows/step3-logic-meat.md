@@ -452,6 +452,23 @@ Step 3完了前に確認：
 - [ ] PR #2作成・レビュー・マージ済み
 - [ ] tasks.mdを更新済み
 
+## コミット戦略
+
+このステップでのコミットポイント：
+
+**各機能のユニットテスト完了後（小さく頻繁に）**
+```bash
+git add tests/ lib/
+git commit -m "feat: implement <specific-feature> logic"
+```
+
+**ロジック実装完了・verify.md再確認後**
+```bash
+git commit -m "feat: complete logic implementation for <feature-name>"
+```
+
+詳細は [commit-strategy.md](commit-strategy.md) を参照。
+
 ## 次のステップ
 
 PR #2マージ後 → **Step 4: Archive & Release**

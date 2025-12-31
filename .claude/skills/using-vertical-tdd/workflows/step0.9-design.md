@@ -360,3 +360,15 @@ A: 実装者が迷わない程度。コード例は最小限で、主に「な�
 **Q: Open Questionsが多い場合はどうするか？**
 
 A: 2-3個までなら許容。それ以上ある場合は、追加の技術検証（Step 0.5に戻る）または質問を解決してから進めます。
+
+## コミット戦略
+
+このステップでのコミットポイント：
+
+**design.md完成後**
+```bash
+git add openspec/changes/<change-id>/design.md
+git commit -m "docs: add design document for <feature-name>"
+```
+
+詳細は [commit-strategy.md](commit-strategy.md) を参照。

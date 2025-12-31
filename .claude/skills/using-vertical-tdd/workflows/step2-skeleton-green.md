@@ -396,3 +396,15 @@ A: すべてGREENになるまでスケルトンを調整します。部分的な
 **Q: フィーチャーフラグの命名規則は？**
 
 A: `FEATURE_<NAME>_ENABLED` の形式。例: `FEATURE_USER_AUTH_ENABLED`, `FEATURE_PAYMENT_ENABLED`
+
+## コミット戦略
+
+このステップでのコミットポイント：
+
+**スケルトン実装完了・verify.md GREEN確認後**
+```bash
+git add .
+git commit -m "feat: add skeleton implementation for <feature-name>"
+```
+
+詳細は [commit-strategy.md](commit-strategy.md) を参照。
