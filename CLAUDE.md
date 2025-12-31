@@ -16,3 +16,9 @@ Use `@/openspec/AGENTS.md` to learn:
 Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
+
+## 開発方法論
+
+このプロジェクトは**垂直TDDスケルトン戦略**を採用しています。新機能開発時、提案修正時、実装再開時に自動的に適用されます。詳細なワークフローとテンプレートは `.claude/skills/using-vertical-tdd/` を参照してください。
+
+Progressive Disclosureにより、必要な時だけ詳細な指示が読み込まれます。
