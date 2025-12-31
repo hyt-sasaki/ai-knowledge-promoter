@@ -1,7 +1,7 @@
 ---
 name: using-vertical-tdd
 description: OpenSpec駆動の垂直TDDスケルトン戦略。提案作成・技術検証・設計・実装・アーカイブの全ライフサイクルをサポート。tasks.md進捗に基づき自動的に適切なステップを提案。新機能開発の開始時、提案修正時、実装再開時、技術検証時に使用。Context7で最新ライブラリ情報を調査し設計精度を向上。
-allowed-tools: Read, Bash(openspec:*), Bash(runme:*), Bash(git:*), Bash(cat:*), Bash(jq:*), Bash(rg:*), Bash(mkdir:*), mcp__plugin_context7_context7__resolve-library-id, mcp__plugin_context7_context7__query-docs
+allowed-tools: Read, Bash(openspec:*), Bash(runme:*), Bash(git:*), Bash(cat:*), Bash(jq:*), Bash(rg:*), Bash(mkdir:*), WebSearch, WebFetch, mcp__plugin_context7_context7__resolve-library-id, mcp__plugin_context7_context7__query-docs
 ---
 
 # 垂直TDDスケルトン戦略の使用
