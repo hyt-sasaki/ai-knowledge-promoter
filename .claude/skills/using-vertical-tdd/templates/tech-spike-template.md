@@ -65,8 +65,11 @@
 
 **ファイル**: `spike/experiment-a.py`（または .js, .ts, .go等）
 
+**注**: 以下のコード例はPythonを使用していますが、Node.js、Go、Rust等、任意の言語で実験できます。
+
 **コード概要**:
 ```python
+# 例: Python
 # 最小限の実装コード（30-50行程度）
 # 目的: [何を検証するか]
 
@@ -105,6 +108,7 @@ app = FastAPI()
 
 **コード概要**:
 ```python
+# 例: Python
 # 最小限の実装コード（30-50行程度）
 # 目的: [何を検証するか]
 
@@ -139,10 +143,11 @@ app = FastAPI()
 
 ### 実験コード
 
-**ファイル**: `spike/experiment-c.py`
+**ファイル**: `spike/experiment-c.py`（または .js, .ts, .go等）
 
 **コード概要**:
 ```python
+# 例: Python
 # 最小限の実装コード
 ```
 
