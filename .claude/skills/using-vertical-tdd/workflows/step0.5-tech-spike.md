@@ -295,14 +295,62 @@ A: 含めません。spike/配下に隔離し、後で削除またはアーカ�
 
 A: 公式ドキュメント、GitHub、技術ブログを直接参照します。Context7はあくまで補助ツールです。
 
-## コミット戦略
+## コミット戦略：git worktree活用パターン
 
-このステップでのコミットポイント：
+技術検証は試行錯誤的な作業のため、安定チェックポイントでこまめにコミットすることが重要です。一方で、実験用のコミット履歴がfeatureブランチを汚す懸念もあります。
 
-**検証結果記録完了後**
+### 推奨アプローチ：git worktree + 実験用ブランチ
+
 ```bash
+# 1. 実験用ブランチとworktreeを作成
+git worktree add ../spike-<change-id> -b spike/<change-id>
+
+# 2. 実験用ディレクトリに移動
+cd ../spike-<change-id>
+
+# 3. spike/配下で実験コードを作成・コミット（こまめに）
+mkdir -p openspec/changes/<change-id>/spike/
+# experiment-a.py を作成
+git add openspec/changes/<change-id>/spike/experiment-a.py
+git commit -m "spike: add experiment A for <feature-name>"
+
+# experiment-b.py を作成
+git add openspec/changes/<change-id>/spike/experiment-b.py
+git commit -m "spike: add experiment B for <feature-name>"
+
+# results.md を作成
+git add openspec/changes/<change-id>/spike/results.md
+git commit -m "spike: document results for <feature-name>"
+
+# 4. 元のディレクトリに戻る
+cd -
+
+# 5. 実験結果をfeatureブランチに取り込む（1コミットにまとめる）
+git merge --squash spike/<change-id>
+git commit -m "docs: add tech spike results for <feature-name>"
+
+# 6. worktreeをクリーンアップ
+git worktree remove ../spike-<change-id>
+git branch -d spike/<change-id>
+```
+
+### メリット
+
+- ✅ **こまめなコミット**: 実験用ブランチで安定チェックポイントごとにコミット可能
+- ✅ **履歴の整理**: featureブランチには1つの統合コミットのみ
+- ✅ **並行作業**: 元のディレクトリで他の作業を続けられる
+- ✅ **独立環境**: 実験用の依存関係が元の環境と干渉しない
+
+### 代替アプローチ：直接コミット（シンプル）
+
+worktreeを使わず、直接コミットする場合：
+
+```bash
+# spike/配下で実験コードを作成・コミット
 git add openspec/changes/<change-id>/spike/
 git commit -m "docs: add tech spike results for <feature-name>"
 ```
+
+このアプローチは実験が1-2時間程度で完了する場合に適しています。
 
 詳細は [commit-strategy.md](commit-strategy.md) を参照。
