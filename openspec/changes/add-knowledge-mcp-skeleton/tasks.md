@@ -4,9 +4,9 @@
 - [x] proposal.md作成
 - [x] spec deltas作成
 - [x] PR #1作成・マージ
-- [ ] 技術検証（FastMCP + Cloud Run構成）
-- [ ] design.md作成
-- [ ] PR #1.5作成・マージ（技術検証/design.md実施した場合）
+- [x] 技術検証（FastMCP + Cloud Run構成）→ spike/results.md
+- [x] design.md作成
+- [ ] PR #1.5作成・マージ
 
 ## 2. 実装フェーズ
 - [ ] verify.md作成（Runme.dev形式）
