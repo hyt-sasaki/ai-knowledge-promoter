@@ -6,7 +6,7 @@
 - [x] PR #1作成・マージ
 - [x] 技術検証（FastMCP + Cloud Run構成）→ spike/results.md
 - [x] design.md作成
-- [ ] PR #1.5作成・マージ
+- [ ] PR #1.5作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/3
 
 ## 2. 実装フェーズ
 - [ ] verify.md作成（Runme.dev形式）
