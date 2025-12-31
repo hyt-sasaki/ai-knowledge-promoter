@@ -12,38 +12,16 @@ Runme.dev形式でverify.mdを作成し、期待する挙動をcURLやCLIコマ�
 
 Runme.devは実行可能なマークダウンドキュメントを作成するツールです。verify.mdをそのままテストスクリプトとして実行できます。
 
-### 主な特徴（2025年版）
+### 主な特徴
 
 - **名前付きコードブロック**: 各コマンドに名前を付けて管理
 - **複数の実行方法**: CLI、TUI、VS Code拡張機能
 - **多言語対応**: Shell、Python、JavaScript、TypeScript等
 - **環境変数管理**: .envファイルとの統合
 
-## Runme.devインストール
+### インストール確認
 
-### 方法1: Homebrew（macOS）
-
-```bash
-brew install runme
-```
-
-### 方法2: NPM（クロスプラットフォーム）
-
-```bash
-# グローバルインストール
-npm install -g runme
-
-# または npx で直接実行
-npx runme
-```
-
-### 方法3: Go
-
-```bash
-go install github.com/stateful/runme@latest
-```
-
-### 確認
+このプロジェクトでは `mise.toml` でRunme.devを管理しています。miseが自動的にインストールします。
 
 ```bash
 # インストール確認
@@ -61,7 +39,7 @@ runme --help
 
 ### 名前付きコードブロックの形式
 
-**重要**: Runme.dev 2025では、コードブロックに `{"name":"command-name"}` 属性を追加します。
+**重要**: コードブロックに `{"name":"command-name"}` 属性を追加します。
 
 ```markdown
 ```sh {"name":"setup-database"}
@@ -262,7 +240,6 @@ tasks.mdまたはverify.mdのコメントに記録：
 
 ```
 verify.md作成進捗:
-- [ ] Runme.devインストール確認
 - [ ] テンプレートをコピー
 - [ ] Setup セクション完成（名前付きコードブロック）
 - [ ] Normal Path（正常系）テスト記述
