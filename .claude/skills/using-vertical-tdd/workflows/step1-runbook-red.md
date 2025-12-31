@@ -48,6 +48,8 @@ runme --help
 
 [../templates/verify-template.md](../templates/verify-template.md) をコピーして開始します。
 
+詳細な実装ガイドは [verify-implementation-guide.md](verify-implementation-guide.md) を参照してください。
+
 ### 名前付きコードブロックの形式
 
 **重要**: コードブロックに `{"name":"command-name"}` 属性を追加します。

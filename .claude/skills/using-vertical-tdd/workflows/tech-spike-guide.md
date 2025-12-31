@@ -1,6 +1,8 @@
-# Step 0.5: Tech Spike（技術検証）
+# tech spike実装ガイド
 
-## 目的
+このガイドは、[tech-spike-template.md](../templates/tech-spike-template.md) を使用して技術検証結果を記録する際の詳細な実装ガイドです。
+
+## 技術検証の目的
 
 design.md作成前に最小限の実験コードで技術的妥当性を検証し、設計精度を向上させます。
 
@@ -25,36 +27,32 @@ design.md作成前に最小限の実験コードで技術的妥当性を検証�
 
 技術検証の前に、Context7で最新のライブラリ情報を調査します。
 
-### 1. ライブラリ調査の基本フロー
-
-```bash
-# Step 1: ライブラリIDを解決
-# MCPツール: mcp__plugin_context7_context7__resolve-library-id
-# パラメータ:
-#   - libraryName: 調査したいライブラリ名（例: "Next.js"）
-#   - query: 質問内容（例: "React Server Componentsのデータフェッチパターン"）
-
-# Step 2: ドキュメント検索
-# MCPツール: mcp__plugin_context7_context7__query-docs
-# パラメータ:
-#   - libraryId: Step 1で取得したID（例: "/vercel/next.js"）
-#   - query: 具体的な質問（例: "Server Components data fetching patterns"）
-```
-
-### 2. 実例：React Server Components vs Client Components
-
-```markdown
-## 調査項目
-Next.js App RouterでのServer Components vs Client Components選択
-
-## Context7調査手順
+### 基本フロー
 
 1. **ライブラリIDを解決**
+   - MCPツール: `mcp__plugin_context7_context7__resolve-library-id`
+   - パラメータ:
+     - `libraryName`: 調査したいライブラリ名（例: "Next.js"）
+     - `query`: 質問内容（例: "React Server Componentsのデータフェッチパターン"）
+
+2. **ドキュメント検索**
+   - MCPツール: `mcp__plugin_context7_context7__query-docs`
+   - パラメータ:
+     - `libraryId`: Step 1で取得したID（例: "/vercel/next.js"）
+     - `query`: 具体的な質問（例: "Server Components data fetching patterns"）
+
+### 実例：React Server Components vs Client Components
+
+**調査項目**: Next.js App RouterでのServer Components vs Client Components選択
+
+**Context7調査手順**:
+
+1. ライブラリIDを解決
    - libraryName: "Next.js"
    - query: "Server ComponentsとClient Componentsのデータフェッチパターンを比較したい"
    - 結果: `/vercel/next.js`
 
-2. **Server Componentsパターン調査**
+2. Server Componentsパターン調査
    - libraryId: `/vercel/next.js`
    - query: "Server Components data fetching patterns and performance benefits"
    - 結果メモ:
@@ -62,7 +60,7 @@ Next.js App RouterでのServer Components vs Client Components選択
      - ゼロクライアントサイドJavaScript
      - SEOに優れる
 
-3. **Client Componentsパターン調査**
+3. Client Componentsパターン調査
    - libraryId: `/vercel/next.js`
    - query: "Client Components hydration performance and use cases"
    - 結果メモ:
@@ -70,20 +68,13 @@ Next.js App RouterでのServer Components vs Client Components選択
      - useState, useEffectが使える
      - ハイドレーションのオーバーヘッドあり
 
-## 調査結果サマリー
-- Server Components: 静的コンテンツ、データフェッチ主体
-- Client Components: インタラクティブUI、クライアントサイド状態管理
-```
+### 実例：FastAPI認証ライブラリ比較
 
-### 3. 実例：FastAPI認証ライブラリ比較
+**調査項目**: FastAPIでの認証ライブラリ選択（FastAPI-Users vs Authlib vs 自前実装）
 
-```markdown
-## 調査項目
-FastAPIでの認証ライブラリ選択（FastAPI-Users vs Authlib vs 自前実装）
+**Context7調査手順**:
 
-## Context7調査手順
-
-1. **FastAPI-Users調査**
+1. FastAPI-Users調査
    - libraryName: "FastAPI-Users"
    - query: "FastAPI-Usersの認証パターンとセキュリティベストプラクティス"
    - 結果メモ:
@@ -91,7 +82,7 @@ FastAPIでの認証ライブラリ選択（FastAPI-Users vs Authlib vs 自前実
      - OAuth2対応
      - ドキュメント豊富
 
-2. **Authlib調査**
+2. Authlib調査
    - libraryName: "Authlib"
    - query: "Authlib FastAPI integration patterns"
    - 結果メモ:
@@ -99,13 +90,12 @@ FastAPIでの認証ライブラリ選択（FastAPI-Users vs Authlib vs 自前実
      - OAuth2/OpenID Connectサポート
      - 学習コストやや高め
 
-3. **FastAPI公式ドキュメント調査**
+3. FastAPI公式ドキュメント調査
    - libraryId: `/tiangolo/fastapi`
    - query: "authentication security best practices"
    - 結果メモ:
      - JWT推奨パターン
      - セキュリティヘッダーの設定例
-```
 
 ## 最小実験コードの作成
 
@@ -187,12 +177,6 @@ def benchmark_approach_b():
 
 `openspec/changes/<change-id>/spike/results.md` に結果を記録します。
 
-### results.mdテンプレート
-
-spike/results.mdのテンプレートは [../templates/tech-spike-template.md](../templates/tech-spike-template.md) を参照してください。
-
-詳細な実装ガイドは [tech-spike-guide.md](tech-spike-guide.md) を参照してください。
-
 ### 記録例
 
 ```markdown
@@ -222,7 +206,7 @@ FastAPIでの認証ライブラリ選択
 ## 定量比較
 
 | 項目 | FastAPI-Users | Authlib |
-|------|---------------|---------|
+|------|---------------| --------|
 | セットアップ時間 | 30分 | 90分 |
 | コード行数 | 50行 | 120行 |
 | パフォーマンス | 100ms | 95ms |
@@ -241,43 +225,139 @@ FastAPIでの認証ライブラリ選択
 将来的にカスタマイズ要件が増えた場合、Authlibへの移行を検討。
 ```
 
-## tasks.md更新
+## 定量データ収集のベストプラクティス
 
-検証完了後、tasks.mdを更新します：
+### セットアップ時間の計測
 
-```markdown
-## 1. 提案フェーズ
-- [x] proposal.md作成
-- [x] spec deltas作成
-- [x] 技術検証（spike/results.md完成）  ← 完了マーク
-- [ ] design.md作成
+実験開始から最初の動作確認までの時間を計測：
+
+```bash
+# タイマー開始
+START=$(date +%s)
+
+# 実験コード作成・実行
+# ...
+
+# タイマー終了
+END=$(date +%s)
+echo "Setup time: $((END - START)) seconds"
 ```
 
-## チェックリスト
+### コード行数の計測
 
-技術検証完了前に確認：
+```bash
+# Pythonの場合
+wc -l spike/experiment-a.py
 
-- [ ] Context7でライブラリ・パターンを調査済み
-- [ ] 複数のアプローチで実験コードを作成済み
-- [ ] パフォーマンス・学習コスト・保守性を比較済み
-- [ ] spike/results.mdに結果を記録済み
-- [ ] 定量的なデータ（時間、行数、パフォーマンス）を含む
-- [ ] 推奨アプローチと理由を明記済み
-- [ ] tasks.mdを更新済み
+# Node.jsの場合
+wc -l spike/experiment-a.js
 
-## 次のステップ
+# 複数ファイル合計
+find spike/ -name "*.py" | xargs wc -l
+```
 
-spike/results.md完成後：
+### パフォーマンスの計測
 
-### design.md作成が必要な場合
-→ **Step 0.9: Design** へ進む
+```bash
+# cURLでレスポンスタイム計測
+time curl -X POST http://localhost:8000/api/endpoint
 
-spike/results.mdの推奨アプローチをdesign.mdに反映します。
+# Apache Benchで複数リクエスト計測
+ab -n 100 -c 10 http://localhost:8000/api/endpoint
 
-### design.md不要な場合
-→ **Step 1: Runbook & Red** へ進む
+# Pythonで詳細計測
+python -m cProfile spike/experiment-a.py
+```
 
-spike/results.mdの推奨アプローチで直接実装を開始します。
+## 推奨判断基準
+
+採用アプローチを選択する際の判断基準：
+
+### 1. セットアップ時間の重み
+
+- **小規模プロジェクト（1-2人）**: セットアップ時間を重視（50%）
+- **中規模プロジェクト（3-10人）**: 学習コストとドキュメント品質を重視（40%）
+- **大規模プロジェクト（10人以上）**: 保守性とカスタマイズ性を重視（40%）
+
+### 2. パフォーマンス差の許容範囲
+
+- **10ms以下**: 無視可能
+- **10-100ms**: 許容範囲（他の要素を優先）
+- **100ms以上**: 重要（パフォーマンス優先の場合）
+
+### 3. 学習曲線の評価
+
+- **緩やか**: チーム全員が1日以内に理解可能
+- **普通**: 2-3日で基本的な使用法を習得可能
+- **急峻**: 1週間以上の学習が必要
+
+## カスタマイズのヒント
+
+### 1. 複数言語での実験
+
+Pythonだけでなく、Node.js、Go、Rust等で実験可能：
+
+```bash
+# Node.js
+spike/experiment-a.js
+spike/experiment-b.ts
+
+# Go
+spike/experiment-a.go
+spike/experiment-b.go
+
+# Rust
+spike/experiment-a.rs
+spike/experiment-b.rs
+```
+
+### 2. スクリーンショットの活用
+
+実験結果の視覚的な証拠を保存：
+
+```bash
+spike/screenshots/
+├── experiment-a-result.png
+├── experiment-b-result.png
+└── performance-comparison.png
+```
+
+### 3. 依存関係の記録
+
+実験で使用した依存関係を記録：
+
+```bash
+# Python
+spike/requirements.txt
+
+# Node.js
+spike/package.json
+
+# Go
+spike/go.mod
+
+# Rust
+spike/Cargo.toml
+```
+
+### 4. ベンチマーク自動化
+
+定期的にベンチマークを実行し、結果を比較：
+
+```python
+# spike/benchmark.py
+import json
+import time
+
+results = {
+    "approach_a": benchmark_approach_a(),
+    "approach_b": benchmark_approach_b(),
+    "timestamp": time.time()
+}
+
+with open("spike/benchmark-results.json", "w") as f:
+    json.dump(results, f, indent=2)
+```
 
 ## よくある質問
 
@@ -297,62 +377,28 @@ A: 含めません。spike/配下に隔離し、後で削除またはアーカ�
 
 A: 公式ドキュメント、GitHub、技術ブログを直接参照します。Context7はあくまで補助ツールです。
 
-## コミット戦略：git worktree活用パターン
+**Q: 複数のアプローチを試す順番は？**
 
-技術検証は試行錯誤的な作業のため、安定チェックポイントでこまめにコミットすることが重要です。一方で、実験用のコミット履歴がfeatureブランチを汚す懸念もあります。
+A: 最も有望なアプローチから順に試します。明らかに劣る選択肢は実験をスキップしても構いません。
 
-### 推奨アプローチ：git worktree + 実験用ブランチ
+**Q: 実験結果が予想と異なる場合は？**
 
-```bash
-# 1. 実験用ブランチとworktreeを作成
-git worktree add ../spike-<change-id> -b spike/<change-id>
+A: 追加の実験を行うか、Context7で追加調査します。必要に応じてdesign.mdで判断を再検討します。
 
-# 2. 実験用ディレクトリに移動
-cd ../spike-<change-id>
+**Q: 実験コードのコミット戦略は？**
 
-# 3. spike/配下で実験コードを作成・コミット（こまめに）
-mkdir -p openspec/changes/<change-id>/spike/
-# experiment-a.py を作成
-git add openspec/changes/<change-id>/spike/experiment-a.py
-git commit -m "spike: add experiment A for <feature-name>"
+A: git worktreeを使用し、実験用ブランチで頻繁にコミットし、最終的にfeatureブランチに--squashマージします。詳細は [step0.5-tech-spike.md](step0.5-tech-spike.md#コミット戦略git-worktree活用パターン) を参照。
 
-# experiment-b.py を作成
-git add openspec/changes/<change-id>/spike/experiment-b.py
-git commit -m "spike: add experiment B for <feature-name>"
+## 次のステップ
 
-# results.md を作成
-git add openspec/changes/<change-id>/spike/results.md
-git commit -m "spike: document results for <feature-name>"
+spike/results.md完成後：
 
-# 4. 元のディレクトリに戻る
-cd -
+### design.md作成が必要な場合
+→ **Step 0.9: Design** へ進む
 
-# 5. 実験結果をfeatureブランチに取り込む（1コミットにまとめる）
-git merge --squash spike/<change-id>
-git commit -m "docs: add tech spike results for <feature-name>"
+spike/results.mdの推奨アプローチをdesign.mdに反映します。
 
-# 6. worktreeをクリーンアップ
-git worktree remove ../spike-<change-id>
-git branch -d spike/<change-id>
-```
+### design.md不要な場合
+→ **Step 1: Runbook & Red** へ進む
 
-### メリット
-
-- ✅ **こまめなコミット**: 実験用ブランチで安定チェックポイントごとにコミット可能
-- ✅ **履歴の整理**: featureブランチには1つの統合コミットのみ
-- ✅ **並行作業**: 元のディレクトリで他の作業を続けられる
-- ✅ **独立環境**: 実験用の依存関係が元の環境と干渉しない
-
-### 代替アプローチ：直接コミット（シンプル）
-
-worktreeを使わず、直接コミットする場合：
-
-```bash
-# spike/配下で実験コードを作成・コミット
-git add openspec/changes/<change-id>/spike/
-git commit -m "docs: add tech spike results for <feature-name>"
-```
-
-このアプローチは実験が1-2時間程度で完了する場合に適しています。
-
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+spike/results.mdの推奨アプローチで直接実装を開始します。
