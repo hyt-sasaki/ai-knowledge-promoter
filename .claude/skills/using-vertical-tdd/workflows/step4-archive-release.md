@@ -10,11 +10,12 @@
 
 ```
 最終検証:
-- [ ] すべてのユニットテストがパス（pytest）
-- [ ] カバレッジ80%以上
-- [ ] verify.mdがすべてGREEN（runme run verify-all）
+- [ ] すべてのユニットテストがパス（言語別テストフレームワーク）
+- [ ] カバレッジ80%以上（ビジネスロジック・純粋関数を対象）
+- [ ] verify.mdがすべてGREEN（runme run verify-all、統合テスト）
+- [ ] テストピラミッド確認（ユニット >> 統合）
 - [ ] openspec validate <change-id> --strict がパス
-- [ ] フィーチャーフラグ動作確認（ON/OFF両方）
+- [ ] フィーチャーフラグ動作確認（ON/OFF両方、フラグ使用時のみ）
 - [ ] design.md の Open Questions がすべて解決済み
 - [ ] tasks.md のすべてのタスクが完了（`- [x]`）
 ```
@@ -23,14 +24,26 @@
 
 ### ユニットテスト実行
 
+**言語別テストフレームワーク例**:
+
 ```bash
-# すべてのユニットテストを実行
+# Python (pytest)
 pytest tests/ -v
+pytest --cov=lib --cov-report=term-missing  # カバレッジ確認
 
-# カバレッジ確認
-pytest --cov=lib --cov-report=term-missing
+# Node.js (Jest)
+npm test -- --verbose
+npm test -- --coverage  # カバレッジ確認
 
-# 期待: すべてのテストがパス、カバレッジ80%以上
+# Go
+go test ./... -v
+go test -cover ./...  # カバレッジ確認
+
+# Rust
+cargo test -- --nocapture
+cargo tarpaulin  # カバレッジ確認
+
+# 期待: すべてのテストがパス、カバレッジ80%以上（ビジネスロジック・純粋関数を対象）
 ```
 
 ### verify.md実行（統合テスト）
@@ -68,6 +81,8 @@ openspec show <change-id> --json --deltas-only | jq
 ```
 
 ## Step 3: フィーチャーフラグ動作確認
+
+**注**: フィーチャーフラグを使用していない場合（完全新規開発等）、このステップはスキップします。
 
 ### OFF状態のテスト
 
@@ -135,11 +150,14 @@ openspec validate --strict
 
 ## Step 5: フィーチャーフラグ有効化
 
+**注**: フィーチャーフラグを使用していない場合（完全新規開発等）、このステップはスキップします。
+
 ### 方法1: 環境変数削除（推奨）
 
 フィーチャーフラグのデフォルト値を変更し、環境変数を不要にします。
 
 ```python
+# 例: Python
 # Before（開発中）
 FEATURE_<NAME>_ENABLED = os.getenv("FEATURE_<NAME>_ENABLED", "false") == "true"
 
@@ -148,9 +166,20 @@ FEATURE_<NAME>_ENABLED = os.getenv("FEATURE_<NAME>_ENABLED", "true") == "true"
 #                                                              ^^^^^ デフォルトをtrueに変更
 ```
 
+```javascript
+// 例: Node.js
+// Before（開発中）
+const FEATURE_ENABLED = process.env.FEATURE_<NAME>_ENABLED === 'true';
+
+// After（リリース後）
+const FEATURE_ENABLED = process.env.FEATURE_<NAME>_ENABLED !== 'false';
+//                                                             ^^^^^^^ デフォルトをtrueに変更
+```
+
 または、フィーチャーフラグコードを完全に削除します：
 
 ```python
+# 例: Python
 # フィーチャーフラグを削除し、常に有効化
 @app.post("/api/users", response_model=UserResponse)
 def create_user(user: UserCreate):
@@ -215,8 +244,13 @@ This PR archives the OpenSpec change and enables the feature in production.
 
 **Unit Tests**:
 \`\`\`bash
+# 例: Python (pytest)
 pytest tests/
 # PASSED: XX tests, coverage: XX%
+
+# 例: Node.js (Jest)
+npm test
+# PASS: XX tests, coverage: XX%
 \`\`\`
 
 **Integration Tests**:
@@ -231,7 +265,14 @@ openspec validate --strict
 # No errors found
 \`\`\`
 
+**Test Pyramid Confirmation**:
+- ✅ Unit tests: Cover business logic, pure functions, validations
+- ✅ Integration tests: Cover End-to-End flows, external dependencies
+- ✅ Ratio: Unit tests >> Integration tests
+
 ### Feature Flag
+
+**注**: フィーチャーフラグを使用していない場合、このセクションは省略します。
 
 - Before: `FEATURE_<NAME>_ENABLED=false` (default)
 - After: `FEATURE_<NAME>_ENABLED=true` (enabled in production)
@@ -361,14 +402,15 @@ PR #3マージ後、tasks.mdを更新：
 
 Step 4完了前に確認：
 
-- [ ] すべてのユニットテストがパス
-- [ ] カバレッジ80%以上
-- [ ] verify.mdがすべてGREEN
+- [ ] すべてのユニットテストがパス（言語別テストフレームワーク）
+- [ ] カバレッジ80%以上（ビジネスロジック・純粋関数を対象）
+- [ ] verify.mdがすべてGREEN（統合テスト）
+- [ ] テストピラミッド確認（ユニット >> 統合）
 - [ ] `openspec validate <change-id> --strict` がパス
-- [ ] フィーチャーフラグ動作確認（ON/OFF）
+- [ ] フィーチャーフラグ動作確認（ON/OFF、フラグ使用時のみ）
 - [ ] `openspec archive <change-id>` 実行済み
 - [ ] アーカイブ後の `openspec validate --strict` がパス
-- [ ] フィーチャーフラグ有効化（または削除）
+- [ ] フィーチャーフラグ有効化（または削除、フラグ使用時のみ）
 - [ ] PR #3作成・レビュー・マージ済み
 - [ ] 本番環境にデプロイ済み
 - [ ] 本番環境で機能確認済み
@@ -406,11 +448,22 @@ git push origin main
 
 A: `openspec archive <change-id> --skip-specs` で実行した可能性があります。手動でspecsを更新するか、アーカイブをやり直します。
 
+**Q: テストピラミッドが崩れている場合（統合テスト >> ユニットテスト）は？**
+
+A: 理想的ではありませんが、リリース前に以下を確認：
+- 統合テスト（verify.md）がすべてGREEN
+- 外部依存が多い場合、ユニットテストが少なくても許容される場合がある
+- 次回の開発でユニットテストを追加し、テストピラミッドを改善
+
 **Q: フィーチャーフラグは必ず削除すべきか？**
 
 A: 削除するかどうかはプロジェクトの方針次第です。以下を考慮：
 - 削除するメリット: コードがシンプルになる
 - 残すメリット: 緊急時に即座にOFF可能
+
+**Q: フィーチャーフラグを使用していない場合は？**
+
+A: 完全新規開発等でフィーチャーフラグを使用していない場合、Step 3（フィーチャーフラグ動作確認）とStep 5（フィーチャーフラグ有効化）をスキップします。PR #3でもフィーチャーフラグに関する記述を省略します。
 
 **Q: PR #3のマージ後すぐにデプロイすべきか？**
 
@@ -419,6 +472,10 @@ A: プロジェクトのデプロイサイクルに従います。CI/CDが自動
 **Q: アーカイブしたchangeは削除されるのか？**
 
 A: いいえ。`openspec/changes/archive/YYYY-MM-DD-<change-id>/` に移動されるだけで、削除はされません。履歴として残ります。
+
+**Q: 他の言語（Node.js、Go、Rust等）でも同じ方法論を使えるか？**
+
+A: はい。OpenSpecアーカイブ、フィーチャーフラグパターン、テストピラミッドは言語非依存です。各言語のツール（テストフレームワーク、環境変数管理等）で同じパターンを適用できます。
 
 ## 完了
 
