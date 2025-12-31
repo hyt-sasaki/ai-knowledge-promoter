@@ -88,6 +88,7 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 - **Step 3: Logic Meat** → [workflows/step3-logic-meat.md](workflows/step3-logic-meat.md)
   - スケルトンの内部を本物のロジックに置き換え
   - ユニットTDDサイクル（Red-Green-Refactor）
+  - テストピラミッド（ユニットテスト >> 統合テスト）
   - PR #2: ロジック実装をマージ
 
 ### OpenSpec Stage 3: Archiving Changes（アーカイブ）

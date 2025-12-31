@@ -4,13 +4,52 @@
 
 スケルトンの内部を本物のロジックに置き換えます。ユニットTDDサイクル（Red-Green-Refactor）を使用して、各関数・メソッドを実装します。
 
+## テスト戦略：テストピラミッド
+
+### テストの役割分担
+
+```
+        /\
+       /  \  E2E/統合テスト（verify.md / Runbook）
+      /----\   - 外部リソース依存（DB、API、ファイルシステム）
+     /      \  - 複数コンポーネント結合
+    /--------\ - システム全体の動作確認
+   /          \
+  /------------\ ユニットテスト
+ /--------------\  - ビジネスロジック
+/----------------\ - 純粋関数、クラスメソッド
+                   - 外部依存なし（モック使用）
+```
+
+### ユニットテスト優先原則
+
+✅ **ユニットテストでカバーすべきもの**:
+- ビジネスロジック（計算、変換、検証）
+- 純粋関数（入力→出力、副作用なし）
+- クラスメソッド（外部依存をモック）
+- エッジケース、バリデーション
+- エラーハンドリング
+
+✅ **verify.md（Runbook）でカバーすべきもの**:
+- End-to-Endフロー（UI/CLI → API → DB）
+- 外部リソース依存（実際のDB接続、ファイルI/O）
+- 複数コンポーネント結合（認証 → API → DB → レスポンス）
+- システム全体の動作確認
+
+**原則**: 可能な限りユニットテストで検証し、外部依存や結合コストが高いものだけverify.mdで確認します。
+
 ## ユニットTDDサイクル
 
 各関数・メソッドごとに以下のサイクルを繰り返します：
 
+**注**: 以下のコード例はPythonを使用していますが、この方法論は言語非依存です。Node.js、Go、Rust、Java等でも同様のサイクルを適用できます。各言語のテストフレームワーク（Jest、Go testing、RSpec等）で同じパターンを使用してください。
+
 ### 1. Red: テスト先行
 
+**コンセプト**: 実装前にテストを書き、失敗（RED）を確認します。
+
 ```python
+# 例: Python (pytest)
 # tests/test_users.py
 def test_create_user_hashes_password():
     """パスワードがbcryptでハッシュ化されることを検証"""
@@ -30,7 +69,10 @@ AttributeError: 'User' object has no attribute 'hashed_password'
 
 ### 2. Green: テストをパスさせる最小実装
 
+**コンセプト**: テストをパスさせる最小限のコードを書きます。
+
 ```python
+# 例: Python (FastAPI + bcrypt)
 # lib/users.py
 import bcrypt
 
@@ -57,8 +99,11 @@ PASSED tests/test_users.py::test_create_user_hashes_password
 
 ### 3. Refactor: リファクタリング
 
+**コンセプト**: テストがGREENを維持しながら、コードを改善します（重複削減、関数抽出、可読性向上）。
+
 ```python
-# lib/users.py（リファクタリング後）
+# 例: Python（リファクタリング後）
+# lib/users.py
 def hash_password(password: str) -> str:
     """パスワードをbcryptでハッシュ化"""
     hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
@@ -193,13 +238,24 @@ def create_user_in_db(email: str, password: str) -> User:
 
 ### ユニットテスト実行
 
-```bash
-# すべてのユニットテスト実行
-pytest tests/
+**言語別テストフレームワーク例**:
 
-# カバレッジ確認
-pytest --cov=lib --cov-report=html
-open htmlcov/index.html
+```bash
+# Python (pytest)
+pytest tests/
+pytest --cov=lib --cov-report=html  # カバレッジ確認
+
+# Node.js (Jest)
+npm test
+npm test -- --coverage  # カバレッジ確認
+
+# Go
+go test ./...
+go test -cover ./...  # カバレッジ確認
+
+# Rust
+cargo test
+cargo tarpaulin  # カバレッジ確認（tarpaulin使用）
 ```
 
 ### verify.md確認（統合テスト）
@@ -214,6 +270,12 @@ runme run verify-all
 
 **重要**: verify.mdの結果は変わらないはず。内部実装が変わっただけで、外部から見た挙動は同じです。
 
+### テストピラミッドの確認
+
+- ✅ **ユニットテスト**: ビジネスロジック、純粋関数、バリデーションをカバー
+- ✅ **verify.md（統合テスト）**: End-to-Endフロー、外部リソース依存をカバー
+- ✅ **カバレッジ**: ユニットテストで80%以上を目標（外部依存を除く）
+
 ## 実装チェックリスト
 
 ```
@@ -226,8 +288,9 @@ runme run verify-all
 - [ ] 重複チェック実装（ユニットテスト → GREEN）
 - [ ] エラーハンドリング実装（ユニットテスト → GREEN）
 - [ ] すべてのユニットテストがパス
-- [ ] カバレッジ80%以上
-- [ ] verify.mdがすべてGREEN（統合テスト）
+- [ ] カバレッジ80%以上（ビジネスロジック・純粋関数を対象）
+- [ ] verify.mdがすべてGREEN（統合テスト、End-to-Endフロー確認）
+- [ ] テストピラミッド確認（ユニット >> 統合）
 ```
 
 ## PR #2 作成
@@ -267,16 +330,25 @@ This PR replaces hardcoded skeleton with real business logic.
 All unit tests pass:
 
 \`\`\`bash
+# 例: Python (pytest)
 pytest tests/
 # PASSED tests/test_users.py::test_create_user_generates_unique_id
 # PASSED tests/test_users.py::test_create_user_hashes_password
 # PASSED tests/test_users.py::test_create_user_validates_email
 # ... (total: XX tests)
+
+# 例: Node.js (Jest)
+npm test
+# PASS tests/users.test.js
+#   ✓ generates unique ID (10ms)
+#   ✓ hashes password (15ms)
+#   ✓ validates email format (5ms)
+# ... (total: XX tests)
 \`\`\`
 
-**Coverage**: XX% (target: 80%+)
+**Coverage**: XX% (target: 80%+ for business logic and pure functions)
 
-### Integration Tests
+### Integration Tests (verify.md)
 
 verify.md still passes (GREEN):
 
@@ -284,6 +356,12 @@ verify.md still passes (GREEN):
 runme run verify-all
 # ✅✅✅ All tests GREEN ✅✅✅
 \`\`\`
+
+### Test Pyramid Confirmation
+
+- ✅ **Unit tests**: Cover business logic, pure functions, validations
+- ✅ **Integration tests**: Cover End-to-End flows, external dependencies
+- ✅ **Ratio**: Unit tests >> Integration tests (following test pyramid)
 
 ### Related
 
@@ -386,9 +464,20 @@ PR #2マージ後 → **Step 4: Archive & Release**
 
 A: はい。verify.mdは外部から見た挙動をテストします。内部がハードコードから本実装に変わっても、APIレスポンスは同じ形式なので、verify.mdの結果は変わりません。
 
+**Q: ユニットテストとverify.md（統合テスト）の違いは？**
+
+A:
+- **ユニットテスト**: ビジネスロジック、純粋関数、バリデーションを対象。外部依存をモック化。高速で大量のテストケースを実行。
+- **verify.md（統合テスト）**: End-to-Endフロー、実際の外部リソース（DB、API、ファイルシステム）を対象。システム全体の動作確認。
+- **テストピラミッド**: ユニットテストを大量に、統合テストを少数に保つことで、高速かつ信頼性の高いテストスイートを構築します。
+
+**Q: すべてのロジックをユニットテストでカバーすべきか？**
+
+A: いいえ。外部リソース依存（DB接続、ファイルI/O、外部API）や複数コンポーネント結合は、verify.mdで確認します。ビジネスロジック、純粋関数、バリデーションはユニットテストでカバーします。
+
 **Q: カバレッジ80%未満の場合はマージできないのか？**
 
-A: プロジェクトの基準に従います。一般的には80%を目標としますが、統合テスト（verify.md）がGREENであれば許容される場合もあります。
+A: プロジェクトの基準に従います。一般的には80%を目標としますが、外部依存が多い場合はカバレッジが低くなることもあります。統合テスト（verify.md）がGREENであれば許容される場合もあります。
 
 **Q: ユニットテストが失敗した場合は？**
 
@@ -401,3 +490,7 @@ A: 以下を基準にします：
 - 関数の単一責任原則
 - 読みやすさの向上
 ただし、過度な抽象化は避けます。
+
+**Q: 他の言語（Node.js、Go、Rust等）でも同じ方法論を使えるか？**
+
+A: はい。Red-Green-Refactorサイクル、テストピラミッド、verify.md（統合テスト）は言語非依存です。各言語のテストフレームワーク（Jest、Go testing、RSpec等）で同じパターンを適用できます。
