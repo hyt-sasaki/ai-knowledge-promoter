@@ -114,19 +114,3 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 ```
 -->
 
----
-
-## 一括実行
-
-すべてのテストを順次実行するには：
-
-```bash
-runme run --all --filename openspec/changes/add-knowledge-mcp-skeleton/verify.md
-```
-
-または、このディレクトリで：
-
-```bash
-cd openspec/changes/add-knowledge-mcp-skeleton
-runme run --all --filename verify.md
-```
