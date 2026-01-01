@@ -30,24 +30,4 @@ Progressive Disclosureにより、必要な時だけ詳細な指示が読み込�
 
 ## Runme.dev規約
 
-マークダウンファイルに実行可能なコードブロックを記述する際は、Runme.dev形式に従います。
-
-### セルレベル設定
-
-| オプション | 説明 | 例 |
-|-----------|------|-----|
-| `name` | タスク名（`runme run <name>`で実行） | `{"name":"deploy"}` |
-| `cwd` | 作業ディレクトリ（マークダウンファイルからの相対パス） | `{"cwd":"../mcp-server"}` |
-| `excludeFromRunAll` | `runme run --all`から除外 | `{"excludeFromRunAll":"true"}` |
-
-### フォーマット
-
-VSCode拡張機能との差分を防ぐため、コミット前に`runme fmt -w`を実行してフォーマットを適用します。
-
-```bash
-runme fmt -w --filename <target.md>
-```
-
-### 参考リンク
-
-- [Runme Cell Level Options](https://docs.runme.dev/configuration/cell-level)
+Runme.dev形式のマークダウン編集時は `.claude/skills/runme-conventions/` を参照してください。
