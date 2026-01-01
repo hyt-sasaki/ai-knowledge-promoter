@@ -371,7 +371,7 @@ runme run verify-all
 ### Next Steps
 
 - [ ] PR #3: Merge logic (this PR)
-- [ ] PR #4: Archive and release
+- [ ] PR #N: Archive and release
 ```
 
 ### PR作成コマンド

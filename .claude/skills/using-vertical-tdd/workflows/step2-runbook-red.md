@@ -311,6 +311,71 @@ print(response.json())
 # 期待: {"id": "...", "email": "test@example.com"}
 ```
 
+## 中間PRでのテストスキップ戦略
+
+インフラ先行型パターンなど、verify.mdが部分的にREDの状態でPRをマージする場合のテスト管理方法です。
+
+詳細は [pr-splitting-guide.md](pr-splitting-guide.md) を参照してください。
+
+### pytest等のテストフレームワーク
+
+```python
+import pytest
+
+@pytest.mark.skip(reason="Implemented in PR #2b: MCP skeleton")
+def test_save_knowledge():
+    """後続PRで実装予定"""
+    pass
+```
+
+### runme.dev (verify.md) でのスキップ
+
+コメントアウトと理由コメントを使用します：
+
+```markdown
+## Pending Tests（後続PRで実装予定）
+
+<!-- [PENDING] PR #2b: MCP skeleton で実装予定
+```sh {"name":"test-save-knowledge"}
+curl -X POST http://localhost:8080/mcp/tools/save_knowledge ...
+```
+-->
+```
+
+### verify-all の部分実行
+
+中間PRでは、実装済みのテストのみを実行するよう `verify-all` を調整します：
+
+```markdown
+```sh {"name":"verify-all"}
+runme run setup
+runme run test-health  # このPRで実装済み
+runme run cleanup
+echo "✅ All implemented tests passed"
+echo "⏳ Pending: test-save-knowledge (PR #2b)"
+```
+```
+
+### tasks.mdにスキップ解除タスクを追記
+
+テストをスキップした場合、**必ず**tasks.mdにスキップ解除タスクを追記して忘れを防ぎます：
+
+```markdown
+## 2. 実装フェーズ
+
+### PR #2a: デプロイ基盤
+- [x] GCPプロジェクト基盤整備
+- [x] Cloud Run + Buildpacks デプロイ検証
+
+### PR #2b: MCPスケルトン
+- [ ] test-save-knowledge スキップ解除  ← スキップ解除タスク
+- [ ] test-search-knowledge スキップ解除
+- [ ] MCPサーバー実装
+- [ ] verify.md全テストGREEN確認
+```
+
+**重要**: スキップしたテストごとに解除タスクを作成し、後続PRで確実に解除します。
+
 ## tasks.md更新
 
 REDステータス確認後、tasks.mdを更新：

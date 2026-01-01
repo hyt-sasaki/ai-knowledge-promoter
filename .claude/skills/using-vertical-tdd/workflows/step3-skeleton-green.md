@@ -4,6 +4,24 @@
 
 verify.mdがパスする最小限の実装（ハードコードやモック可）でシステム疎通を証明します。
 
+## 実装パターンの選択
+
+状況に応じて適切なパターンを選択します。詳細は [pr-splitting-guide.md](pr-splitting-guide.md) を参照。
+
+### パターンA: アプリケーション型
+
+既存システムへの機能追加、インフラ変更が少ない場合：
+- 直接スケルトン実装を開始
+- PR #2 としてマージ
+
+### パターンB: インフラ先行型
+
+新規インフラ構築、デプロイ基盤整備が必要な場合：
+1. **PR #2a**: デプロイ基盤（最小HTTPサーバーでデプロイ成功確認）
+2. **PR #2b**: スケルトン（verify.md GREEN）
+
+インフラ先行型では、PR #2a の段階ではverify.mdが部分的にREDの状態でマージします。テストスキップ戦略については [step2-runbook-red.md](step2-runbook-red.md#中間prでのテストスキップ戦略) を参照。
+
 ## スケルトン実装の原則
 
 ### ✅ DO（実装すべきこと）
@@ -289,7 +307,7 @@ Feature is **disabled by default** in production:
 
 - [ ] PR #2: Merge skeleton (this PR)
 - [ ] PR #3: Implement business logic
-- [ ] PR #4: Archive and release
+- [ ] PR #N: Archive and release
 ```
 
 ### PR作成コマンド

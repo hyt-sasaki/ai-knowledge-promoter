@@ -34,7 +34,7 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 
 - **Step 1b: Design**（任意） → [workflows/step1b-design.md](workflows/step1b-design.md)
   - design.mdで設計判断を文書化
-  - **PR #1.5**（任意）: spike/results.md + design.md
+  - **PR #1a/1b**（任意）: spike/results.md + design.md
 
 ### Stage 2: Implementing Changes（実装）
 
@@ -50,7 +50,7 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 ### Stage 3: Archiving Changes（アーカイブ）
 
 - **Step 5: Archive & Release** → [workflows/step5-archive-release.md](workflows/step5-archive-release.md)
-  - 全テスト検証、アーカイブ、フィーチャーフラグ有効化、**PR #4**
+  - 全テスト検証、アーカイブ、フィーチャーフラグ有効化、**PR #N**（リリース）
 
 ## テンプレート
 
@@ -82,8 +82,33 @@ Step 1a（Tech Spike）でライブラリ調査、Step 1b（Design）でベス�
 
 1. **疎通優先、ロジック後回し**: Step 3ではUIからDBまで貫通させ、ビジネスロジックは書かない
 2. **フィーチャーフラグで段階的リリース**: 環境変数で制御、スケルトンはOFFでマージ
-3. **柔軟な4-5PRで段階的マージ**: PR #1（提案）→ [PR #1.5（設計、任意）] → PR #2（スケルトン）→ PR #3（ロジック）→ PR #4（リリース）
+3. **柔軟なPRで段階的マージ**: 提案フェーズは厳密に、実装フェーズは柔軟に分割
 4. **verify.mdは実行可能なドキュメント**: Runme.devでそのまま実行可能
+
+## 実装フェーズのバリエーション
+
+状況に応じて実装フェーズのPR構成を選択します。詳細は [workflows/pr-splitting-guide.md](workflows/pr-splitting-guide.md) を参照。
+
+### パターンA: アプリケーション型（従来通り）
+
+既存システムへの機能追加、インフラ変更が少ない場合：
+
+```
+PR #1 → [PR #1a] → [PR #1b] → PR #2（スケルトン）→ PR #3（ロジック）→ PR #N（リリース）
+```
+
+### パターンB: インフラ先行型
+
+新規インフラ構築、デプロイ基盤整備が必要な場合：
+
+```
+PR #1 → [PR #1a] → [PR #1b] → PR #2a（デプロイ基盤）→ PR #2b（スケルトン）→ PR #3+（ロジック）→ PR #N（リリース）
+```
+
+### PR分割の目安
+
+- **変更ファイル数**: 10ファイル以下
+- **意味のある単位**: レイヤー単位、機能単位、デプロイ単位など
 
 ## 詳細ワークフロー
 

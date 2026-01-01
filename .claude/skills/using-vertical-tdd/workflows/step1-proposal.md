@@ -91,7 +91,8 @@ openspec/changes/<change-id>/
 - [ ] PR #1作成・マージ
 - [ ] 技術検証（spike/results.md完成） ← 必要な場合のみ
 - [ ] design.md作成 ← 必要な場合のみ
-- [ ] PR #1.5作成・マージ ← 技術検証/design.md実施した場合のみ
+- [ ] PR #1a作成・マージ ← Tech Spike実施した場合のみ
+- [ ] PR #1b作成・マージ ← design.md作成した場合のみ
 
 ## 2. 実装フェーズ
 - [ ] verify.md作成（Runme.dev形式）
@@ -107,7 +108,7 @@ openspec/changes/<change-id>/
 - [ ] openspec validate --strict 実行
 - [ ] openspec archive <change-id> 実行
 - [ ] フィーチャーフラグ有効化
-- [ ] PR #4作成・マージ
+- [ ] PR #N作成・マージ
 ```
 
 ### 技術検証タスクの判断基準

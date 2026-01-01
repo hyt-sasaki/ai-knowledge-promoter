@@ -17,15 +17,24 @@
 
 ## PR戦略
 
-柔軟な4-5PRで段階的マージ:
+### 基本構成
 
-| PR | ブランチ命名 | タイミング | 必須/任意 |
-|---|---|---|---|
-| PR #1 | `proposal/<change-id>` | Step 1完了後 | 必須 |
-| PR #1.5 | `design/<change-id>` | Step 1a/1b完了後 | 任意 |
-| PR #2 | `skeleton/<change-id>` | Step 3完了後 | 必須 |
-| PR #3 | `logic/<change-id>` | Step 4完了後 | 必須 |
-| PR #4 | `release/<change-id>` | Step 5完了後 | 必須 |
+提案フェーズは厳密に管理し、実装フェーズは柔軟に分割します。
+
+| フェーズ | PR | ブランチ命名 | 必須/任意 |
+|---------|---|---|---|
+| 提案 | PR #1 | `proposal/<change-id>` | 必須 |
+| Tech Spike | PR #1a | `spike/<change-id>` | 任意 |
+| 設計 | PR #1b | `design/<change-id>` | 任意 |
+| 実装 | PR #2, #2a, #2b... | `skeleton/<change-id>`, `infra/<change-id>` | 柔軟に分割 |
+| ロジック | PR #3, #3a, #3b... | `logic/<change-id>` | 柔軟に分割 |
+| リリース | PR #N | `release/<change-id>` | 必須 |
+
+### PR分割の目安
+
+- **変更ファイル数**: 10ファイル以下を目安に分割を検討
+- **意味のある単位**: レイヤー単位、機能単位、デプロイ単位など
+- 詳細は [pr-splitting-guide.md](pr-splitting-guide.md) を参照
 
 ## 各ステップでのコミットポイント
 
@@ -33,11 +42,11 @@
 
 - [Step 1: Proposal](step1-proposal.md#コミット戦略) → **PR #1**
 - [Step 1a: Tech Spike](step1a-tech-spike.md#コミット戦略)
-- [Step 1b: Design](step1b-design.md#コミット戦略) → **PR #1.5**（任意）
+- [Step 1b: Design](step1b-design.md#コミット戦略) → **PR #1b**（任意）
 - [Step 2: Runbook & Red](step2-runbook-red.md#コミット戦略)
 - [Step 3: Skeleton Green](step3-skeleton-green.md#コミット戦略) → **PR #2**
 - [Step 4: Logic Meat](step4-logic-meat.md#コミット戦略) → **PR #3**
-- [Step 5: Archive & Release](step5-archive-release.md#コミット戦略) → **PR #4**
+- [Step 5: Archive & Release](step5-archive-release.md#コミット戦略) → **PR #N**（リリース）
 
 ## よくある質問
 
