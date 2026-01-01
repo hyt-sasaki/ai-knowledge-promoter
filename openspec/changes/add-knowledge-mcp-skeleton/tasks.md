@@ -50,10 +50,10 @@
 ## 3. AIエージェント結合テストフェーズ
 
 ### PR #2c: Claude Code結合テスト
-- [ ] `claude mcp add --transport sse <URL>`でuserスコープにMCPサーバーを登録
-- [ ] Claude Codeから`save_knowledge`ツール呼び出し確認
-- [ ] Claude Codeから`search_knowledge`ツール呼び出し確認
-- [ ] 結合テスト手順をverify.mdに追記
+- [x] `claude mcp add --transport http <URL>`でuserスコープにMCPサーバーを登録
+- [x] Claude Codeから`save_knowledge`ツール呼び出し確認
+- [x] Claude Codeから`search_knowledge`ツール呼び出し確認
+- [x] 結合テスト手順をverify.mdに追記
 - [ ] PR #2c作成・マージ
 
 ## 4. アーカイブフェーズ
