@@ -57,6 +57,6 @@
 - [x] PR #2c作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/10
 
 ## 4. アーカイブフェーズ
-- [ ] 全テストGREEN確認（verify.md）
-- [ ] openspec validate 実行
-- [ ] openspec archive add-knowledge-mcp-skeleton 実行
+- [x] 全テストGREEN確認（verify.md）
+- [x] openspec validate 実行
+- [x] openspec archive add-knowledge-mcp-skeleton 実行

@@ -18,7 +18,12 @@ def register(mcp):
 
         Returns:
             A dict containing status, id, and title
+
+        Raises:
+            ValueError: If content is empty or not provided
         """
+        if not content or not content.strip():
+            raise ValueError("content is required")
         if tags is None:
             tags = []
         # Phase 1: Stub implementation

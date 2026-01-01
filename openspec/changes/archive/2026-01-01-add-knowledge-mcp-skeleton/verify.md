@@ -30,14 +30,13 @@ curl -s -o /dev/null -w "%{http_code}" "${SERVICE_URL}/health"
 
 # 期待値:
 # ステータスコード: 200
-# レスポンス: OK
 ```
 
 ```sh {"name":"test-health-body"}
 # ヘルスチェックのレスポンスボディ確認
 curl -s "${SERVICE_URL}/health"
 
-# 期待値: OK
+# 期待値: {"status":"healthy"}
 ```
 
 ### MCP Tools
@@ -114,6 +113,53 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 # ステータスコード: 200
 # レスポンス: event: message
 # data: {"jsonrpc": "2.0", "id": 3, "error": {"code": -32601, "message": "..."}}
+```
+
+```sh {"name":"test-save-knowledge-missing-content"}
+# save_knowledgeツールのエラーテスト（content未提供）
+curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 4,
+    "method": "tools/call",
+    "params": {
+      "name": "save_knowledge",
+      "arguments": {
+        "title": "Test Knowledge",
+        "content": "",
+        "tags": ["test"]
+      }
+    }
+  }'
+
+# 期待値:
+# レスポンスにエラーが含まれる
+# エラーメッセージに "content is required" が含まれる
+```
+
+```sh {"name":"test-search-knowledge-missing-query"}
+# search_knowledgeツールのエラーテスト（query未提供）
+curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 5,
+    "method": "tools/call",
+    "params": {
+      "name": "search_knowledge",
+      "arguments": {
+        "query": "",
+        "limit": 5
+      }
+    }
+  }'
+
+# 期待値:
+# レスポンスにエラーが含まれる
+# エラーメッセージに "query is required" が含まれる
 ```
 
 ---

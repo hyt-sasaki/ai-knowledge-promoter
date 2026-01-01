@@ -4,7 +4,7 @@ import os
 
 from fastmcp import FastMCP
 from starlette.requests import Request
-from starlette.responses import PlainTextResponse
+from starlette.responses import JSONResponse
 
 from .tools.save_knowledge import register as register_save_knowledge
 from .tools.search_knowledge import register as register_search_knowledge
@@ -14,9 +14,9 @@ mcp = FastMCP("KnowledgeGateway", stateless_http=True)
 
 
 @mcp.custom_route("/health", methods=["GET"])
-async def health_check(request: Request) -> PlainTextResponse:
+async def health_check(request: Request) -> JSONResponse:
     """Health check endpoint for Cloud Run."""
-    return PlainTextResponse("OK")
+    return JSONResponse({"status": "healthy"})
 
 
 # Register MCP tools

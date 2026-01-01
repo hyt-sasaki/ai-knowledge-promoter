@@ -15,7 +15,12 @@ def register(mcp):
 
         Returns:
             A list of dicts containing id, title, and score
+
+        Raises:
+            ValueError: If query is empty or not provided
         """
+        if not query or not query.strip():
+            raise ValueError("query is required")
         # Phase 1: Stub implementation
         return [
             {"id": "stub-1", "title": f"Sample: {query}", "score": 0.95},
