@@ -7,6 +7,7 @@ description: |
   (2) Runme.devセル設定の追加・編集（name, cwd, excludeFromRunAllなど）
   (3) runme fmtでフォーマット適用
   (4) 既存Runmeファイルの修正・改善
+allowed-tools: Read, Bash(runme fmt:*)
 ---
 
 # Runme.dev規約
