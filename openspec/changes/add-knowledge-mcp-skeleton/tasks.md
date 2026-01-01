@@ -11,15 +11,16 @@
 ## 2. 実装フェーズ（パターンB: インフラ先行型）
 
 ### PR #2a: デプロイ基盤
-- [ ] verify.md作成（Runme.dev形式）
-- [ ] REDステータス確認
-- [ ] GCPプロジェクト基盤整備
-  - [ ] Cloud Run サービスアカウント設定
-  - [ ] IAMポリシー設定
-- [ ] Cloud Run + Buildpacks デプロイ検証（MCPなし最小構成）
-  - [ ] uvベースプロジェクト作成（pyproject.toml + uv.lock + Procfile）
-  - [ ] 最小限のHTTPサーバー（/health のみ）
-  - [ ] `gcloud run deploy --source .` でデプロイ成功確認
+- [x] verify.md作成（Runme.dev形式）
+- [x] REDステータス確認
+- [x] GCPプロジェクト基盤整備
+  - [x] GCPプロジェクト作成（ai-knowledge-promoter）
+  - [x] 課金アカウント紐付け
+  - [x] Cloud Run/Cloud Build/Artifact Registry API有効化
+- [x] Cloud Run + Buildpacks デプロイ検証（MCPなし最小構成）
+  - [x] uvベースプロジェクト作成（pyproject.toml + uv.lock + Procfile）
+  - [x] 最小限のHTTPサーバー（/health のみ）
+  - [x] `gcloud run deploy --source .` でデプロイ成功確認
 - [ ] PR #2a作成・マージ
   - verify.md: test-health GREEN, MCP関連テストは SKIP
 
