@@ -1,0 +1,148 @@
+# Verification: 知識共有MCPサーバー
+
+このファイルは、知識共有MCPサーバーの受け入れテスト（統合テスト/E2Eテスト）をRunme.dev形式で記述します。
+
+## 環境変数
+
+```sh {"name":"setup-env"}
+# Cloud RunサービスURLを取得
+export SERVICE_URL=$(gcloud run services describe knowledge-mcp-server \
+  --region asia-northeast1 \
+  --format="value(status.url)" 2>/dev/null || echo "")
+
+if [ -z "$SERVICE_URL" ]; then
+  echo "Warning: Cloud Run service not deployed yet. Using localhost for local testing."
+  export SERVICE_URL="http://localhost:8080"
+fi
+
+echo "SERVICE_URL: $SERVICE_URL"
+```
+
+---
+
+## Normal Path（正常系）
+
+### Health Check
+
+```sh {"name":"test-health"}
+# ヘルスチェックエンドポイントのテスト
+curl -s -o /dev/null -w "%{http_code}" "${SERVICE_URL}/health"
+
+# 期待値:
+# ステータスコード: 200
+# レスポンス: OK
+```
+
+```sh {"name":"test-health-body"}
+# ヘルスチェックのレスポンスボディ確認
+curl -s "${SERVICE_URL}/health"
+
+# 期待値: OK
+```
+
+### MCP Tools
+
+<!-- [PENDING] PR #2b: MCP skeleton で実装予定
+```sh {"name":"test-save-knowledge"}
+# save_knowledgeツールのテスト
+curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "save_knowledge",
+      "arguments": {
+        "title": "Test Knowledge",
+        "content": "This is a test content",
+        "tags": ["test", "sample"]
+      }
+    }
+  }'
+
+# 期待値:
+# ステータスコード: 200
+# レスポンス: {"jsonrpc": "2.0", "id": 1, "result": {"status": "saved", "id": "...", "title": "Test Knowledge"}}
+```
+
+```sh {"name":"test-search-knowledge"}
+# search_knowledgeツールのテスト
+curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "search_knowledge",
+      "arguments": {
+        "query": "test",
+        "limit": 5
+      }
+    }
+  }'
+
+# 期待値:
+# ステータスコード: 200
+# レスポンス: {"jsonrpc": "2.0", "id": 2, "result": [{"id": "...", "title": "...", "score": ...}]}
+```
+-->
+
+---
+
+## Edge Cases（異常系）
+
+<!-- [PENDING] PR #2b: MCP skeleton で実装予定
+```sh {"name":"test-invalid-tool"}
+# 存在しないツール呼び出しテスト
+curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "tools/call",
+    "params": {
+      "name": "invalid_tool",
+      "arguments": {}
+    }
+  }'
+
+# 期待値:
+# ステータスコード: 200
+# レスポンス: {"jsonrpc": "2.0", "id": 3, "error": {"code": -32601, "message": "Method not found"}}
+```
+-->
+
+---
+
+## Verify All（一括実行）
+
+```sh {"name":"verify-all"}
+echo "Starting verification..."
+
+# Setup
+runme run setup-env --chdir openspec/changes/add-knowledge-mcp-skeleton
+
+# Health Check Tests
+echo "Testing health endpoint..."
+HEALTH_STATUS=$(runme run test-health --chdir openspec/changes/add-knowledge-mcp-skeleton)
+if [ "$HEALTH_STATUS" = "200" ]; then
+  echo "  test-health: PASSED"
+else
+  echo "  test-health: FAILED (got $HEALTH_STATUS, expected 200)"
+  exit 1
+fi
+
+HEALTH_BODY=$(runme run test-health-body --chdir openspec/changes/add-knowledge-mcp-skeleton)
+if [ "$HEALTH_BODY" = "OK" ]; then
+  echo "  test-health-body: PASSED"
+else
+  echo "  test-health-body: FAILED (got '$HEALTH_BODY', expected 'OK')"
+  exit 1
+fi
+
+echo ""
+echo "All implemented tests passed"
+echo "Pending: test-save-knowledge, test-search-knowledge (PR #2b)"
+```

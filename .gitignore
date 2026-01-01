@@ -1,1 +1,10 @@
 .local-contexts/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+*.egg-info/
+dist/
+build/
