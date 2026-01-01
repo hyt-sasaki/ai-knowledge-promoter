@@ -52,7 +52,7 @@
   - [x] design.md: Phase 2設計判断を追記
   - [x] tasks.md: Phase 2タスクを細分化（本更新）
   - [x] spec.md: Phase 2要件を追記
-- [ ] PR #3a作成・マージ
+- [ ] PR #3a作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/9
 
 ### PR #3b: Cloud Run認証設定
 - [ ] Cloud Run Invoker権限設定
