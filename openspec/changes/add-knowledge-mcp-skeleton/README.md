@@ -4,7 +4,7 @@
 
 ### プロジェクトルートから実行
 
-```bash
+```bash {"excludeFromRunAll":"true"}
 runme run --all --filename openspec/changes/add-knowledge-mcp-skeleton/verify.md
 ```
 
@@ -16,7 +16,7 @@ runme run --all --filename verify.md
 
 ### 個別のテストを実行
 
-```bash
+```bash {"excludeFromRunAll":"true"}
 # 利用可能なテスト一覧
 runme list --filename verify.md
 

@@ -4,14 +4,15 @@ Knowledge sharing MCP server for Claude Code.
 
 ## Development
 
-```bash
-# Install dependencies
+```sh {"name":"install-deps"}
 uv sync
+```
 
-# Run server locally
+```sh {"name":"run-local"}
 uv run python -m mcp_server.main
+```
 
-# Run tests
+```sh {"name":"run-tests"}
 uv run pytest
 ```
 

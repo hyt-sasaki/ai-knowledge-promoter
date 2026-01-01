@@ -56,9 +56,9 @@ gcloud services enable artifactregistry.googleapis.com
 
 ## 5. Cloud Runデプロイ
 
-```sh {"name":"deploy-cloud-run"}
+```sh {"name":"deploy-cloud-run","cwd":"mcp-server"}
 gcloud run deploy knowledge-mcp-server \
-  --source ./mcp-server \
+  --source . \
   --region asia-northeast1 \
   --allow-unauthenticated
 ```
@@ -84,18 +84,18 @@ curl -s "${SERVICE_URL}/health"
 
 ### プロジェクトが既に存在する場合
 
-```sh {"name":"set-existing-project"}
+```sh {"name":"set-existing-project","excludeFromRunAll":"true"}
 gcloud config set project ai-knowledge-promoter
 ```
 
 ### APIが有効化されているか確認
 
-```sh {"name":"list-enabled-services"}
+```sh {"name":"list-enabled-services","excludeFromRunAll":"true"}
 gcloud services list --enabled --filter="name:(run.googleapis.com OR cloudbuild.googleapis.com OR artifactregistry.googleapis.com)"
 ```
 
 ### Cloud Runサービスの削除（必要な場合）
 
-```sh {"name":"delete-service"}
+```sh {"name":"delete-service","excludeFromRunAll":"true"}
 gcloud run services delete knowledge-mcp-server --region asia-northeast1
 ```
