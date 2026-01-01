@@ -29,17 +29,28 @@ spike/results.mdの技術検証により、FastMCP + Cloud Run構成が技術的
 
 ## Decisions
 
-### Decision 1: FastMCPを採用
+### Decision 1: FastMCP 2.0を採用（MCP公式SDKではなく）
 
 **Rationale**:
-- spike/results.mdの検証により、HTTPトランスポートをネイティブサポート
-- `@mcp.tool`デコレータで直感的にツール定義可能
-- 型ヒントから自動的にJSONスキーマを生成
-- Context7調査（`/jlowin/fastmcp`）で十分なドキュメントと実績を確認
+
+spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.0（`fastmcp`）を比較検討した結果、FastMCP 2.0を採用する。
+
+1. **基本APIは同一**: インポートパス以外は公式SDKと同じデコレータベースのAPI
+2. **将来の移行不要**: Phase 2以降で認証やComposition機能が必要になっても移行作業なし
+3. **追加機能は使わなければ影響しない**: エンタープライズ認証等は明示的に有効化しない限り無効
+4. **活発なメンテナンス**: 本番向けドキュメントが充実
+
+**注意事項**:
+- `fastmcp<3`でバージョンをピン留め（3.0で破壊的変更予定）
+- Cloud IAPで認証するため、FastMCP 2.0のエンタープライズ認証機能は不使用
 
 **Alternatives considered**:
-- FastAPI MCP（`/tadata-org/fastapi_mcp`）: Benchmark Score高い（89.7）が、FastAPIエンドポイントをMCPとして公開する用途向けで、今回のMCPファーストな設計には不向き
-- 自前MCP実装: プロトコル実装コストが高く、車輪の再発明
+
+| 選択肢 | 評価 | 却下理由 |
+|--------|------|----------|
+| MCP公式SDK (`mcp`) | △ | 基本機能のみ。将来FastMCP 2.0の機能が必要になった場合、移行作業が発生 |
+| FastAPI MCP | × | FastAPIエンドポイントをMCPとして公開する用途向け。MCPファースト設計には不向き |
+| 自前MCP実装 | × | プロトコル実装コストが高く、車輪の再発明 |
 
 ### Decision 2: Cloud Run + HTTPトランスポート
 
@@ -236,3 +247,4 @@ async def health_check(request: Request) -> PlainTextResponse:
 - [x] FastMCP + Cloud Run構成は技術的に妥当か → spike/results.mdで確認済み
 - [x] 認証方式 → Cloud IAP（ロードバランサー不要でCloud Runに直接設定可能）
 - [x] マルチテナント対応の必要性 → 不要
+- [x] MCP公式SDK vs FastMCP 2.0 → FastMCP 2.0を採用（将来の移行不要、基本APIは同一）

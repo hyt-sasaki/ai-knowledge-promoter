@@ -6,9 +6,61 @@
 
 ## Context7調査サマリー
 
-### FastMCP
+### MCP公式Python SDK vs FastMCP 2.0
+
+MCPサーバー実装には2つの選択肢があることが判明した。
+
+#### MCP公式Python SDK (`mcp`)
+
+**ライブラリID**: `/modelcontextprotocol/python-sdk`
+**Benchmark Score**: 89.2
+
+- FastMCP 1.0が2024年に統合され、`mcp.server.fastmcp.FastMCP`として利用可能
+- MCPプロトコルのコア実装を提供
+- `streamable-http`トランスポートをサポート
+
+#### FastMCP 2.0 (`fastmcp`)
 
 **ライブラリID**: `/jlowin/fastmcp`
+**Benchmark Score**: 78
+
+- FastMCP 1.0の後継として独立して開発継続
+- 公式SDKを超えた本番向け機能を提供：
+  - サーバー構成（Composition）、プロキシ
+  - OpenAPI/FastAPI生成
+  - エンタープライズ認証（Google、GitHub、Azure、Auth0等）
+  - デプロイメントツール、テストユーティリティ
+- `http`トランスポートをサポート
+
+#### 比較表
+
+| 項目 | MCP公式SDK | FastMCP 2.0 |
+|------|-----------|-------------|
+| インポート | `from mcp.server.fastmcp import FastMCP` | `from fastmcp import FastMCP` |
+| 基本API | `@mcp.tool()` | `@mcp.tool` |
+| トランスポート | `streamable-http` | `http` |
+| 認証機能 | なし | エンタープライズ対応 |
+| サーバー構成 | なし | Composition、Proxy |
+| メンテナンス | Anthropic公式 | コミュニティ（活発） |
+| 将来の破壊的変更 | 不明 | 3.0で予定（`fastmcp<3`でピン留め推奨） |
+
+#### 結論：FastMCP 2.0を採用
+
+**理由：**
+
+1. **基本APIは同一**: インポートパス以外は公式SDKと同じ使い方
+2. **追加機能は使わなければ影響しない**: 認証やCompositionは明示的に有効化しない限り無効
+3. **将来の移行不要**: Phase 2以降で認証機能が必要になっても移行作業なし
+4. **活発なメンテナンス**: 公式SDKより更新頻度が高い
+5. **本番向けドキュメント充実**: デプロイメントのベストプラクティスが豊富
+
+**注意事項：**
+- `fastmcp<3`でバージョンをピン留め（3.0で破壊的変更予定）
+- Cloud IAPで認証するため、FastMCP 2.0のエンタープライズ認証機能は不使用
+
+---
+
+### FastMCP 2.0の詳細
 
 **主要な発見**:
 
