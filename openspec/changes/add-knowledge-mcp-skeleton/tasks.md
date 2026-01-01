@@ -15,10 +15,10 @@
 ## 1. 提案フェーズ
 - [x] proposal.md作成
 - [x] spec deltas作成
-- [x] PR #1作成・マージ
+- [x] PR #1作成
 - [x] 技術検証（FastMCP + Cloud Run構成）→ spike/results.md
 - [x] design.md作成
-- [x] PR #1b作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/3
+- [x] PR #1b作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/3
 
 ## 2. 実装フェーズ（パターンB: インフラ先行型）
 
@@ -33,7 +33,7 @@
   - [x] uvベースプロジェクト作成（pyproject.toml + uv.lock + Procfile）
   - [x] 最小限のHTTPサーバー（/health のみ）
   - [x] `gcloud run deploy --source .` でデプロイ成功確認
-- [x] PR #2a作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/4
+- [x] PR #2a作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/4
   - verify.md: test-health GREEN, MCP関連テストは SKIP
 
 ### PR #2b: MCPスケルトン
@@ -45,7 +45,7 @@
 - [x] Cloud Runへ再デプロイ・疎通確認
 - [x] verify.mdのMCPテストを有効化（excludeFromRunAll解除）
 - [x] スケルトン実装完了（全テストGREEN確認）
-- [x] PR #2b作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/7
+- [x] PR #2b作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/7
 
 ## 3. AIエージェント結合テストフェーズ
 
@@ -54,7 +54,7 @@
 - [x] Claude Codeから`save_knowledge`ツール呼び出し確認
 - [x] Claude Codeから`search_knowledge`ツール呼び出し確認
 - [x] 結合テスト手順をverify.mdに追記
-- [ ] PR #2c作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/10
+- [x] PR #2c作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/10
 
 ## 4. アーカイブフェーズ
 - [ ] 全テストGREEN確認（verify.md）
