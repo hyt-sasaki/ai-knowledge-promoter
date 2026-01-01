@@ -56,7 +56,7 @@ gcloud services enable artifactregistry.googleapis.com
 
 ## 5. Cloud Runデプロイ
 
-```sh {"name":"deploy-cloud-run","cwd":"mcp-server"}
+```sh {"cwd":"../mcp-server","name":"deploy-cloud-run"}
 gcloud run deploy knowledge-mcp-server \
   --source . \
   --region asia-northeast1 \
