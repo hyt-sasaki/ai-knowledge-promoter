@@ -4,23 +4,26 @@
 - [x] proposal.md作成
 - [x] spec deltas作成
 - [x] PR #1作成・マージ
-- [ ] 技術検証（FastMCP + Cloud Run構成）
-- [ ] design.md作成
-- [ ] PR #1.5作成・マージ（技術検証/design.md実施した場合）
+- [x] 技術検証（FastMCP + Cloud Run構成）→ spike/results.md
+- [x] design.md作成
+- [ ] PR #1.5作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/3
 
 ## 2. 実装フェーズ
 - [ ] verify.md作成（Runme.dev形式）
 - [ ] REDステータス確認
 - [ ] GCPプロジェクト基盤整備
   - [ ] Cloud Run サービスアカウント設定
-  - [ ] Firestore データベース作成
   - [ ] IAMポリシー設定
+- [ ] Cloud Run + Buildpacks デプロイ検証（MCPなし最小構成）
+  - [ ] uvベースプロジェクト作成（pyproject.toml + uv.lock + Procfile）
+  - [ ] 最小限のHTTPサーバー（/health のみ）
+  - [ ] `gcloud run deploy --source .` でデプロイ成功確認
 - [ ] MCPサーバー実装
-  - [ ] FastAPI + FastMCP プロジェクト構成
-  - [ ] HTTP /health エンドポイント（Cloud Run用、MCPツールとは別）
+  - [ ] FastMCP プロジェクト構成
+  - [ ] HTTP /health エンドポイント（Cloud Run用）
   - [ ] save_knowledge ツール（スタブ）
   - [ ] search_knowledge ツール（スタブ）
-- [ ] Dockerfile & Cloud Runデプロイ設定
+- [ ] Cloud Runへ再デプロイ・疎通確認
 - [ ] スケルトン実装完了（GREEN確認）
 - [ ] PR #2作成・マージ
 
