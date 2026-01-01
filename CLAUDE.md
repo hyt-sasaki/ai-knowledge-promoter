@@ -56,14 +56,14 @@ runme run type-check
 runme run check-all
 ```
 
-### カテゴリ別一括実行
+### タグ別一括実行
 
 ```bash
 # すべてのチェック系タスクを実行（修正なし）
-runme run --category check
+runme run --tag check
 
 # すべての修正系タスクを実行
-runme run --category fix
+runme run --tag fix
 ```
 
 ### コミット前の推奨フロー
@@ -74,10 +74,10 @@ runme run --category fix
 
 ```bash
 # 1. 問題を確認
-runme run --category check
+runme run --tag check
 
 # 2. 自動修正
-runme run --category fix
+runme run --tag fix
 
 # 3. 再確認
 runme run check-all
