@@ -42,7 +42,7 @@ spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.
 
 **注意事項**:
 - `fastmcp<3`でバージョンをピン留め（3.0で破壊的変更予定）
-- Cloud IAPで認証するため、FastMCP 2.0のエンタープライズ認証機能は不使用
+- Phase 2以降でCloud IAPを導入予定のため、FastMCP 2.0のエンタープライズ認証機能は不使用
 
 **Alternatives considered**:
 
