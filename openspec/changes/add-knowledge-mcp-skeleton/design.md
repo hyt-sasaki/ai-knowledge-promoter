@@ -78,22 +78,34 @@ spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.
 - GKE: 今回の規模ではオーバーエンジニアリング
 - Compute Engine: サーバーレスのメリットが得られない
 
-### Decision 3: uvによるPythonプロジェクト管理
+### Decision 3: uv + Google Cloud Buildpacksによるデプロイ
 
 **Rationale**:
 - uvは高速なPythonパッケージマネージャー（Rust製）
 - `pyproject.toml` + `uv.lock`で依存関係を管理（`requirements.txt`は不使用）
-- マルチステージDockerビルドで本番イメージを最適化
+- **Google Cloud BuildpacksがuvをGA（一般提供）でサポート**
+- Dockerfileなしでソースからデプロイ可能
 
 **プロジェクト構成**:
 - `pyproject.toml`: プロジェクトメタデータと依存関係定義
 - `uv.lock`: 依存関係のロックファイル（再現性保証）
 - 開発用依存関係は`[dependency-groups].dev`に分離
+- **Dockerfile不要**: Buildpacksが`pyproject.toml` + `uv.lock`を自動検出
+
+**Buildpacksのuv検出条件**:
+- `uv.lock` + `pyproject.toml`が存在 → 自動的にuvを使用
+- Python 3.13以降: pyproject.toml対応がGA
+- Python 3.12以前: Preview（`GOOGLE_PYTHON_PACKAGE_MANAGER=uv`で明示指定可能）
+
+**デプロイコマンド**:
+```bash
+gcloud run deploy SERVICE --source .
+```
 
 **Alternatives considered**:
 - pip + requirements.txt: 従来のパターンだが、ロックファイル管理が煩雑
-- Poetry: 機能は豊富だが、uvより低速
-- pipenv: メンテナンス頻度が低下傾向
+- Poetry: 機能は豊富だが、uvより低速。Buildpacks対応あり
+- Dockerfile手動管理: カスタマイズ可能だが、メンテナンスコスト増
 
 ### Decision 4: スタブ実装でスケルトン構築
 
@@ -136,13 +148,14 @@ src/mcp_server/
 
 pyproject.toml           # プロジェクトメタデータ・依存関係
 uv.lock                  # 依存関係ロックファイル（自動生成）
-Dockerfile               # マルチステージビルド
+Procfile                 # Buildpacks用エントリポイント定義
 
 infrastructure/
-├── cloudbuild.yaml      # Cloud Build設定
 └── terraform/           # Terraform設定（将来）
     └── main.tf
 ```
+
+**注**: Dockerfileは不要。Google Cloud Buildpacksが`pyproject.toml` + `uv.lock`を自動検出してビルド。
 
 ### pyproject.toml
 
@@ -169,38 +182,15 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 ```
 
-### Dockerfile（マルチステージビルド）
+### Procfile
 
-```dockerfile
-# Build stage
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
-ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
-ENV UV_PYTHON_DOWNLOADS=0
+Buildpacksはエントリポイントを`Procfile`で指定：
 
-WORKDIR /app
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project --no-dev
-COPY . /app
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-dev
-
-# Runtime stage
-FROM python:3.12-slim-bookworm
-
-RUN groupadd --system --gid 999 nonroot \
- && useradd --system --gid 999 --uid 999 --create-home nonroot
-
-COPY --from=builder --chown=nonroot:nonroot /app /app
-ENV PATH="/app/.venv/bin:$PATH"
-
-USER nonroot
-WORKDIR /app
-
-# Cloud Run uses PORT environment variable
-CMD ["python", "-m", "mcp_server.main"]
 ```
+web: python -m mcp_server.main
+```
+
+**注**: Cloud Runは`PORT`環境変数を自動設定。アプリケーション側で`PORT`を読み取ってリッスン。
 
 ### サーバー初期化
 
