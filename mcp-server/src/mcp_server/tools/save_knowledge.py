@@ -7,9 +7,7 @@ def register(mcp):
     """Register save_knowledge tool to the MCP server."""
 
     @mcp.tool
-    def save_knowledge(
-        title: str, content: str, tags: list[str] | None = None
-    ) -> dict:
+    def save_knowledge(title: str, content: str, tags: list[str] | None = None) -> dict:
         """
         Save knowledge to the system.
 
