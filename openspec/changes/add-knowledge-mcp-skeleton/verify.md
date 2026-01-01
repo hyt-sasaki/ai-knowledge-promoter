@@ -115,3 +115,47 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 # レスポンス: event: message
 # data: {"jsonrpc": "2.0", "id": 3, "error": {"code": -32601, "message": "..."}}
 ```
+
+---
+
+## Claude Code 結合テスト
+
+このセクションでは、Claude CodeからMCPサーバーへの結合テスト手順を記述します。
+
+### 前提条件
+
+MCPサーバーがuserスコープに登録されていること：
+
+```sh {"name":"setup-mcp-server"}
+# MCPサーバーをuserスコープに追加（未登録の場合）
+claude mcp add --transport http knowledge-mcp https://knowledge-mcp-server-lqb45vmcbq-an.a.run.app/mcp --scope user 2>/dev/null || echo "Already registered or registration attempted"
+
+# 登録状況を確認
+claude mcp list | grep -E "(knowledge-mcp|Connected)"
+```
+
+### save_knowledge ツール呼び出し
+
+```sh {"name":"test-claude-save-knowledge"}
+# Claude Codeからsave_knowledgeツールを呼び出し
+claude -p "save_knowledge ツールを使って、title='テスト知識', content='これはClaude Codeからの結合テストです', tags=['test', 'integration'] でナレッジを保存してください。ツール呼び出しの結果をそのまま表示してください。" --allowedTools "mcp__knowledge-mcp__save_knowledge"
+
+# 期待値:
+# レスポンスに以下が含まれる:
+# - "status": "saved"
+# - "id": "stub-id-..."
+# - "title": "テスト知識"
+```
+
+### search_knowledge ツール呼び出し
+
+```sh {"name":"test-claude-search-knowledge"}
+# Claude Codeからsearch_knowledgeツールを呼び出し
+claude -p "search_knowledge ツールを使って、query='テスト', limit=5 でナレッジを検索してください。ツール呼び出しの結果をそのまま表示してください。" --allowedTools "mcp__knowledge-mcp__search_knowledge"
+
+# 期待値:
+# レスポンスに以下が含まれる:
+# - "id": "stub-1"
+# - "title": "Sample: テスト"
+# - "score": 0.95
+```

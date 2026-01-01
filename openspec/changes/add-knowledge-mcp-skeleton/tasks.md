@@ -1,12 +1,24 @@
 # Tasks: 知識共有MCPサーバーの垂直スケルトン構築
 
+## スコープ
+
+このChangeはroadmap.mdの**Phase 1: 垂直スケルトンの構築**に対応する：
+- 1.1 GCPプロジェクト基盤の整備
+- 1.2 MCPサーバーのハローワールド
+- 1.3 AIエージェントとの結合テスト
+
+**スコープ外（後続Phaseで対応）：**
+- Firestore連携実装 → Phase 2
+- Vertex AI Search統合 → Phase 2
+- Local Agent用Skillsの整備 → Optional
+
 ## 1. 提案フェーズ
 - [x] proposal.md作成
 - [x] spec deltas作成
-- [x] PR #1作成・マージ
+- [x] PR #1作成
 - [x] 技術検証（FastMCP + Cloud Run構成）→ spike/results.md
 - [x] design.md作成
-- [x] PR #1b作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/3
+- [x] PR #1b作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/3
 
 ## 2. 実装フェーズ（パターンB: インフラ先行型）
 
@@ -21,7 +33,7 @@
   - [x] uvベースプロジェクト作成（pyproject.toml + uv.lock + Procfile）
   - [x] 最小限のHTTPサーバー（/health のみ）
   - [x] `gcloud run deploy --source .` でデプロイ成功確認
-- [x] PR #2a作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/4
+- [x] PR #2a作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/4
   - verify.md: test-health GREEN, MCP関連テストは SKIP
 
 ### PR #2b: MCPスケルトン
@@ -33,17 +45,18 @@
 - [x] Cloud Runへ再デプロイ・疎通確認
 - [x] verify.mdのMCPテストを有効化（excludeFromRunAll解除）
 - [x] スケルトン実装完了（全テストGREEN確認）
-- [ ] PR #2b作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/7
+- [x] PR #2b作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/7
 
-## 3. ロジック実装フェーズ（Phase 2以降）
-- [ ] Firestore連携実装
-- [ ] Vertex AI Search統合
-- [ ] ユニットテスト実装
-- [ ] PR #3作成・マージ
+## 3. AIエージェント結合テストフェーズ
 
-## 4. リリースフェーズ
-- [ ] 全テスト検証
-- [ ] openspec validate --strict 実行
+### PR #2c: Claude Code結合テスト
+- [x] `claude mcp add --transport http <URL>`でuserスコープにMCPサーバーを登録
+- [x] Claude Codeから`save_knowledge`ツール呼び出し確認
+- [x] Claude Codeから`search_knowledge`ツール呼び出し確認
+- [x] 結合テスト手順をverify.mdに追記
+- [x] PR #2c作成 → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/10
+
+## 4. アーカイブフェーズ
+- [ ] 全テストGREEN確認（verify.md）
+- [ ] openspec validate 実行
 - [ ] openspec archive add-knowledge-mcp-skeleton 実行
-- [ ] フィーチャーフラグ有効化
-- [ ] PR #N（リリース）作成・マージ
