@@ -54,7 +54,7 @@
 - [x] Claude Codeから`save_knowledge`ツール呼び出し確認
 - [x] Claude Codeから`search_knowledge`ツール呼び出し確認
 - [x] 結合テスト手順をverify.mdに追記
-- [ ] PR #2c作成・マージ
+- [ ] PR #2c作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/10
 
 ## 4. アーカイブフェーズ
 - [ ] 全テストGREEN確認（verify.md）
