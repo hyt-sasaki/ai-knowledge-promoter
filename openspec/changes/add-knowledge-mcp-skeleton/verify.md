@@ -42,12 +42,11 @@ curl -s "${SERVICE_URL}/health"
 
 ### MCP Tools
 
-> **Note**: PR #2b（MCPスケルトン）で実装予定。実装後に`excludeFromRunAll`を解除してください。
-
-```sh {"excludeFromRunAll":"true","name":"test-save-knowledge"}
+```sh {"name":"test-save-knowledge"}
 # save_knowledgeツールのテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
@@ -64,13 +63,15 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 
 # 期待値:
 # ステータスコード: 200
-# レスポンス: {"jsonrpc": "2.0", "id": 1, "result": {"status": "saved", "id": "...", "title": "Test Knowledge"}}
+# レスポンス: event: message
+# data: {"jsonrpc": "2.0", "id": 1, "result": {..., "structuredContent": {"status": "saved", "id": "...", "title": "Test Knowledge"}}}
 ```
 
-```sh {"excludeFromRunAll":"true","name":"test-search-knowledge"}
+```sh {"name":"test-search-knowledge"}
 # search_knowledgeツールのテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{
     "jsonrpc": "2.0",
     "id": 2,
@@ -86,7 +87,8 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 
 # 期待値:
 # ステータスコード: 200
-# レスポンス: {"jsonrpc": "2.0", "id": 2, "result": [{"id": "...", "title": "...", "score": ...}]}
+# レスポンス: event: message
+# data: {"jsonrpc": "2.0", "id": 2, "result": {..., "structuredContent": {"result": [{"id": "...", "title": "...", "score": ...}]}}}
 ```
 
 ---
@@ -97,6 +99,7 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 # 存在しないツール呼び出しテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{
     "jsonrpc": "2.0",
     "id": 3,
@@ -109,6 +112,6 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 
 # 期待値:
 # ステータスコード: 200
-# レスポンス: {"jsonrpc": "2.0", "id": 3, "error": {"code": -32601, "message": "Method not found"}}
+# レスポンス: event: message
+# data: {"jsonrpc": "2.0", "id": 3, "error": {"code": -32601, "message": "..."}}
 ```
-

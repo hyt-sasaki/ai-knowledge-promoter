@@ -1,26 +1,29 @@
-"""Minimal HTTP server for Cloud Run health checks."""
+"""Knowledge sharing MCP server for Claude Code."""
 
 import os
 
-from starlette.applications import Starlette
+from fastmcp import FastMCP
+from starlette.requests import Request
 from starlette.responses import PlainTextResponse
-from starlette.routing import Route
+
+from .tools.save_knowledge import register as register_save_knowledge
+from .tools.search_knowledge import register as register_search_knowledge
+
+# Stateless mode for Cloud Run horizontal scaling
+mcp = FastMCP("KnowledgeGateway", stateless_http=True)
 
 
-async def health(request):
+@mcp.custom_route("/health", methods=["GET"])
+async def health_check(request: Request) -> PlainTextResponse:
     """Health check endpoint for Cloud Run."""
     return PlainTextResponse("OK")
 
 
-app = Starlette(
-    routes=[
-        Route("/health", health, methods=["GET"]),
-    ]
-)
+# Register MCP tools
+register_save_knowledge(mcp)
+register_search_knowledge(mcp)
 
 
 if __name__ == "__main__":
-    import uvicorn
-
     port = int(os.environ.get("PORT", 8080))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    mcp.run(transport="http", host="0.0.0.0", port=port)
