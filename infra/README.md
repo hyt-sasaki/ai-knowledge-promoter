@@ -84,18 +84,18 @@ curl -s "${SERVICE_URL}/health"
 
 ### プロジェクトが既に存在する場合
 
-```sh {"name":"set-existing-project","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","name":"set-existing-project"}
 gcloud config set project ai-knowledge-promoter
 ```
 
 ### APIが有効化されているか確認
 
-```sh {"name":"list-enabled-services","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","name":"list-enabled-services"}
 gcloud services list --enabled --filter="name:(run.googleapis.com OR cloudbuild.googleapis.com OR artifactregistry.googleapis.com)"
 ```
 
 ### Cloud Runサービスの削除（必要な場合）
 
-```sh {"name":"delete-service","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","name":"delete-service"}
 gcloud run services delete knowledge-mcp-server --region asia-northeast1
 ```

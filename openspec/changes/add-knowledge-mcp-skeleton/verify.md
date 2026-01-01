@@ -44,7 +44,7 @@ curl -s "${SERVICE_URL}/health"
 
 > **Note**: PR #2b（MCPスケルトン）で実装予定。実装後に`excludeFromRunAll`を解除してください。
 
-```sh {"name":"test-save-knowledge","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","name":"test-save-knowledge"}
 # save_knowledgeツールのテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
@@ -67,7 +67,7 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 # レスポンス: {"jsonrpc": "2.0", "id": 1, "result": {"status": "saved", "id": "...", "title": "Test Knowledge"}}
 ```
 
-```sh {"name":"test-search-knowledge","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","name":"test-search-knowledge"}
 # search_knowledgeツールのテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
@@ -93,7 +93,7 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 
 ## Edge Cases（異常系）
 
-```sh {"name":"test-invalid-tool","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","name":"test-invalid-tool"}
 # 存在しないツール呼び出しテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
