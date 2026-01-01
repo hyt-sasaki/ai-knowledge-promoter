@@ -248,11 +248,20 @@ async def health_check(request: Request) -> PlainTextResponse:
 4. Claude Code MCP設定
 5. エンドツーエンド疎通確認
 
-### Phase 2: ロジック実装（将来）
+### Phase 2: ロジック実装 + 認証基盤（将来）
 
-1. Firestoreデータベース作成
-2. `save_knowledge`のFirestore連携
-3. `search_knowledge`の基本検索実装
+1. **Cloud IAP設定（認証基盤）** ← 実データを扱う前に必須
+   - Cloud Run サービスへのIAP有効化
+   - 許可ユーザー/グループのホワイトリスト設定（IAM `roles/iap.httpsResourceAccessor`）
+   - Claude Code MCP設定にIAP認証ヘッダー追加
+2. Firestoreデータベース作成
+3. `save_knowledge`のFirestore連携
+4. `search_knowledge`の基本検索実装
+
+**Cloud IAP設定の理由**:
+- Phase 2から実データ（ナレッジ）を永続化するため、認証なしでは情報漏洩リスク
+- ホワイトリスト方式で許可されたユーザーのみアクセス可能
+- Cloud Runに直接IAP設定可能（ロードバランサー不要）
 
 ### Phase 3: 高度な検索（将来）
 
