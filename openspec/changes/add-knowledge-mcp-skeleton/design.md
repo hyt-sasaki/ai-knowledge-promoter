@@ -346,3 +346,137 @@ async def health_check(request: Request) -> PlainTextResponse:
 - [x] 認証方式 → Cloud IAP（ロードバランサー不要でCloud Runに直接設定可能）
 - [x] マルチテナント対応の必要性 → 不要
 - [x] MCP公式SDK vs FastMCP 2.0 → FastMCP 2.0を採用（将来の移行不要、基本APIは同一）
+
+---
+
+## Phase 2 設計判断
+
+spike/results-phase2.mdの技術検証により、Phase 2の設計判断を追記する。
+
+### Decision 5: Cloud Run Invoker権限を採用（Cloud IAPではなく）
+
+**Rationale**:
+
+spike/results-phase2.mdの検証により、Cloud IAPとCloud Run Invoker権限を比較検討した結果、Phase 2ではCloud Run Invoker権限を採用する。
+
+1. **シンプルさ**: Cloud Run Invoker権限は追加のコンポーネント不要
+2. **組織制約なし**: Cloud IAPは組織内プロジェクト必須だが、Invoker権限は制約なし
+3. **十分なセキュリティ**: `--no-allow-unauthenticated`で未認証アクセスを無効化
+4. **将来の移行性**: 必要に応じてCloud IAPへの移行も容易
+
+**設定手順**:
+```bash
+# 未認証アクセスを無効化
+gcloud run services update knowledge-mcp-server \
+  --region asia-northeast1 \
+  --no-allow-unauthenticated
+
+# ユーザーにInvoker権限を付与
+gcloud run services add-iam-policy-binding knowledge-mcp-server \
+  --region asia-northeast1 \
+  --member="user:your-email@example.com" \
+  --role="roles/run.invoker"
+```
+
+**Claude Codeからの認証**:
+```bash
+# IDトークンを取得してMCPサーバーに接続
+claude mcp add --transport http knowledge-gateway \
+  https://knowledge-mcp-server-xxxxx.run.app/mcp \
+  --header "Authorization: Bearer $(gcloud auth print-identity-token)"
+```
+
+**Alternatives considered**:
+
+| 選択肢 | 評価 | 却下理由 |
+|--------|------|----------|
+| Cloud IAP | △ | 組織内プロジェクト必須、ベータ版、セットアップが複雑 |
+| 認証なし | × | 実データを扱うため、セキュリティリスクが高い |
+
+### Decision 6: Firestore非同期API（AsyncClient）を採用
+
+**Rationale**:
+- FastMCPのツールは非同期関数として定義可能
+- `AsyncClient`を使用することでI/Oブロッキングを回避
+- Cloud Run上では Application Default Credentials で自動認証
+
+**コード例**:
+```python
+from google.cloud import firestore
+
+# Cloud Run上では認証情報の明示的な設定は不要
+db = firestore.AsyncClient()
+
+async def save_to_firestore(data: dict) -> str:
+    doc_ref = db.collection('knowledge').document()
+    await doc_ref.set(data)
+    return doc_ref.id
+```
+
+### Decision 7: タイトル前方一致 + タグ検索（フルテキスト検索の代替）
+
+**Rationale**:
+- Firestoreはフルテキスト検索をネイティブサポートしていない
+- Phase 2では以下の検索方式で代替する:
+  - **タイトル前方一致**: `where('title', '>=', prefix).where('title', '<=', prefix + '\uf8ff')`
+  - **タグ検索**: `where('tags', 'array_contains', tag)`
+- Phase 3でVertex AI Searchを導入し、セマンティック検索を実現予定
+
+**制約**:
+- 部分一致検索は不可（"Tips"で"Python Tips"は検索不可）
+- 複数タグのAND検索はクライアントサイドフィルタが必要
+
+**検索クエリの判定ロジック**:
+```python
+if query.startswith('#'):
+    # タグ検索: #python → tags array_contains "python"
+    tag = query[1:]
+    results = await repository.find_by_tags([tag], limit=limit)
+else:
+    # タイトル前方一致検索
+    results = await repository.find_by_title_prefix(query, limit=limit)
+```
+
+### Phase 2 アーキテクチャ
+
+```
+┌─────────────────┐      HTTPS + Bearer Token      ┌─────────────────┐
+│  Claude Code    │ ◄────────────────────────────► │   Cloud Run     │
+│  (MCP Client)   │   Authorization: Bearer xxx    │   (FastMCP)     │
+│                 │                                │                 │
+│  gcloud auth    │                                │  Invoker権限    │
+│  print-identity │                                │  で認証         │
+│  -token         │                                │                 │
+└─────────────────┘                                └────────┬────────┘
+                                                            │
+                                                            │ ADC (自動)
+                                                            ▼
+                                                   ┌─────────────────┐
+                                                   │   Firestore     │
+                                                   │   (Native Mode) │
+                                                   └─────────────────┘
+```
+
+### Phase 2 ディレクトリ構成（追加分）
+
+```
+mcp-server/src/mcp_server/
+├── __init__.py
+├── main.py
+├── models/                      # 追加
+│   ├── __init__.py
+│   └── knowledge.py             # Knowledgeモデル
+├── repositories/                # 追加
+│   ├── __init__.py
+│   └── knowledge_repository.py  # Firestoreリポジトリ
+└── tools/
+    ├── __init__.py
+    ├── save_knowledge.py        # Firestore保存に変更
+    └── search_knowledge.py      # Firestore検索に変更
+```
+
+### Phase 2 Open Questions
+
+- [x] Firestore非同期APIの使用方法 → spike/results-phase2.mdで確認済み
+- [x] Cloud Run認証方式 → Cloud Run Invoker権限を採用
+- [x] フルテキスト検索の代替方法 → タイトル前方一致 + タグ検索

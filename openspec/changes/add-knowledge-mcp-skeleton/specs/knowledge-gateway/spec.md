@@ -57,3 +57,63 @@ Local Agent（Claude Code）はMCPサーバーに接続できなければなら�
 - **WHEN** Claude CodeがMCPサーバーに接続を試みる
 - **THEN** 接続が確立される
 - **AND** 利用可能なツール一覧が取得できる
+
+---
+
+## Phase 2 Requirements
+
+### Requirement: Cloud Run Authentication
+MCPサーバーは認証されたリクエストのみを受け付けなければならない（SHALL）。
+
+#### Scenario: 認証成功
+- **WHEN** Authorization: Bearer <valid-token> ヘッダー付きでリクエストを送信する
+- **THEN** リクエストが処理される
+- **AND** 正常なレスポンスが返される
+
+#### Scenario: 認証失敗（トークンなし）
+- **WHEN** Authorization ヘッダーなしでリクエストを送信する
+- **THEN** ステータスコード401または403が返される
+
+### Requirement: Firestore Persistence
+ナレッジはFirestoreに永続化されなければならない（SHALL）。
+
+#### Scenario: ナレッジ保存成功（Firestore）
+- **WHEN** `save_knowledge` ツールが呼び出される
+- **AND** title, content パラメータが提供される
+- **THEN** Firestoreにドキュメントが作成される
+- **AND** 作成されたドキュメントのIDが返される
+- **AND** created_at, updated_at タイムスタンプが設定される
+
+### Requirement: Knowledge Data Model
+ナレッジドキュメントは以下のフィールドを持たなければならない（SHALL）。
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|------|------|------|
+| id | string | Yes | ドキュメントID（Firestore自動生成） |
+| title | string | Yes | ナレッジのタイトル |
+| content | string | Yes | ナレッジの本文 |
+| user_id | string | Yes | ユーザー識別子 |
+| source | string | Yes | "personal" または "team" |
+| status | string | Yes | "draft", "proposed", "promoted" のいずれか |
+| tags | array | No | タグのリスト |
+| schema_version | number | Yes | スキーマバージョン（初期値: 1） |
+| created_at | timestamp | Yes | 作成日時 |
+| updated_at | timestamp | Yes | 更新日時 |
+
+### Requirement: Search by Title Prefix
+タイトル前方一致検索ができなければならない（SHALL）。
+
+#### Scenario: タイトル前方一致検索成功
+- **WHEN** `search_knowledge` ツールが呼び出される
+- **AND** query パラメータに検索文字列が提供される（#で始まらない）
+- **THEN** タイトルが query で始まるナレッジが返される
+- **AND** 結果は limit パラメータで指定された件数以下
+
+### Requirement: Search by Tag
+タグ検索ができなければならない（SHALL）。
+
+#### Scenario: タグ検索成功
+- **WHEN** `search_knowledge` ツールが呼び出される
+- **AND** query パラメータに "#tagname" 形式で提供される
+- **THEN** tags フィールドに "tagname" を含むナレッジが返される
+- **AND** 結果は limit パラメータで指定された件数以下
