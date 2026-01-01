@@ -7,7 +7,9 @@ def register(mcp):
     """Register save_knowledge tool to the MCP server."""
 
     @mcp.tool
-    def save_knowledge(title: str, content: str, tags: list[str] = []) -> dict:
+    def save_knowledge(
+        title: str, content: str, tags: list[str] | None = None
+    ) -> dict:
         """
         Save knowledge to the system.
 
@@ -19,6 +21,8 @@ def register(mcp):
         Returns:
             A dict containing status, id, and title
         """
+        if tags is None:
+            tags = []
         # Phase 1: Stub implementation
         return {
             "status": "saved",
