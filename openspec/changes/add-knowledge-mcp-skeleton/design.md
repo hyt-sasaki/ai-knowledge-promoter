@@ -360,7 +360,7 @@ spike/results-phase2.mdの技術検証により、Phase 2の設計判断を追�
 spike/results-phase2.mdの検証により、Cloud IAPとCloud Run Invoker権限を比較検討した結果、Phase 2ではCloud Run Invoker権限を採用する。
 
 1. **シンプルさ**: Cloud Run Invoker権限は追加のコンポーネント不要
-2. **組織制約なし**: Cloud IAPは組織内プロジェクト必須だが、Invoker権限は制約なし
+2. **proxyでトークン管理不要**: `gcloud run services proxy`を使用することで自動的にIDトークンを注入
 3. **十分なセキュリティ**: `--no-allow-unauthenticated`で未認証アクセスを無効化
 4. **将来の移行性**: 必要に応じてCloud IAPへの移行も容易
 
@@ -378,19 +378,19 @@ gcloud run services add-iam-policy-binding knowledge-mcp-server \
   --role="roles/run.invoker"
 ```
 
-**Claude Codeからの認証**:
+**Claude Codeからの認証（推奨: gcloud run services proxy）**:
 ```bash
-# IDトークンを取得してMCPサーバーに接続
-claude mcp add --transport http knowledge-gateway \
-  https://knowledge-mcp-server-xxxxx.run.app/mcp \
-  --header "Authorization: Bearer $(gcloud auth print-identity-token)"
+# ローカルプロキシを起動（トークン管理不要）
+gcloud run services proxy knowledge-mcp-server --region asia-northeast1 --port=3000
+
+# MCP設定は http://localhost:3000/mcp を指定
 ```
 
 **Alternatives considered**:
 
 | 選択肢 | 評価 | 却下理由 |
 |--------|------|----------|
-| Cloud IAP | △ | 組織内プロジェクト必須、ベータ版、セットアップが複雑 |
+| Cloud IAP | △ | ベータ版、組織が必要な可能性あり |
 | 認証なし | × | 実データを扱うため、セキュリティリスクが高い |
 
 ### Decision 6: Firestore非同期API（AsyncClient）を採用

@@ -124,15 +124,21 @@ query = collection.where(
 
 | 方式 | 概要 | 利点 | 欠点 |
 |------|------|------|------|
-| **Cloud Run Invoker権限** | `roles/run.invoker`で認証 | シンプル、追加コストなし | 組織外ユーザーも設定可能 |
-| **Cloud IAP** | Identity-Aware Proxyで認証 | 組織内ユーザーのみ許可、監査ログ充実 | ベータ版、組織必須 |
+| **Cloud Run Invoker権限** | `roles/run.invoker`で認証 | シンプル、追加コストなし、proxyでトークン管理不要 | - |
+| **Cloud IAP** | Identity-Aware Proxyで認証 | ユーザー認証、監査ログ充実、組織なしでも利用可能 | ベータ版 |
 
 **結論**: Phase 2では**Cloud Run Invoker権限**を採用する。
 
 **理由**:
-1. Cloud IAPは組織内プロジェクト必須だが、現在のプロジェクトが組織内かどうか確認が必要
-2. Cloud Run Invoker権限はシンプルで十分なセキュリティを提供
+1. Cloud Run Invoker権限はシンプルで十分なセキュリティを提供
+2. `gcloud run services proxy`を使用することでトークン管理が不要
 3. 将来的にCloud IAPへの移行も容易
+4. Cloud IAPはCloud Run直接統合がベータ版（`gcloud beta run deploy --iap`）
+
+**Cloud IAPについての補足**:
+- Gmailアカウントでも利用可能（組織なしでOK）。[Google Codelabs](https://codelabs.developers.google.com/secure-serverless-application-with-identity-aware-proxy?hl=ja#1)参照
+- Cloud IAPのCloud Run直接統合はベータ版
+- 将来的にCloud IAPへの移行も選択肢として残す
 
 ### 2.2 Cloud Run Invoker権限の設定
 
@@ -149,14 +155,45 @@ gcloud run services add-iam-policy-binding knowledge-mcp-server \
   --role="roles/run.invoker"
 ```
 
-### 2.3 Claude Codeからの認証トークン送信
+### 2.3 Claude Codeからの認証方法
 
-Claude CodeのMCPサーバー設定で`--header`フラグを使用してBearer tokenを送信する。
+ローカルのMCPクライアント（Claude Code）からCloud Run上のMCPサーバーに接続する方法は複数ある。
 
-**方法1: 直接トークン指定**
+#### 方法1: gcloud run services proxy（推奨）
+
+[Google公式ドキュメント](https://docs.cloud.google.com/run/docs/host-mcp-servers)で推奨されている方法。ローカルにプロキシを立て、自動的にIDトークンを注入する。
 
 ```bash
-# IDトークンを取得
+# ローカルプロキシを起動（ポート3000でリッスン）
+gcloud run services proxy knowledge-mcp-server --region asia-northeast1 --port=3000
+```
+
+**利点**:
+- トークン管理が不要（自動的にIDトークンを注入）
+- トークンの期限切れを気にする必要がない
+- セキュアな接続（ローカルからCloud Runへのリクエストを安全に転送）
+
+**MCP設定**:
+```json
+{
+  "mcpServers": {
+    "knowledge-gateway": {
+      "url": "http://localhost:3000/mcp"
+    }
+  }
+}
+```
+
+**制約**:
+- プロキシプロセスを常時起動しておく必要がある
+- Claude Code起動前にプロキシを開始する必要がある
+
+#### 方法2: IDトークンを直接指定
+
+一時的なテストや自動化スクリプトで使用する場合。
+
+```bash
+# IDトークンを取得（1時間で期限切れ）
 TOKEN=$(gcloud auth print-identity-token)
 
 # Claude CodeにMCPサーバーを追加
@@ -165,26 +202,14 @@ claude mcp add --transport http knowledge-gateway \
   --header "Authorization: Bearer ${TOKEN}"
 ```
 
-**方法2: 環境変数経由**
-
-```bash
-# .zshrc や .bashrc に追加
-export KNOWLEDGE_MCP_TOKEN=$(gcloud auth print-identity-token)
-
-# Claude CodeのMCP設定
-claude mcp add-json knowledge-gateway '{
-  "type": "http",
-  "url": "https://knowledge-mcp-server-xxxxx.run.app/mcp",
-  "headers": {
-    "Authorization": "Bearer ${KNOWLEDGE_MCP_TOKEN}"
-  }
-}'
-```
-
 **注意点**:
-- `gcloud auth print-identity-token`で取得したトークンは1時間で期限切れ
-- 長期利用にはトークンリフレッシュの仕組みが必要
-- または、Claude Code起動時にトークンを再取得するスクリプトを用意
+- `gcloud auth print-identity-token`で取得したトークンは**1時間で期限切れ**
+- 長期利用には不向き
+- テストやデバッグ用途に限定
+
+#### 推奨: 方法1（gcloud run services proxy）
+
+開発中は`gcloud run services proxy`を使用することを推奨する。トークン管理の手間がなく、セキュアな接続が可能。
 
 ### 2.4 Cloud IAP（将来の移行オプション）
 
