@@ -5,8 +5,8 @@ description = "Knowledge sharing MCP server for Claude Code"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "fastmcp<3",
     "starlette>=0.40.0",
-    "uvicorn>=0.32.0",
 ]
 
 [dependency-groups]
