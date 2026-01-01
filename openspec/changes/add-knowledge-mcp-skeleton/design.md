@@ -71,7 +71,7 @@ spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.
 
 **Phase 4対応**:
 - `@mcp.custom_route("/sync", methods=["POST"])`でGitHub Actions同期用Webhookを追加可能
-- master-plan.mdの「Webhook Endpoint」要件に対応
+- ロードマップ（`docs/roadmap.md`）の「Webhook Endpoint」要件に対応
 
 **Alternatives considered**:
 - Cloud Functions: WebSocket/長時間接続に制限があり、MCPプロトコルに不向き

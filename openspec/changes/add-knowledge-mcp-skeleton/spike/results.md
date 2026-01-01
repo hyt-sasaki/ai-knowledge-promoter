@@ -174,9 +174,9 @@ mcp = FastMCP("KnowledgeGateway", stateless_http=True)
 
 ---
 
-### master-plan.md との整合性確認
+### ロードマップとの整合性確認
 
-`.local-contexts/gemini/master-plan.md`の要件との整合性を検証した。
+`docs/roadmap.md`の要件との整合性を検証した。
 
 #### Phase 1（現在）: 垂直スケルトンの構築
 
@@ -229,7 +229,7 @@ async def sync_from_github(request: Request) -> JSONResponse:
 
 #### 整合性結論
 
-**FastMCP 2.0 + HTTPトランスポート + Cloud Run構成は、master-plan.mdの全Phaseに対応可能。**
+**FastMCP 2.0 + HTTPトランスポート + Cloud Run構成は、ロードマップの全Phaseに対応可能。**
 
 特にPhase 4の「Webhook Endpoint」要件は`@mcp.custom_route`で完全に対応できる。
 
