@@ -25,7 +25,7 @@ spike/results.mdの技術検証により、FastMCP + Cloud Run構成が技術的
 
 - Firestore連携（Phase 2）
 - Vertex AI Search統合（Phase 2）
-- Cloud IAP設定（Phase 1では開発用途のため、認証なしで進める）
+- 認証設定（Phase 1では開発用途のため、認証なしで進める）
 
 ## Decisions
 
@@ -42,7 +42,7 @@ spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.
 
 **注意事項**:
 - `fastmcp<3`でバージョンをピン留め（3.0で破壊的変更予定）
-- Phase 2以降でCloud IAPを導入予定のため、FastMCP 2.0のエンタープライズ認証機能は不使用
+- Phase 2以降はCloud Run Invoker権限で認証するため、FastMCP 2.0のエンタープライズ認証機能は不使用
 
 **Alternatives considered**:
 
@@ -317,18 +317,18 @@ async def health_check(request: Request) -> PlainTextResponse:
 
 ### Phase 2: ロジック実装 + 認証基盤（将来）
 
-1. **Cloud IAP設定（認証基盤）** ← 実データを扱う前に必須
-   - Cloud Run サービスへのIAP有効化
-   - 許可ユーザー/グループのホワイトリスト設定（IAM `roles/iap.httpsResourceAccessor`）
-   - Claude Code MCP設定にIAP認証ヘッダー追加
+1. **Cloud Run Invoker権限設定（認証基盤）** ← 実データを扱う前に必須
+   - `--no-allow-unauthenticated`で未認証アクセスを無効化
+   - `roles/run.invoker`で許可ユーザーを設定
+   - `gcloud run services proxy`でローカルからの認証接続
 2. Firestoreデータベース作成
 3. `save_knowledge`のFirestore連携
 4. `search_knowledge`の基本検索実装
 
-**Cloud IAP設定の理由**:
+**Cloud Run Invoker権限設定の理由**:
 - Phase 2から実データ（ナレッジ）を永続化するため、認証なしでは情報漏洩リスク
-- ホワイトリスト方式で許可されたユーザーのみアクセス可能
-- Cloud Runに直接IAP設定可能（ロードバランサー不要）
+- `gcloud run services proxy`でトークン管理不要
+- シンプルで追加コンポーネント不要
 
 ### Phase 3: 高度な検索（将来）
 
@@ -343,7 +343,7 @@ async def health_check(request: Request) -> PlainTextResponse:
 ## Open Questions
 
 - [x] FastMCP + Cloud Run構成は技術的に妥当か → spike/results.mdで確認済み
-- [x] 認証方式 → Cloud IAP（ロードバランサー不要でCloud Runに直接設定可能）
+- [x] 認証方式 → Cloud Run Invoker権限 + `gcloud run services proxy`（spike/results-phase2.mdで決定）
 - [x] マルチテナント対応の必要性 → 不要
 - [x] MCP公式SDK vs FastMCP 2.0 → FastMCP 2.0を採用（将来の移行不要、基本APIは同一）
 
@@ -390,7 +390,7 @@ gcloud run services proxy knowledge-mcp-server --region asia-northeast1 --port=3
 
 | 選択肢 | 評価 | 却下理由 |
 |--------|------|----------|
-| Cloud IAP | △ | ベータ版、組織が必要な可能性あり |
+| Cloud IAP | △ | ベータ版、proxyより複雑 |
 | 認証なし | × | 実データを扱うため、セキュリティリスクが高い |
 
 ### Decision 6: Firestore非同期API（AsyncClient）を採用
@@ -440,13 +440,13 @@ else:
 ### Phase 2 アーキテクチャ
 
 ```
-┌─────────────────┐      HTTPS + Bearer Token      ┌─────────────────┐
-│  Claude Code    │ ◄────────────────────────────► │   Cloud Run     │
-│  (MCP Client)   │   Authorization: Bearer xxx    │   (FastMCP)     │
+┌─────────────────┐                                ┌─────────────────┐
+│  Claude Code    │                                │   Cloud Run     │
+│  (MCP Client)   │                                │   (FastMCP)     │
 │                 │                                │                 │
-│  gcloud auth    │                                │  Invoker権限    │
-│  print-identity │                                │  で認証         │
-│  -token         │                                │                 │
+│  localhost:3000 │──────► gcloud run ────────────►│  Invoker権限    │
+│  /mcp           │        services proxy          │  で認証         │
+│                 │        (トークン自動注入)       │                 │
 └─────────────────┘                                └────────┬────────┘
                                                             │
                                                             │ ADC (自動)

@@ -56,7 +56,7 @@ MCPサーバー実装には2つの選択肢があることが判明した。
 
 **注意事項：**
 - `fastmcp<3`でバージョンをピン留め（3.0で破壊的変更予定）
-- Cloud IAPで認証するため、FastMCP 2.0のエンタープライズ認証機能は不使用
+- Cloud Run Invoker権限で認証するため、FastMCP 2.0のエンタープライズ認証機能は不使用
 
 ---
 
@@ -254,7 +254,7 @@ async def sync_from_github(request: Request) -> JSONResponse:
 
 2. **認証**
    - Phase 1では認証なし（開発用途）
-   - 将来的にはCloud IAP（ロードバランサー不要でCloud Runに直接設定可能）を使用
+   - Phase 2以降はCloud Run Invoker権限 + `gcloud run services proxy`を使用
 
 ## 推奨構成
 

@@ -211,31 +211,6 @@ claude mcp add --transport http knowledge-gateway \
 
 開発中は`gcloud run services proxy`を使用することを推奨する。トークン管理の手間がなく、セキュアな接続が可能。
 
-### 2.4 Cloud IAP（将来の移行オプション）
-
-Cloud IAPを使用する場合の設定（参考情報）:
-
-```bash
-# IAP APIを有効化
-gcloud services enable iap.googleapis.com
-
-# Cloud RunにIAPを有効化（ベータ）
-gcloud beta run deploy knowledge-mcp-server \
-  --region asia-northeast1 \
-  --image gcr.io/PROJECT_ID/knowledge-mcp-server \
-  --no-allow-unauthenticated \
-  --iap
-
-# ユーザーにIAPアクセス権を付与
-gcloud beta iap web add-iam-policy-binding \
-  --resource-type=cloud-run \
-  --service=knowledge-mcp-server \
-  --region=asia-northeast1 \
-  --member=user:your-email@example.com \
-  --role=roles/iap.httpsResourceAccessor \
-  --condition=None
-```
-
 ---
 
 ## 3. 推奨構成
@@ -243,16 +218,16 @@ gcloud beta iap web add-iam-policy-binding \
 ### 3.1 Phase 2の認証構成
 
 ```
-┌─────────────────┐      HTTPS + Bearer Token      ┌─────────────────┐
-│  Claude Code    │ ◄────────────────────────────► │   Cloud Run     │
-│  (MCP Client)   │   Authorization: Bearer xxx    │   (FastMCP)     │
+┌─────────────────┐                                ┌─────────────────┐
+│  Claude Code    │                                │   Cloud Run     │
+│  (MCP Client)   │                                │   (FastMCP)     │
 │                 │                                │                 │
-│  gcloud auth    │                                │  Invoker権限    │
-│  print-identity │                                │  で認証         │
-│  -token         │                                │                 │
+│  localhost:3000 │──────► gcloud run ────────────►│  Invoker権限    │
+│  /mcp           │        services proxy          │  で認証         │
+│                 │        (トークン自動注入)       │                 │
 └─────────────────┘                                └────────┬────────┘
                                                             │
-                                                            │ ADC
+                                                            │ ADC (自動)
                                                             ▼
                                                    ┌─────────────────┐
                                                    │   Firestore     │
@@ -291,13 +266,14 @@ knowledge (collection)
 
 ## 4. リスクと対策
 
-### Risk 1: トークンの有効期限
+### Risk 1: プロキシプロセスの管理
 
-**リスク**: `gcloud auth print-identity-token`のトークンは1時間で期限切れ
+**リスク**: `gcloud run services proxy`を常時起動しておく必要がある
 
 **対策**:
-- Claude Code起動時にトークンを再取得するラッパースクリプトを用意
-- または、長期的にはサービスアカウントキーを使用（セキュリティ上の考慮が必要）
+- Claude Code起動前にプロキシを開始するワークフローを確立
+- ターミナルの別タブでプロキシを常時起動
+- 必要に応じてlaunchd/systemdでサービス化
 
 ### Risk 2: Firestoreのフルテキスト検索制限
 
@@ -330,7 +306,6 @@ knowledge (collection)
 ## 参考資料
 
 - [Google Cloud Firestore Python Client](https://context7.com/googleapis/python-firestore)
-- [Configure IAP for Cloud Run](https://docs.cloud.google.com/run/docs/securing/identity-aware-proxy-cloud-run)
+- [Host MCP servers on Cloud Run](https://docs.cloud.google.com/run/docs/host-mcp-servers)
 - [Authenticate developers | Cloud Run](https://docs.cloud.google.com/run/docs/authenticating/developers)
-- [Using Google Identity-Aware Proxy (IAP) with Cloud Run — Without a Load Balancer!](https://medium.com/google-cloud/using-google-identity-aware-proxy-iap-with-cloud-run-without-a-load-balancer-27db89b9ed49)
 - [Connect Claude Code to tools via MCP](https://code.claude.com/docs/en/mcp)
