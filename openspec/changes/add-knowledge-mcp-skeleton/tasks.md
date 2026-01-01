@@ -45,7 +45,7 @@
 - [x] Cloud Runへ再デプロイ・疎通確認
 - [x] verify.mdのMCPテストを有効化（excludeFromRunAll解除）
 - [x] スケルトン実装完了（全テストGREEN確認）
-- [ ] PR #2b作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/7
+- [x] PR #2b作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/7
 
 ## 3. AIエージェント結合テストフェーズ
 
