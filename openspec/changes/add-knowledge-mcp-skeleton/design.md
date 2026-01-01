@@ -78,7 +78,24 @@ spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.
 - GKE: 今回の規模ではオーバーエンジニアリング
 - Compute Engine: サーバーレスのメリットが得られない
 
-### Decision 3: スタブ実装でスケルトン構築
+### Decision 3: uvによるPythonプロジェクト管理
+
+**Rationale**:
+- uvは高速なPythonパッケージマネージャー（Rust製）
+- `pyproject.toml` + `uv.lock`で依存関係を管理（`requirements.txt`は不使用）
+- マルチステージDockerビルドで本番イメージを最適化
+
+**プロジェクト構成**:
+- `pyproject.toml`: プロジェクトメタデータと依存関係定義
+- `uv.lock`: 依存関係のロックファイル（再現性保証）
+- 開発用依存関係は`[dependency-groups].dev`に分離
+
+**Alternatives considered**:
+- pip + requirements.txt: 従来のパターンだが、ロックファイル管理が煩雑
+- Poetry: 機能は豊富だが、uvより低速
+- pipenv: メンテナンス頻度が低下傾向
+
+### Decision 4: スタブ実装でスケルトン構築
 
 **Rationale**:
 - 垂直TDD戦略に基づき、まずUI（Claude Code）からDB（将来のFirestore）までの疎通を優先
@@ -112,17 +129,77 @@ spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.
 src/mcp_server/
 ├── __init__.py
 ├── main.py              # FastMCPサーバーエントリポイント
-├── tools/
-│   ├── __init__.py
-│   ├── save_knowledge.py    # save_knowledgeツール
-│   └── search_knowledge.py  # search_knowledgeツール
-├── Dockerfile
-└── requirements.txt
+└── tools/
+    ├── __init__.py
+    ├── save_knowledge.py    # save_knowledgeツール
+    └── search_knowledge.py  # search_knowledgeツール
+
+pyproject.toml           # プロジェクトメタデータ・依存関係
+uv.lock                  # 依存関係ロックファイル（自動生成）
+Dockerfile               # マルチステージビルド
 
 infrastructure/
 ├── cloudbuild.yaml      # Cloud Build設定
 └── terraform/           # Terraform設定（将来）
     └── main.tf
+```
+
+### pyproject.toml
+
+```toml
+[project]
+name = "knowledge-mcp-server"
+version = "0.1.0"
+description = "Knowledge sharing MCP server for Claude Code"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp<3",
+    "starlette",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+```
+
+### Dockerfile（マルチステージビルド）
+
+```dockerfile
+# Build stage
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+ENV UV_PYTHON_DOWNLOADS=0
+
+WORKDIR /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
+COPY . /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev
+
+# Runtime stage
+FROM python:3.12-slim-bookworm
+
+RUN groupadd --system --gid 999 nonroot \
+ && useradd --system --gid 999 --uid 999 --create-home nonroot
+
+COPY --from=builder --chown=nonroot:nonroot /app /app
+ENV PATH="/app/.venv/bin:$PATH"
+
+USER nonroot
+WORKDIR /app
+
+# Cloud Run uses PORT environment variable
+CMD ["python", "-m", "mcp_server.main"]
 ```
 
 ### サーバー初期化
