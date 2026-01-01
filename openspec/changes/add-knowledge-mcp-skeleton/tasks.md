@@ -1,5 +1,17 @@
 # Tasks: 知識共有MCPサーバーの垂直スケルトン構築
 
+## スコープ
+
+このChangeはroadmap.mdの**Phase 1: 垂直スケルトンの構築**に対応する：
+- 1.1 GCPプロジェクト基盤の整備
+- 1.2 MCPサーバーのハローワールド
+- 1.3 AIエージェントとの結合テスト
+
+**スコープ外（後続Phaseで対応）：**
+- Firestore連携実装 → Phase 2
+- Vertex AI Search統合 → Phase 2
+- Local Agent用Skillsの整備 → Optional
+
 ## 1. 提案フェーズ
 - [x] proposal.md作成
 - [x] spec deltas作成
@@ -35,15 +47,16 @@
 - [x] スケルトン実装完了（全テストGREEN確認）
 - [ ] PR #2b作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/7
 
-## 3. ロジック実装フェーズ（Phase 2以降）
-- [ ] Firestore連携実装
-- [ ] Vertex AI Search統合
-- [ ] ユニットテスト実装
-- [ ] PR #3作成・マージ
+## 3. AIエージェント結合テストフェーズ
 
-## 4. リリースフェーズ
-- [ ] 全テスト検証
-- [ ] openspec validate --strict 実行
+### PR #2c: Claude Code結合テスト
+- [ ] `claude mcp add --transport sse <URL>`でuserスコープにMCPサーバーを登録
+- [ ] Claude Codeから`save_knowledge`ツール呼び出し確認
+- [ ] Claude Codeから`search_knowledge`ツール呼び出し確認
+- [ ] 結合テスト手順をverify.mdに追記
+- [ ] PR #2c作成・マージ
+
+## 4. アーカイブフェーズ
+- [ ] 全テストGREEN確認（verify.md）
+- [ ] openspec validate 実行
 - [ ] openspec archive add-knowledge-mcp-skeleton 実行
-- [ ] フィーチャーフラグ有効化
-- [ ] PR #N（リリース）作成・マージ
