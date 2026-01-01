@@ -279,12 +279,17 @@ async def sync_from_github(request: Request) -> JSONResponse:
 src/mcp_server/
 ├── __init__.py
 ├── main.py              # FastMCPサーバーエントリポイント
-├── tools/
-│   ├── __init__.py
-│   ├── save_knowledge.py
-│   └── search_knowledge.py
-└── Dockerfile
+└── tools/
+    ├── __init__.py
+    ├── save_knowledge.py
+    └── search_knowledge.py
+
+pyproject.toml           # プロジェクトメタデータ・依存関係
+uv.lock                  # 依存関係ロックファイル（自動生成）
+Procfile                 # Buildpacks用エントリポイント定義
 ```
+
+**注**: Google Cloud BuildpacksがuvをGAでサポート。`pyproject.toml` + `uv.lock`を自動検出してビルドするため、Dockerfileは不要。
 
 ### スケルトン実装（Phase 1）
 
