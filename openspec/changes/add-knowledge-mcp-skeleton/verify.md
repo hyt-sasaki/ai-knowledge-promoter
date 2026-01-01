@@ -42,8 +42,9 @@ curl -s "${SERVICE_URL}/health"
 
 ### MCP Tools
 
-<!-- [PENDING] PR #2b: MCP skeleton で実装予定
-```sh {"name":"test-save-knowledge"}
+> **Note**: PR #2b（MCPスケルトン）で実装予定。実装後に`excludeFromRunAll`を解除してください。
+
+```sh {"name":"test-save-knowledge","excludeFromRunAll":"true"}
 # save_knowledgeツールのテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
@@ -66,7 +67,7 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 # レスポンス: {"jsonrpc": "2.0", "id": 1, "result": {"status": "saved", "id": "...", "title": "Test Knowledge"}}
 ```
 
-```sh {"name":"test-search-knowledge"}
+```sh {"name":"test-search-knowledge","excludeFromRunAll":"true"}
 # search_knowledgeツールのテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
@@ -87,14 +88,12 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 # ステータスコード: 200
 # レスポンス: {"jsonrpc": "2.0", "id": 2, "result": [{"id": "...", "title": "...", "score": ...}]}
 ```
--->
 
 ---
 
 ## Edge Cases（異常系）
 
-<!-- [PENDING] PR #2b: MCP skeleton で実装予定
-```sh {"name":"test-invalid-tool"}
+```sh {"name":"test-invalid-tool","excludeFromRunAll":"true"}
 # 存在しないツール呼び出しテスト
 curl -s -X POST "${SERVICE_URL}/mcp" \
   -H "Content-Type: application/json" \
@@ -112,5 +111,4 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 # ステータスコード: 200
 # レスポンス: {"jsonrpc": "2.0", "id": 3, "error": {"code": -32601, "message": "Method not found"}}
 ```
--->
 

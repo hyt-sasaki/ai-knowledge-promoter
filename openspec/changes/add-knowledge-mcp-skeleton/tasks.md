@@ -31,7 +31,7 @@
   - [ ] save_knowledge ツール（スタブ）
   - [ ] search_knowledge ツール（スタブ）
 - [ ] Cloud Runへ再デプロイ・疎通確認
-- [ ] スキップしたMCPテストを有効化（@pytest.mark.skip解除）
+- [ ] verify.mdのMCPテストを有効化（excludeFromRunAll解除）
 - [ ] スケルトン実装完了（全テストGREEN確認）
 - [ ] PR #2b作成・マージ
 
