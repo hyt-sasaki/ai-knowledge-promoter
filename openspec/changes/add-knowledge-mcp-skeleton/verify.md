@@ -116,33 +116,17 @@ curl -s -X POST "${SERVICE_URL}/mcp" \
 
 ---
 
-## Verify All（一括実行）
+## 一括実行
 
-```sh {"name":"verify-all"}
-echo "Starting verification..."
+すべてのテストを順次実行するには：
 
-# Setup
-runme run setup-env --chdir openspec/changes/add-knowledge-mcp-skeleton
+```bash
+runme run --all --filename openspec/changes/add-knowledge-mcp-skeleton/verify.md
+```
 
-# Health Check Tests
-echo "Testing health endpoint..."
-HEALTH_STATUS=$(runme run test-health --chdir openspec/changes/add-knowledge-mcp-skeleton)
-if [ "$HEALTH_STATUS" = "200" ]; then
-  echo "  test-health: PASSED"
-else
-  echo "  test-health: FAILED (got $HEALTH_STATUS, expected 200)"
-  exit 1
-fi
+または、このディレクトリで：
 
-HEALTH_BODY=$(runme run test-health-body --chdir openspec/changes/add-knowledge-mcp-skeleton)
-if [ "$HEALTH_BODY" = "OK" ]; then
-  echo "  test-health-body: PASSED"
-else
-  echo "  test-health-body: FAILED (got '$HEALTH_BODY', expected 'OK')"
-  exit 1
-fi
-
-echo ""
-echo "All implemented tests passed"
-echo "Pending: test-save-knowledge, test-search-knowledge (PR #2b)"
+```bash
+cd openspec/changes/add-knowledge-mcp-skeleton
+runme run --all --filename verify.md
 ```
