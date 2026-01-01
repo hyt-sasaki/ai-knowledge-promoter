@@ -52,13 +52,26 @@ spike/results.mdの検証により、MCP公式Python SDK（`mcp`）とFastMCP 2.
 | FastAPI MCP | × | FastAPIエンドポイントをMCPとして公開する用途向け。MCPファースト設計には不向き |
 | 自前MCP実装 | × | プロトコル実装コストが高く、車輪の再発明 |
 
-### Decision 2: Cloud Run + HTTPトランスポート
+### Decision 2: Cloud Run + HTTPトランスポート + ステートレスモード
 
 **Rationale**:
-- FastMCPのHTTPトランスポートがCloud Runと相性が良い
+- FastMCPのHTTPトランスポート（Streamable HTTP）がCloud Runと相性が良い
+- `stateless_http=True`で水平スケーリング対応（セッションアフィニティ不要）
 - サーバーレスでコスト効率が良い（使用時のみ課金）
 - GCPの他サービス（Firestore、Vertex AI）との統合が容易
-- `@mcp.custom_route`でヘルスチェックエンドポイントを簡単に追加可能
+- `@mcp.custom_route`でヘルスチェックエンドポイント、Webhookエンドポイントを追加可能
+
+**トランスポート選択**:
+
+| トランスポート | 採用 | 理由 |
+|---------------|------|------|
+| HTTP（Streamable） | ✅ | 双方向ストリーミング、複数クライアント対応、ステートレスモード |
+| STDIO | ❌ | ローカルCLI向け、Webサービス不適 |
+| SSE | ❌ | レガシー、HTTPに置き換え |
+
+**Phase 4対応**:
+- `@mcp.custom_route("/sync", methods=["POST"])`でGitHub Actions同期用Webhookを追加可能
+- master-plan.mdの「Webhook Endpoint」要件に対応
 
 **Alternatives considered**:
 - Cloud Functions: WebSocket/長時間接続に制限があり、MCPプロトコルに不向き
@@ -110,6 +123,15 @@ infrastructure/
 ├── cloudbuild.yaml      # Cloud Build設定
 └── terraform/           # Terraform設定（将来）
     └── main.tf
+```
+
+### サーバー初期化
+
+```python
+from fastmcp import FastMCP
+
+# ステートレスモードでCloud Run最適化
+mcp = FastMCP("KnowledgeGateway", stateless_http=True)
 ```
 
 ### MCPツール定義

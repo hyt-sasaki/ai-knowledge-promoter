@@ -91,16 +91,147 @@ if __name__ == "__main__":
     mcp.run(transport="http", host="0.0.0.0", port=8080)
 ```
 
-### Cloud Run
+### FastMCP 2.0 トランスポート選択肢
+
+FastMCP 2.0は3つのトランスポートプロトコルをサポートする。
+
+#### 1. STDIO（デフォルト）
+
+```python
+mcp.run()  # or mcp.run(transport="stdio")
+```
+
+- **用途**: ローカルCLI統合、コマンドラインスクリプト
+- **特徴**: 1プロセス1クライアント
+- **Cloud Run適性**: ❌ 不適（Webサービス向けではない）
+
+#### 2. HTTP（Streamable HTTP）- 推奨
+
+```python
+mcp.run(transport="http", host="0.0.0.0", port=8000)
+```
+
+- **用途**: Webデプロイメント、ネットワーク経由のアクセス
+- **特徴**:
+  - 双方向ストリーミング対応（Streamable HTTPプロトコル）
+  - 複数クライアント同時接続可能
+  - `stateless_http=True`でステートレスモード（水平スケーリング向け）
+- **Cloud Run適性**: ✅ 推奨
+
+#### 3. SSE（Server-Sent Events）- レガシー
+
+```python
+mcp.run(transport="sse", host="127.0.0.1", port=8080)
+```
+
+- **用途**: 後方互換性
+- **特徴**: Streamable HTTPに置き換えられた
+- **Cloud Run適性**: △ 非推奨（新規デプロイにはHTTPを使用）
+
+#### トランスポート比較表
+
+| トランスポート | 用途 | 複数クライアント | ステートレス | Cloud Run |
+|---------------|------|-----------------|-------------|-----------|
+| STDIO | ローカルCLI | ❌ | - | ❌ |
+| HTTP | Webデプロイ | ✅ | ✅ (`stateless_http=True`) | ✅ 推奨 |
+| SSE | レガシー互換 | ✅ | - | △ |
+
+#### 結論：HTTPトランスポート + ステートレスモードを採用
+
+```python
+# Cloud Run最適化設定
+mcp = FastMCP("KnowledgeGateway", stateless_http=True)
+```
+
+**理由**:
+- 水平スケーリング対応（セッションアフィニティ不要）
+- Cloud Runの複数インスタンスに対応
+- 双方向ストリーミングでMCPプロトコルの全機能をサポート
+
+---
+
+### Cloud Run との相性分析
 
 **ライブラリID**: `/googlecloudplatform/cloud-run-samples`
 
-**主要な発見**:
+#### Cloud Runの特徴
 
-1. **コンテナポート**: Cloud Runはデフォルトでポート8080を期待
-2. **ヘルスチェック**: `startupProbe`でTCPソケットベースのヘルスチェックを設定可能
+1. **コンテナポート**: デフォルトでポート8080を期待
+2. **ヘルスチェック**: `startupProbe`でTCPソケットベースのヘルスチェック設定可能
 3. **環境変数**: `PORT`環境変数でポートを動的に設定可能
 4. **認証**: IAMベースのアクセス制御、または`allUsers`で公開アクセス可能
+
+#### FastMCP HTTP + Cloud Run 相性評価
+
+| 観点 | 評価 | 詳細 |
+|------|------|------|
+| ステートレス対応 | ✅ | `stateless_http=True`でセッションアフィニティ不要 |
+| 水平スケーリング | ✅ | ステートレスモードで複数インスタンス対応 |
+| コールドスタート | ✅ | HTTPリクエストベースで問題なし |
+| ヘルスチェック | ✅ | `@mcp.custom_route("/health")`で対応 |
+| カスタムエンドポイント | ✅ | Webhook用`POST /sync`等も追加可能 |
+| ポート設定 | ✅ | `PORT`環境変数対応 |
+
+---
+
+### master-plan.md との整合性確認
+
+`.local-contexts/gemini/master-plan.md`の要件との整合性を検証した。
+
+#### Phase 1（現在）: 垂直スケルトンの構築
+
+| 要件 | 対応状況 | 備考 |
+|------|----------|------|
+| MCP Server (Knowledge Gateway) on Cloud Run | ✅ | FastMCP 2.0 + HTTPトランスポート |
+| Local Agent (Claude Code) からMCP経由でアクセス | ✅ | HTTPトランスポートで対応 |
+| ヘルスチェックエンドポイント | ✅ | `@mcp.custom_route("/health")` |
+
+#### Phase 2: 個人ナレッジの永続化と検索
+
+| 要件 | 対応状況 | 備考 |
+|------|----------|------|
+| Firestoreデータモデリング | ✅ 対応可能 | MCPツールからFirestore SDK呼び出し |
+| Vertex AI Search統合 | ✅ 対応可能 | MCPツールから呼び出し |
+
+#### Phase 3: Remote Agent による知的自動化
+
+| 要件 | 対応状況 | 備考 |
+|------|----------|------|
+| Remote Knowledge Agent (Vertex AI Agent Engine) | ✅ 対応可能 | MCP経由でアクセス |
+| 高度なナレッジ操作ツール追加 | ✅ 対応可能 | `@mcp.tool`で追加 |
+
+#### Phase 4: チーム共有と同期メカニズム（重要）
+
+| 要件 | 対応状況 | 備考 |
+|------|----------|------|
+| **Webhook Endpoint** (`POST /sync`) | ✅ 対応可能 | `@mcp.custom_route("/sync", methods=["POST"])` |
+| GitHub Actions からの同期リクエスト受付 | ✅ 対応可能 | カスタムルートでHTTP POST処理 |
+| Markdown パースしてFirestoreへ書き込み | ✅ 対応可能 | Webhook内で実装 |
+
+#### Phase 4対応コード例
+
+```python
+from fastmcp import FastMCP
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+
+mcp = FastMCP("KnowledgeGateway", stateless_http=True)
+
+# Phase 4: GitHub Actions同期用エンドポイント
+@mcp.custom_route("/sync", methods=["POST"])
+async def sync_from_github(request: Request) -> JSONResponse:
+    """GitHub Actionsからの同期リクエストを受け付ける"""
+    data = await request.json()
+    # Markdownをパースしてfirestoreへ書き込み
+    # ...
+    return JSONResponse({"status": "synced", "count": len(data.get("files", []))})
+```
+
+#### 整合性結論
+
+**FastMCP 2.0 + HTTPトランスポート + Cloud Run構成は、master-plan.mdの全Phaseに対応可能。**
+
+特にPhase 4の「Webhook Endpoint」要件は`@mcp.custom_route`で完全に対応できる。
 
 ## 技術的妥当性の評価
 
@@ -164,7 +295,8 @@ from fastmcp import FastMCP
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse
 
-mcp = FastMCP("KnowledgeGateway")
+# ステートレスモードでCloud Run最適化
+mcp = FastMCP("KnowledgeGateway", stateless_http=True)
 
 @mcp.custom_route("/health", methods=["GET"])
 async def health_check(request: Request) -> PlainTextResponse:
