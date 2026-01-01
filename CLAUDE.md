@@ -31,3 +31,54 @@ Progressive Disclosureにより、必要な時だけ詳細な指示が読み込�
 ## Runme.dev規約
 
 Runme.dev形式のマークダウン編集時は `.claude/skills/runme-conventions/` を参照してください。
+
+## 静的解析の実行方法
+
+### 個別タスクの実行
+
+```bash
+# リントチェック
+runme run lint-check
+
+# リント自動修正
+runme run lint-fix
+
+# フォーマットチェック
+runme run format-check
+
+# フォーマット自動修正
+runme run format
+
+# 型チェック
+runme run type-check
+
+# すべてのチェックを一括実行
+runme run check-all
+```
+
+### タグ別一括実行
+
+```bash
+# すべてのチェック系タスクを実行（修正なし）
+runme run --tag check
+
+# すべての修正系タスクを実行
+runme run --tag fix
+```
+
+### コミット前の推奨フロー
+
+1. チェック系タスクを実行して問題を確認
+2. 修正系タスクを実行して自動修正
+3. 再度チェック系タスクを実行して問題がないことを確認
+
+```bash
+# 1. 問題を確認
+runme run --tag check
+
+# 2. 自動修正
+runme run --tag fix
+
+# 3. 再確認
+runme run check-all
+```
