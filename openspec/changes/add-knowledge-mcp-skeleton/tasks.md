@@ -21,7 +21,7 @@
   - [x] uvベースプロジェクト作成（pyproject.toml + uv.lock + Procfile）
   - [x] 最小限のHTTPサーバー（/health のみ）
   - [x] `gcloud run deploy --source .` でデプロイ成功確認
-- [ ] PR #2a作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/4
+- [x] PR #2a作成・マージ → https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/4
   - verify.md: test-health GREEN, MCP関連テストは SKIP
 
 ### PR #2b: MCPスケルトン
