@@ -14,6 +14,7 @@
 - [ ] カバレッジ80%以上（ビジネスロジック・純粋関数を対象）
 - [ ] verify.mdがすべてGREEN（runme run verify-all、統合テスト）
 - [ ] テストピラミッド確認（ユニット >> 統合）
+- [ ] **coverage.md最終確認・100%カバレッジ達成**
 - [ ] openspec validate <change-id> --strict がパス
 - [ ] フィーチャーフラグ動作確認（ON/OFF両方、フラグ使用時のみ）
 - [ ] design.md の Open Questions がすべて解決済み
@@ -59,6 +60,23 @@ runme run verify-all
 
 # 期待: ✅✅✅ All tests GREEN ✅✅✅
 ```
+
+## 最終カバレッジチェック
+
+アーカイブ前にcoverage.mdを最終確認します。
+
+### 実行手順
+
+1. **coverage.md最終生成**
+   - ユニットテストからのカバレッジも反映
+   - verify.md + 自動テストで全シナリオがカバーされていることを確認
+
+2. **ブロッキングルール**
+   - 「Uncovered Items」セクションが空であること
+   - すべてのRequirementが「Covered」
+   - 「Auto-Test Targets」に記載された項目は自動テストでカバー済みであること
+
+詳細は [coverage-check.md](coverage-check.md) を参照。
 
 ## Step 2: OpenSpec検証
 
@@ -406,6 +424,7 @@ Step 5完了前に確認：
 - [ ] カバレッジ80%以上（ビジネスロジック・純粋関数を対象）
 - [ ] verify.mdがすべてGREEN（統合テスト）
 - [ ] テストピラミッド確認（ユニット >> 統合）
+- [ ] **coverage.md最終確認・100%カバレッジ達成**
 - [ ] `openspec validate <change-id> --strict` がパス
 - [ ] フィーチャーフラグ動作確認（ON/OFF、フラグ使用時のみ）
 - [ ] `openspec archive <change-id>` 実行済み

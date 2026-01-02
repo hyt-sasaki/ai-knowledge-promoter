@@ -181,3 +181,29 @@ runme run stop-server
 
 echo "✅✅✅ All tests completed ✅✅✅"
 ```
+
+---
+
+## Auto-Test Targets（自動テストでカバーすべき内容）
+
+> このセクションは、ユニットテストでカバーすべきシナリオを明示します。
+> verify.md（統合テスト）ではなく、各言語のテストフレームワークで実装します。
+> Step 4（Logic Meat）で自動テストを追加する際の参照として使用してください。
+
+### Unit Test Candidates
+
+| Requirement | Scenario | Test Type | Reason |
+|-------------|----------|-----------|--------|
+| [Requirement名] | [Scenario名] | Unit Test | 純粋関数・ビジネスロジック |
+| [Requirement名] | [Scenario名] | Unit Test | バリデーション・入力検証 |
+
+### Expected Test Files
+
+- `tests/test_xxx.py` - [テスト対象の説明]
+- `tests/test_yyy.py` - [テスト対象の説明]
+
+### Coverage Expectations
+
+- **ビジネスロジック・純粋関数**: ユニットテストで80%以上カバー
+- **verify.md**: End-to-Endフローのみ（外部依存・結合）
+- **テストピラミッド**: ユニットテスト >> 統合テスト（verify.md）

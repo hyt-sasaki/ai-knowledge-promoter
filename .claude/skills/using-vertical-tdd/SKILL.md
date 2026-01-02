@@ -57,6 +57,7 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 
 - **verify.md**: [templates/verify-template.md](templates/verify-template.md)
 - **tech-spike.md**: [templates/tech-spike-template.md](templates/tech-spike-template.md)
+- **coverage.md**: [templates/coverage-template.md](templates/coverage-template.md)
 
 ## コミット戦略
 

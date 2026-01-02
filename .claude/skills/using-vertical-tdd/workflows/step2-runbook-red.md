@@ -376,6 +376,37 @@ echo "⏳ Pending: test-save-knowledge (PR #2b)"
 
 **重要**: スキップしたテストごとに解除タスクを作成し、後続PRで確実に解除します。
 
+## カバレッジチェック（verify.md作成後）
+
+verify.md作成後、spec.mdとのカバレッジをチェックします。
+
+### 実行手順
+
+1. **AIによるカバレッジ分析を実行**
+   - spec.mdからRequirements/Scenariosを抽出
+   - verify.mdの各テストケースとマッピング
+   - coverage.mdを生成
+
+2. **カバレッジ確認**
+   - coverage.mdを確認
+   - 未カバーの項目がある場合、verify.mdを更新
+   - または「Auto-Test Targets」に移動（Step 4で対応）
+
+3. **ブロッキングルール**
+   - 「Not Covered」が0であること
+   - または「Auto-Test Targets」に明示的に記載されていること
+
+詳細は [coverage-check.md](coverage-check.md) を参照。
+
+### カバレッジチェックリスト
+
+```
+カバレッジ確認:
+- [ ] coverage.md生成完了
+- [ ] 未カバー項目の対応完了（verify.mdに追加 or Auto-Test Targetsに記載）
+- [ ] 「Uncovered Items」セクションが空
+```
+
 ## tasks.md更新
 
 REDステータス確認後、tasks.mdを更新：
@@ -389,13 +420,15 @@ REDステータス確認後、tasks.mdを更新：
 
 ## チェックリスト
 
-Step 1完了前に確認：
+Step 2完了前に確認：
 
 - [ ] verify.mdにすべてのシナリオを記述済み
 - [ ] 各コードブロックに `{"name":"..."}` 属性付与済み
 - [ ] `runme list` でコマンド一覧表示確認済み
 - [ ] `runme run verify-all` でRED確認済み
 - [ ] REDステータスを記録済み
+- [ ] **coverage.md生成・確認済み**
+- [ ] **未カバー項目の対応完了**
 - [ ] tasks.mdを更新済み
 
 ## 次のステップ

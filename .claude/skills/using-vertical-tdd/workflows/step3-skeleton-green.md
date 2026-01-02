@@ -248,6 +248,22 @@ runme tui
 # すべてのテストを実行し、GREEN（成功）を視覚的に確認
 ```
 
+## カバレッジチェック（GREEN確認後）
+
+スケルトン実装でGREEN確認後、coverage.mdを再生成してカバレッジを確認します。
+
+### 実行手順
+
+1. **coverage.md再生成**
+   - verify.mdのGREEN結果を反映
+   - すべてのシナリオがverify.mdでカバーされていることを確認
+
+2. **カバレッジ確認**
+   - 「Uncovered Items」セクションが空であることを確認
+   - 「Auto-Test Targets」の項目はStep 4で対応予定であることを確認
+
+詳細は [coverage-check.md](coverage-check.md) を参照。
+
 ## PR #2 作成
 
 ### PR情報
@@ -382,6 +398,7 @@ Step 3完了前に確認：
 - [ ] スケルトン実装完成（ハードコードのみ）
 - [ ] フィーチャーフラグ実装済み
 - [ ] `runme run verify-all` でGREEN確認済み
+- [ ] **coverage.md再生成・全シナリオカバー確認済み**
 - [ ] verify.md GREENのスクリーンショット取得済み
 - [ ] PR #2作成済み
 - [ ] PR #2レビュー・マージ済み
