@@ -21,6 +21,7 @@ Phase 2ではナレッジの永続化と検索を実装する。
 ### Non-Goals
 
 - ハイブリッド検索の最適化（将来フェーズ）
+- フィールド別検索（tags, title等でのフィルタリング）（将来フェーズ）
 - IAP認証（将来のWebダッシュボード向け）
 - マルチユーザー対応（Phase 3で実装）
 
@@ -74,9 +75,31 @@ gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 | user_id | string | 開発者識別子（Phase 2では固定値 "anonymous"） |
 | source | string | personal / team |
 | status | string | draft / proposed / promoted |
-| path | string | GitHubファイルパス |
+| path | string | GitHubファイルパス（個人ナレッジでは空文字列） |
 | created_at | string | 作成日時（ISO 8601） |
 | updated_at | string | 更新日時（ISO 8601） |
+
+**フィールド補足**:
+- `path`: 個人ナレッジ（source: personal）では空文字列 `""` を使用。Vector Search 2.0のスキーマではnullable/requiredの明示的サポートが確認できないため、空文字列をnull相当として扱う。
+
+**ナレッジステータス遷移**:
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     ステータス遷移図                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   [draft]  ──────────────►  [proposed]  ──────►  [promoted] │
+│     ▲                           │                    │      │
+│     │                           │                    │      │
+│   保存時                    Remote Agent           GitHub    │
+│   自動付与                  が昇格候補選択         にマージ   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+- **draft**: 保存直後の初期状態。開発者個人の断片的なメモ
+- **proposed**: Remote Agentが価値ありと判断し、昇格候補として選択した状態
+- **promoted**: PRレビューを経てGitHubにマージされた状態（チームナレッジ）
 
 **ベクトルスキーマ（vector_schema）**:
 ```python
@@ -148,6 +171,31 @@ gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 │  └─ vector_search.py: VectorSearchKnowledgeRepository   │
 └─────────────────────────────────────────────────────────┘
 ```
+
+### Decision 5: Collection作成方式（ローカルスクリプト）
+
+**Rationale**:
+- Collection作成は初回1回のみ必要な操作
+- setupエンドポイントを用意すると認証の複雑化を招く
+- 開発者がローカルで手動実行する方がシンプル
+
+**実装方式**:
+- `scripts/create_collection.py` としてPythonスクリプトを用意
+- 開発者がgcloud認証済みの状態でローカル実行
+- 冪等性を持たせ、既存Collectionがあればスキップ
+
+**実行手順**:
+```bash
+# 1. gcloud認証
+gcloud auth application-default login
+
+# 2. Collection作成
+python scripts/create_collection.py
+```
+
+**Alternatives considered**:
+- setupエンドポイント: Cloud Run認証の複雑化。MCPクライアントからの呼び出しが煩雑
+- Terraform/gcloud CLI: Vector Search 2.0はPython SDKでの操作が前提
 
 ## Architecture
 
@@ -387,6 +435,11 @@ gcloud run deploy knowledge-mcp-server \
 - Vector Search 2.0はPublic Preview → GA時にAPI変更の可能性あり
 - リージョン制限（us-central1がデフォルト、asia-northeast1は要確認）
 - gcloud CLIが必要 → 開発者向けなので許容範囲
+- **スキーマ変更制約**: Collectionのスキーマ（data_schema, vector_schema）は作成後の変更が困難
+  - 公式ドキュメントにUpdateCollection APIは確認できず
+  - `additionalProperties`は常に`false`として扱われる厳格なスキーマ検証
+  - **マイグレーション戦略**: 将来のフィールド追加（ハイブリッド検索等）が必要な場合は、新Collectionを作成しデータ移行
+  - Repositoryパターン採用により移行コストは軽減される
 
 ## Open Questions
 

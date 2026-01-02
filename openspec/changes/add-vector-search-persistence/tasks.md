@@ -10,7 +10,7 @@
 - [x] 0.4 spec delta作成（specs/knowledge-gateway/spec.md）
 - [x] 0.5 docs/roadmap.md更新（Phase 2変更、Phase 2.5削除）
 - [x] 0.6 `openspec validate add-vector-search-persistence --strict`
-- [ ] 0.7 **PR作成**
+- [x] 0.7 **PR作成**
 
 ## 1. インフラ基盤整備（Stage 2: PR #2a デプロイ基盤）
 
