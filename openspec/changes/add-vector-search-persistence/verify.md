@@ -13,7 +13,7 @@
 
 ## Setup
 
-```sh {"name":"vs-setup-proxy","background":"true"}
+```sh {"background":"true","name":"vs-setup-proxy"}
 # gcloud proxyをバックグラウンドで起動
 gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 ```
@@ -381,3 +381,91 @@ echo "Proxy stopped"
 - **ビジネスロジック・純粋関数**: ユニットテストで80%以上カバー
 - **verify.md**: End-to-Endフローのみ（外部依存・結合）
 - **テストピラミッド**: ユニットテスト >> 統合テスト（verify.md）
+
+---
+
+## Claude Code 結合テスト
+
+> このセクションは、Claude Code CLIからMCPツールを呼び出すE2Eテストです。
+> 実際のAIワークフローでの統合を検証します。
+
+### 前提条件（Claude Code結合テスト用）
+
+- Claude Code CLIインストール済み（`claude --version` で確認）
+- MCPサーバー設定済み（下記Setup参照）
+- gcloud proxyが起動中（上記Setupセクション参照）
+
+### MCP Server Setup
+
+```sh {"name":"cc-setup-mcp"}
+# MCPサーバーを登録（初回のみ）
+# gcloud proxyが起動している状態で実行
+
+# 既存の登録を削除（存在する場合）
+claude mcp remove knowledge-mcp 2>/dev/null || true
+
+# MCPサーバーを追加
+claude mcp add knowledge-mcp --transport sse -- http://localhost:3000/sse
+echo "MCP server registered"
+```
+
+### セマンティック検索の精度検証
+
+このシナリオでは、2つの異なるナレッジを保存し、特定のクエリで片方だけが高スコアで返されることを検証します。
+
+#### Step 1: 2つの異なるナレッジを保存
+
+```sh {"name":"cc-test-save-two-knowledge"}
+# 2つの異なるトピックのナレッジを保存
+# 1つ目: Pythonの非同期処理について
+# 2つ目: 料理のレシピについて
+
+claude -p "以下の2つのナレッジを save_knowledge ツールで保存してください:
+
+1つ目のナレッジ:
+- タイトル: 'Pythonの非同期処理入門'
+- 内容: 'Pythonのasyncioライブラリを使った非同期処理の実装方法を解説します。async/await構文を使うことで、I/O待ち時間を効率的に活用できます。コルーチン、タスク、イベントループの概念を理解することが重要です。'
+- タグ: ['python', 'asyncio', 'programming']
+
+2つ目のナレッジ:
+- タイトル: 'おいしいパスタの作り方'
+- 内容: '本格的なイタリアンパスタの作り方を紹介します。麺を茹でる際は塩分濃度が重要です。ソースは弱火でじっくり煮込むことで、深い味わいが生まれます。最後にパルメザンチーズを振りかけて完成です。'
+- タグ: ['cooking', 'pasta', 'recipe']" \
+  --allowedTools "mcp__knowledge-mcp__save_knowledge"
+```
+
+#### Step 2: プログラミング関連のクエリで検索
+
+```sh {"name":"cc-test-search-programming"}
+# プログラミング関連のクエリで検索
+# 期待: Pythonの非同期処理のナレッジが高スコアで、パスタのレシピは低スコアまたは表示されない
+
+claude -p "search_knowledge ツールを使って、'Pythonで並行処理を実装する方法を知りたい' というクエリで検索してください。検索結果のスコアを確認し、どのナレッジがより関連性が高いか説明してください。" \
+  --allowedTools "mcp__knowledge-mcp__search_knowledge"
+```
+
+#### Step 3: 料理関連のクエリで検索
+
+```sh {"name":"cc-test-search-cooking"}
+# 料理関連のクエリで検索
+# 期待: パスタのレシピが高スコアで、Pythonの非同期処理は低スコアまたは表示されない
+
+claude -p "search_knowledge ツールを使って、'イタリア料理のレシピ' というクエリで検索してください。検索結果のスコアを確認し、どのナレッジがより関連性が高いか説明してください。" \
+  --allowedTools "mcp__knowledge-mcp__search_knowledge"
+```
+
+#### Step 4: テストデータのクリーンアップ
+
+```sh {"name":"cc-test-cleanup-knowledge"}
+# テストで保存したナレッジを削除
+claude -p "search_knowledge ツールで 'Pythonの非同期処理入門' と 'おいしいパスタの作り方' をそれぞれ検索し、見つかったナレッジを delete_knowledge ツールで削除してください。" \
+  --allowedTools "mcp__knowledge-mcp__search_knowledge,mcp__knowledge-mcp__delete_knowledge"
+```
+
+### MCP Server Cleanup
+
+```sh {"name":"cc-cleanup-mcp"}
+# テスト後のクリーンアップ（必要に応じて）
+claude mcp remove knowledge-mcp
+echo "MCP server removed"
+```
