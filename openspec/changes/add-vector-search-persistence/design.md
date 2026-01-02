@@ -94,6 +94,8 @@ gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 }
 ```
 
+※ gemini-embedding-001はデフォルトで3072次元を出力する。768次元はMRL（Matryoshka Representation Learning）による縮小次元で、ストレージコストと検索性能のバランスを考慮して選択。
+
 ### Decision 3: セマンティック検索をデフォルトに
 
 **Rationale**:

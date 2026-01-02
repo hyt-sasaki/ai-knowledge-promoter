@@ -25,6 +25,8 @@ Vertex AI Vector Search 2.0を使って実際にデータを永続化・検索�
 - Cloud Run認証を`--no-allow-unauthenticated`に変更
 - ローカルからは`gcloud run services proxy`で接続
 - **BREAKING**: スタブ実装からVector Search 2.0依存に変更（環境設定が必要）
+- **BREAKING**: save_knowledgeのtitleパラメータがオプションに変更（未指定時はcontentの先頭30文字を使用）
+- **BREAKING**: search_knowledgeの戻り値にcontentフィールドを追加
 
 ## Impact
 
@@ -41,6 +43,7 @@ Vertex AI Vector Search 2.0を使って実際にデータを永続化・検索�
   - `mcp-server/src/mcp_server/infrastructure/vector_search.py`（VectorSearchKnowledgeRepository）
 - Updated docs:
   - `docs/roadmap.md`（Phase 2をVector Search 2.0に変更、Phase 2.5を削除）
+  - `openspec/project.md`（InfrastructureセクションをVector Search 2.0に更新）
   - `infra/README.md`（Phase 2インフラセットアップ手順追加）
 - Infrastructure changes:
   - Vector Search API有効化
