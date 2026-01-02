@@ -10,7 +10,7 @@
 - [x] 0.4 spec delta作成（specs/knowledge-gateway/spec.md）
 - [x] 0.5 `openspec validate add-firestore-persistence --strict`
 - [x] 0.6 docs/roadmap.md更新（Vertex AI Search計画追記）
-- [ ] 0.7 **PR #1作成**
+- [x] 0.7 **PR #1作成**
 
 ## 1. インフラ基盤整備（Stage 2: PR #2a デプロイ基盤）
 
