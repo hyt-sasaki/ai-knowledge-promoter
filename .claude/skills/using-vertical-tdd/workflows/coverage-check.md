@@ -11,10 +11,17 @@ spec.mdに記述された要件（Requirements）と各Scenarioが、verify.md�
 | Step 2 | verify.md作成後 | 統合テストのカバレッジ確認 |
 | Step 3 | GREEN確認後 | スケルトン実装後の再確認 |
 | Step 5 | Archive前 | ユニットテスト含む最終確認 |
+| Step 5後 | verify.md昇格後 | マージ後の正式版カバレッジ確認 |
 
 ## 配置場所
 
+### 開発中（change内）
 `openspec/changes/<change-id>/coverage.md`
+
+### 正式版（昇格後）
+`openspec/specs/<capability>/coverage.md`
+
+**注**: verify.mdと同時に昇格します。詳細は [verify-promotion.md](verify-promotion.md) を参照。
 
 ## カバレッジチェック手順
 
@@ -172,6 +179,33 @@ Archive前の最終カバレッジチェックを実行します。
 [coverage.md最終結果を表示]
 
 すべてのScenarioがカバーされていることを確認後、Archiveを実行します。
+```
+
+### Step 5後: verify.md昇格後（マージ後カバレッジ確認）
+
+```
+verify.md正式版昇格（マージ）が完了しました。マージ後のカバレッジを確認します。
+
+## 入力ファイル
+1. 正式版spec.md: openspec/specs/<capability>/spec.md
+2. 正式版verify.md: openspec/specs/<capability>/verify.md
+
+## 確認手順
+1. 正式版spec.mdのすべてのRequirementsとScenariosを抽出
+2. 正式版verify.mdのテストケースを抽出
+3. マッピング分析を実行
+4. カバレッジ100%を確認
+
+## ブロッキングルール
+- すべてのRequirementが「Covered」であること
+- 「Uncovered Items」が空であること
+
+## カバレッジ不足の場合
+1. verify.mdにテストケースを追加
+2. 再度マージ後カバレッジを確認
+3. 100%カバレッジ達成後にArchiveを続行
+
+詳細は [verify-promotion.md](verify-promotion.md) を参照。
 ```
 
 ## よくある質問

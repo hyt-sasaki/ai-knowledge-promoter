@@ -99,3 +99,107 @@ gcloud services list --enabled --filter="name:(run.googleapis.com OR cloudbuild.
 ```sh {"excludeFromRunAll":"true","name":"delete-service"}
 gcloud run services delete knowledge-mcp-server --region asia-northeast1
 ```
+
+---
+
+# Phase 2: Vector Search 2.0 セットアップ
+
+Phase 2ではナレッジの永続化とセマンティック検索を実装します。
+Vertex AI Vector Search 2.0を使用し、Cloud Run Invoker認証でセキュアなアクセスを実現します。
+
+## Phase 2 設定情報
+
+| 項目 | 値 |
+|------|-----|
+| Vector Search リージョン | `us-central1` |
+| Collection名 | `knowledge` |
+| 認証方式 | Cloud Run Invoker + gcloud proxy |
+
+## Phase 2.1 Vector Search API有効化
+
+```sh {"name":"enable-vector-search-apis"}
+gcloud services enable vectorsearch.googleapis.com aiplatform.googleapis.com \
+    --project "ai-knowledge-promoter"
+```
+
+## Phase 2.2 Cloud Run IAM設定
+
+Vector SearchにアクセスするためのIAM権限を付与します。
+
+```sh {"name":"setup-iam"}
+PROJECT_ID=$(gcloud config get-value project)
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
+  --role="roles/aiplatform.user"
+```
+
+## Phase 2.3 Collection作成
+
+Collection作成スクリプトを実行します（初回1回のみ）。
+
+```sh {"cwd":"../mcp-server","name":"create-collection"}
+GCP_PROJECT_ID=ai-knowledge-promoter uv run python scripts/create_collection.py
+```
+
+## Phase 2.4 Cloud Run認証設定変更
+
+認証を必須に変更します（`--no-allow-unauthenticated`）。
+
+```sh {"cwd":"../mcp-server","name":"deploy-cloud-run-authenticated"}
+gcloud run deploy knowledge-mcp-server \
+  --source . \
+  --region us-central1 \
+  --no-allow-unauthenticated \
+  --quiet
+```
+
+## Phase 2.5 gcloud proxy接続
+
+ローカルからCloud Runに接続するためのプロキシを起動します。
+
+```sh {"background":"true","name":"start-proxy"}
+gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
+```
+
+## Phase 2.6 プロキシ経由でヘルスチェック
+
+```sh {"name":"test-health-via-proxy"}
+curl -s "http://localhost:3000/health"
+```
+
+## Phase 2 トラブルシューティング
+
+### Vector Search APIが有効か確認
+
+```sh {"excludeFromRunAll":"true","name":"check-vector-search-api"}
+gcloud services list --enabled --filter="name:(vectorsearch.googleapis.com OR aiplatform.googleapis.com)"
+```
+
+### IAM設定を確認
+
+```sh {"excludeFromRunAll":"true","name":"check-iam"}
+PROJECT_ID=$(gcloud config get-value project)
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+
+gcloud projects get-iam-policy $PROJECT_ID \
+  --flatten="bindings[].members" \
+  --filter="bindings.members:serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
+  --format="table(bindings.role)"
+```
+
+### Collectionの状態を確認
+
+```sh {"cwd":"../mcp-server","excludeFromRunAll":"true","name":"check-collection"}
+GCP_PROJECT_ID=ai-knowledge-promoter uv run python -c "
+import os
+from google.cloud import vectorsearch_v1beta
+project_id = os.environ['GCP_PROJECT_ID']
+location = os.environ.get('GCP_LOCATION', 'us-central1')
+client = vectorsearch_v1beta.VectorSearchServiceClient()
+collections = client.list_collections(parent=f'projects/{project_id}/locations/{location}')
+for c in collections:
+    print(f'{c.name}: {c.state}')
+"
+```
