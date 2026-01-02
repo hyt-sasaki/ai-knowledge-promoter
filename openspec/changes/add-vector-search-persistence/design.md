@@ -392,8 +392,8 @@ gcloud run deploy knowledge-mcp-server \
 
 - [x] 認証方式 → Cloud Run Invoker + gcloud proxy
 - [x] データストア → Vector Search 2.0
-- [ ] リージョン → us-central1（asia-northeast1サポートは要確認）
-- [ ] IAM権限 → roles/aiplatform.user（要確認）
+- [x] リージョン → us-central1を使用（公式ドキュメントで確認済み。asia-northeast1は未確認だが、us-central1で問題なし）
+- [x] IAM権限 → roles/aiplatform.userで十分（Cloud RunサービスアカウントがVector Searchと連携するのに必要な権限を含む）
 
 ## 参考リンク
 
