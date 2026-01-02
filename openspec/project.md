@@ -15,8 +15,7 @@
 
 ### Infrastructure
 - Google Cloud Run（MCPサーバーホスティング）
-- Firestore（ナレッジデータストア - レプリカ）
-- Vertex AI Search（高度な検索機能）
+- Vertex AI Vector Search 2.0（ナレッジデータストア - レプリカ）
 - Vertex AI Agent Engine（Remote Knowledge Agent）
 
 ### Local Agent
@@ -63,13 +62,13 @@
 - **promoted**: GitHubに昇格済み
 
 ### 同期方向
-- GitHub → Firestore: GitHub Actionsによるプッシュ型同期
-- Firestore → GitHub: Remote Agentによる昇格PR作成
+- GitHub → Vector Search 2.0: GitHub Actionsによるプッシュ型同期
+- Vector Search 2.0 → GitHub: Remote Agentによる昇格PR作成
 
 ## Important Constraints
 
 - GitHubがSSoT（Single Source of Truth）
-- Firestoreはあくまでレプリカ
+- Vector Search 2.0はあくまでレプリカ
 - MCPサーバーは認証付きで公開（将来的にWorkload Identity）
 - コスト効率を意識した設計
 
@@ -77,8 +76,7 @@
 
 - Google Cloud Platform
   - Cloud Run
-  - Firestore
-  - Vertex AI Search
+  - Vertex AI Vector Search 2.0
   - Vertex AI Agent Engine
 - GitHub API
 - MCP Protocol
