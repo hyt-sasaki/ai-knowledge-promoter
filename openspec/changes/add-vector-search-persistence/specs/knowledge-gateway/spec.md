@@ -42,7 +42,8 @@ Local Agentが蓄積されたナレッジを検索するためのエントリポ
 - **THEN** Vector Search 2.0からセマンティック検索が実行される
 - **AND** 成功レスポンスが返される
 - **AND** 検索結果のリスト（空可）が返される
-- **AND** 各結果にはid, title, content, score が含まれる
+- **AND** 各結果には最低限 id, title, content, score が含まれる
+- **AND** 各結果には tags, source, status も含まれる場合がある（実装依存）
 - **AND** scoreはセマンティック検索の類似度スコアを表す
 
 #### Scenario: ナレッジ検索失敗（必須パラメータ不足）

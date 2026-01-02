@@ -41,6 +41,7 @@ Vertex AI Vector Search 2.0を使って実際にデータを永続化・検索�
   - `mcp-server/src/mcp_server/domain/repositories.py`（KnowledgeRepository Protocol）
   - `mcp-server/src/mcp_server/infrastructure/__init__.py`
   - `mcp-server/src/mcp_server/infrastructure/vector_search.py`（VectorSearchKnowledgeRepository）
+  - `openspec/changes/add-vector-search-persistence/verify.md`（垂直TDD検証手順）
 - Updated docs:
   - `docs/roadmap.md`（Phase 2をVector Search 2.0に変更、Phase 2.5を削除）
   - `openspec/project.md`（InfrastructureセクションをVector Search 2.0に更新）
