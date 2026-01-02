@@ -68,8 +68,16 @@ Firestore はスキーマレスだが、アプリケーション側で以下の�
 
 - [ ] **2.1 Firestore データモデリングと実装**
   - [ ] `schema_version` を含むドキュメント操作クラスの作成
-- [ ] **2.2 Vertex AI Search の統合**
+  - [ ] Cloud Run Invoker認証の有効化
+  - [ ] Firestoreへの部分一致検索実装
 - [ ] **[垂直統合Check 1]** 保存したメモが検索結果として返ってくるか確認
+
+### Phase 2.5 (Optional): 高度な検索機能
+
+- [ ] **2.5.1 Vertex AI Search の統合**
+  - Firestoreからの定期インポート（手動）
+  - ベクトル検索による曖昧検索
+  - セマンティック検索機能
 
 ### Phase 3: Remote Agent による知的自動化
 
