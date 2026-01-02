@@ -69,7 +69,7 @@ Firestore はスキーマレスだが、アプリケーション側で以下の�
 - [ ] **2.1 Firestore データモデリングと実装**
   - [ ] `schema_version` を含むドキュメント操作クラスの作成
   - [ ] Cloud Run Invoker認証の有効化
-  - [ ] Firestoreへの部分一致検索実装
+  - [ ] Firestoreへの前方一致検索実装
 - [ ] **[垂直統合Check 1]** 保存したメモが検索結果として返ってくるか確認
 
 ### Phase 2.5 (Optional): 高度な検索機能

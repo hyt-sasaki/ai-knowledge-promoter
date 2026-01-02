@@ -5,14 +5,14 @@
 Phase 2ではナレッジの永続化と検索を実装する。
 当初Vertex AI Searchの統合も検討したが、調査の結果：
 - FirestoreからのリアルタイムsyncはVertex AI Searchで不可
-- 部分一致検索はFirestoreのクエリで十分
+- 前方一致検索はFirestoreのクエリで十分
 
 ## Goals / Non-Goals
 
 ### Goals
 
 - ナレッジをFirestoreに永続化
-- 部分一致検索の実装
+- 前方一致検索の実装
 - schema_versionによるスキーマ管理
 - Cloud Run Invoker認証の有効化
 
@@ -67,14 +67,14 @@ gcloud run services proxy knowledge-mcp-server --region asia-northeast1 --port=3
 | title | string | ナレッジのタイトル |
 | content | string | ナレッジ本文 |
 | tags | array | タグのリスト |
-| user_id | string | 開発者識別子 |
+| user_id | string | 開発者識別子（Phase 2では固定値 "anonymous"） |
 | source | string | personal / team |
 | status | string | draft / proposed / promoted |
 | path | string | GitHubファイルパス |
 | schema_version | number | 初期値: 1 |
 | updated_at | timestamp | 最終更新日時 |
 
-### Decision 3: Firestoreクエリによる部分一致検索
+### Decision 3: Firestoreクエリによる前方一致検索
 
 **Rationale**:
 - Phase 2スコープでは十分な検索精度
@@ -264,7 +264,7 @@ class Knowledge:
     schema_version: int = 1
     updated_at: Optional[datetime] = None
     path: Optional[str] = None
-    score: Optional[float] = None  # 検索スコア（検索結果用）
+    score: Optional[float] = None  # 検索スコア（Vertex AI Search用、Firestoreでは常にNone）
 
 @dataclass
 class SearchResult:
@@ -388,7 +388,7 @@ class FirestoreKnowledgeRepository(KnowledgeRepository):
             schema_version=data.get("schema_version", 1),
             updated_at=data.get("updated_at"),
             path=data.get("path"),
-            score=1.0,  # Firestoreは検索スコアなし
+            score=None,  # Firestoreは検索スコアを返さない
         )
 ```
 
@@ -431,7 +431,7 @@ gcloud run deploy knowledge-mcp-server \
 
 ## Risks / Trade-offs
 
-- Firestoreの部分一致検索は前方一致のみ → 将来Vertex AI Searchで改善予定
+- Firestoreの前方一致検索には中間一致・後方一致の制限あり → 将来Vertex AI Searchで改善予定
 - gcloud CLIが必要 → 開発者向けなので許容範囲
 
 ## Open Questions

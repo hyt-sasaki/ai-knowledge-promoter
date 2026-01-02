@@ -11,7 +11,7 @@ Firestoreを使って実際にデータを永続化・検索できるように�
 ## What Changes
 
 - save_knowledgeツールがFirestoreにナレッジを永続化する
-- search_knowledgeツールがFirestoreから部分一致検索を行う
+- search_knowledgeツールがFirestoreから前方一致検索を行う
 - Repositoryパターンによるインフラ層の抽象化（将来のデータストア変更に備える）
 - Cloud Run認証を`--no-allow-unauthenticated`に変更
 - ローカルからは`gcloud run services proxy`で接続
