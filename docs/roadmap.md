@@ -13,7 +13,7 @@
 
 * **MCP Server (Knowledge Gateway)**:
   * すべてのナレッジ操作のゲートウェイ。Cloud Run 上でホスティングされる。
-  * **Webhook Endpoint**: GitHub Actions からの同期リクエスト（HTTP POST）を受け付け、Markdown をパースして Firestore へ書き込む機能を備える。
+  * **Webhook Endpoint**: GitHub Actions からの同期リクエスト（HTTP POST）を受け付け、Markdown をパースして Vector Search 2.0 へ書き込む機能を備える。
 
 * **Local Coding Agent (Claude Code)**:
   * MCP 経由でナレッジの保存・検索を行う。
@@ -26,35 +26,48 @@
 
 ### 1.3 データ同期戦略 (Synchronization)
 
-GitHub Actions を利用した、GitHub → Firestore へのプッシュ型同期を採用する。
+GitHub Actions を利用した、GitHub → Vector Search 2.0 へのプッシュ型同期を採用する。
 
 1. **Trigger**: `main` ブランチの特定のディレクトリ（例: `docs/*.md`）に変更がマージされる。
 2. **GitHub Actions**:
    * 変更されたファイルの内容を取得。
    * MCP サーバーの同期用エンドポイント（例: `POST /sync`）に対してデータを送信。
 3. **MCP Server**:
-   * 受信した内容を Firestore の `status: promoted`, `source: team` として保存・更新する。
+   * 受信した内容を Vector Search 2.0 の `status: promoted`, `source: team` として保存・更新する。
 
-### 1.4 データモデル (Firestore)
+### 1.4 データモデル (Vector Search 2.0 Collection)
 
-Firestore はスキーマレスだが、アプリケーション側で以下の構造を維持する。
+Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddingsにより、ベクトルは自動生成される。
 
 | フィールド名 | 型 | 説明 |
 | ----- | ----- | ----- |
 | `id` | string | ドキュメントID |
+| `title` | string | ナレッジのタイトル |
 | `content` | string | ナレッジの本文 |
+| `tags` | array | タグのリスト |
 | `user_id` | string | `system:github` または開発者の識別子 |
 | `source` | string | `personal` / `team` |
 | `status` | string | `draft` / `proposed` / `promoted` |
 | `path` | string | GitHub上のファイルパス (同期時のキー) |
-| `schema_version` | number | **データ構造のバージョン。初期値は `1`。** |
-| `updated_at` | timestamp | 最終更新日時 |
+| `created_at` | string | 作成日時（ISO 8601） |
+| `updated_at` | string | 最終更新日時（ISO 8601） |
 
-#### スキーマ管理の方針
+#### ベクトルスキーマ
 
-* **追加**: 新しいフィールドを追加する場合、コード側でデフォルト値を設定し、古いドキュメントが存在しなくても動作するようにする。
-* **変更/削除**: 原則として「削除」は行わず、`schema_version` をインクリメントした上で、新旧フィールドを並存させる期間を設ける。
-* **インデックス**: ソートやフィルタに使用するフィールドを追加した後は、既存ドキュメントへの一括書き込み（Migration）を検討する。
+```python
+{
+    "content_embedding": {
+        "dense_vector": {
+            "dimensions": 768,
+            "vertex_embedding_config": {
+                "model_id": "gemini-embedding-001",
+                "text_template": "{title} {content}",
+                "task_type": "RETRIEVAL_DOCUMENT",
+            },
+        },
+    },
+}
+```
 
 ## 2. 開発ロードマップ (Roadmap & Tasks)
 
@@ -66,10 +79,17 @@ Firestore はスキーマレスだが、アプリケーション側で以下の�
 
 ### Phase 2: 個人ナレッジの永続化と検索
 
-- [ ] **2.1 Firestore データモデリングと実装**
-  - [ ] `schema_version` を含むドキュメント操作クラスの作成
-- [ ] **2.2 Vertex AI Search の統合**
-- [ ] **[垂直統合Check 1]** 保存したメモが検索結果として返ってくるか確認
+- [ ] **2.1 Vector Search 2.0 データモデリングと実装**
+  - [ ] Collection作成（Auto-Embeddings設定含む）
+  - [ ] Cloud Run Invoker認証の有効化
+  - [ ] Repositoryパターンによるインフラ層の抽象化
+- [ ] **2.2 セマンティック検索の実装**
+  - [ ] save_knowledgeツールでVector Search 2.0に永続化
+  - [ ] search_knowledgeツールでセマンティック検索
+- [ ] **[垂直統合Check 1]** 保存したメモがセマンティック検索結果として返ってくるか確認
+
+**Phase 2での制限事項（後続Phaseで対応）:**
+- `user_id`: 固定値 "anonymous" を使用（Phase 3で実ユーザーID対応）
 
 ### Phase 3: Remote Agent による知的自動化
 
@@ -95,5 +115,5 @@ Firestore はスキーマレスだが、アプリケーション側で以下の�
 * **Knowledge Gateway**: MCP Server (Python / FastAPI + FastMCP)
 * **Remote Agent**: Vertex AI Agent Engine
 * **CI/CD & Sync**: GitHub Actions + Workload Identity Federation
-* **Infrastructure**: Cloud Run, Firestore, Vertex AI Search
+* **Infrastructure**: Cloud Run, Vertex AI Vector Search 2.0
 * **VCS**: GitHub (SSoT)
