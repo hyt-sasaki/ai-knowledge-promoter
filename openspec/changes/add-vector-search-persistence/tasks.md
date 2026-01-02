@@ -33,18 +33,19 @@
 
 ## 2. スケルトン実装（Stage 2: PR #2b スケルトン）
 
-- [ ] 2.1 verify.md作成（Runme.dev形式）
-- [ ] 2.2 REDステータス確認
-- [ ] 2.3 google-cloud-vectorsearch依存をpyproject.tomlに追加
-- [ ] 2.4 domain/パッケージ作成（__init__.py含む）
-- [ ] 2.5 domain/models.py作成（Knowledge, SearchResult dataclass）
-- [ ] 2.6 domain/repositories.py作成（KnowledgeRepository Protocol: save, search, get）
-- [ ] 2.7 infrastructure/パッケージ作成（__init__.py含む）
-- [ ] 2.8 infrastructure/vector_search.py作成（VectorSearchKnowledgeRepository）
-- [ ] 2.9 save_knowledge.pyをRepository経由で保存に更新
-- [ ] 2.10 search_knowledge.pyをRepository経由で検索に更新
-- [ ] 2.11 GREENステータス確認（verify.md全パス）
-- [ ] 2.12 **PR作成**
+- [x] 2.1 verify.md作成（Runme.dev形式）
+- [x] 2.2 REDステータス確認
+- [x] 2.3 google-cloud-vectorsearch依存をpyproject.tomlに追加（PR #14で完了済み）
+- [x] 2.4 domain/パッケージ作成（__init__.py含む）
+- [x] 2.5 domain/models.py作成（Knowledge, SearchResult dataclass）
+- [x] 2.6 domain/repositories.py作成（KnowledgeRepository Protocol: save, search, get, delete）
+- [x] 2.7 infrastructure/パッケージ作成（__init__.py含む）
+- [x] 2.8 infrastructure/vector_search.py作成（VectorSearchKnowledgeRepository）
+- [x] 2.9 save_knowledge.pyをRepository経由で保存に更新
+- [x] 2.10 search_knowledge.pyをRepository経由で検索に更新
+- [x] 2.11 delete_knowledge.py新規作成（Repository経由で削除）
+- [x] 2.12 GREENステータス確認（verify.md全パス）
+- [ ] 2.13 **PR作成**
 
 ## 3. ロジック実装（Stage 2: PR #3 ロジック）
 
