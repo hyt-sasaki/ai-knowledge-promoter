@@ -45,19 +45,13 @@
 - [x] 2.10 search_knowledge.pyをRepository経由で検索に更新
 - [x] 2.11 delete_knowledge.py新規作成（Repository経由で削除）
 - [x] 2.12 GREENステータス確認（verify.md全パス）
-- [x] 2.13 **PR作成** → PR #15
+- [x] 2.14 ユニットテスト追加
+- [x] 2.15 エラーハンドリング強化
+- [ ] 2.16 **PR作成** → PR #15
 
-## 3. ロジック実装（Stage 2: PR #3 ロジック）
+## 3. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
 
-- [ ] 3.1 セマンティック検索の実装
-- [ ] 3.2 created_at, updated_at, user_id等の自動付与
-- [ ] 3.3 エラーハンドリング強化
-- [ ] 3.4 ユニットテスト追加
-- [ ] 3.5 **PR作成**
-
-## 4. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
-
-- [ ] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
-- [ ] 4.2 全テスト検証
-- [ ] 4.3 `openspec archive add-vector-search-persistence --yes`
-- [ ] 4.4 **PR作成**
+- [ ] 3.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
+- [ ] 3.2 全テスト検証
+- [ ] 3.3 `openspec archive add-vector-search-persistence --yes`
+- [ ] 3.4 **PR作成**
