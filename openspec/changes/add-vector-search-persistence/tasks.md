@@ -45,7 +45,7 @@
 - [x] 2.10 search_knowledge.pyをRepository経由で検索に更新
 - [x] 2.11 delete_knowledge.py新規作成（Repository経由で削除）
 - [x] 2.12 GREENステータス確認（verify.md全パス）
-- [ ] 2.13 **PR作成**
+- [x] 2.13 **PR作成** → PR #15
 
 ## 3. ロジック実装（Stage 2: PR #3 ロジック）
 
