@@ -404,8 +404,8 @@ echo "Proxy stopped"
 # 既存の登録を削除（存在する場合）
 claude mcp remove knowledge-mcp 2>/dev/null || true
 
-# MCPサーバーを追加
-claude mcp add knowledge-mcp --transport sse -- http://localhost:3000/sse
+# MCPサーバーを追加（HTTP transport + /mcp エンドポイント）
+claude mcp add knowledge-mcp --transport http http://localhost:3000/mcp
 echo "MCP server registered"
 ```
 
