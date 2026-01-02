@@ -51,6 +51,8 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 ### Stage 3: Archiving Changes（アーカイブ）
 
 - **Step 5: Archive & Release** → [workflows/step5-archive-release.md](workflows/step5-archive-release.md)
+  - spec.md TBDチェック → [workflows/tbd-check.md](workflows/tbd-check.md)
+  - verify.md / coverage.md正式版昇格 → [workflows/verify-promotion.md](workflows/verify-promotion.md)
   - 全テスト検証、アーカイブ、フィーチャーフラグ有効化、**PR #N**（リリース）
 
 ## テンプレート

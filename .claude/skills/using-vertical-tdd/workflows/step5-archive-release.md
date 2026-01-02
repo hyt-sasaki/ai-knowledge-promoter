@@ -15,10 +15,13 @@
 - [ ] verify.mdがすべてGREEN（runme run verify-all、統合テスト）
 - [ ] テストピラミッド確認（ユニット >> 統合）
 - [ ] **coverage.md最終確認・100%カバレッジ達成**
+- [ ] **spec.md TBDチェック完了（TBD箇所なし）**
 - [ ] openspec validate <change-id> --strict がパス
 - [ ] フィーチャーフラグ動作確認（ON/OFF両方、フラグ使用時のみ）
 - [ ] design.md の Open Questions がすべて解決済み
 - [ ] tasks.md のすべてのタスクが完了（`- [x]`）
+- [ ] **verify.md / coverage.md正式版昇格準備完了**
+- [ ] **マージ後カバレッジ100%確認済み（coverage.md更新済み）**
 ```
 
 ## Step 1: 全テスト検証
@@ -78,6 +81,42 @@ runme run verify-all
 
 詳細は [coverage-check.md](coverage-check.md) を参照。
 
+## Step 1.5: spec.md TBDチェック
+
+### 目的
+
+archive前にspec.mdの未定義箇所（TBD）を検出し、ブロックします。TBDが残っている場合、archiveを実行してはいけません。
+
+### チェック対象
+
+1. **正式版spec.md**: `openspec/specs/*/spec.md`
+2. **change内spec.md**: `openspec/changes/<change-id>/specs/*/spec.md`
+
+### チェックコマンド
+
+```bash
+# 正式版とchange内のspec.mdをチェック
+grep -rn -E "(TBD|tbd|To Be Determined|TODO:|FIXME:)" \
+  openspec/specs/*/spec.md \
+  openspec/changes/<change-id>/specs/*/spec.md
+
+# 期待: 結果なし（TBD箇所がない）
+```
+
+### ブロッキングルール
+
+- TBD箇所が1つでもある場合、archiveを実行しない
+- TBD箇所を適切な内容で置換してから再チェック
+
+### TBDが見つかった場合
+
+1. TBD箇所を特定
+2. 適切な内容で置換
+3. コミット: `git commit -m "docs: resolve TBD in spec.md"`
+4. 再チェック
+
+詳細は [tbd-check.md](tbd-check.md) を参照。
+
 ## Step 2: OpenSpec検証
 
 ### 厳格モードで検証
@@ -126,7 +165,107 @@ curl -X POST http://localhost:3000/api/users ...
 # 期待: 正常なレスポンス（実装された機能が動作）
 ```
 
+## Step 3.5: verify.md / coverage.md 正式版昇格
+
+### 目的
+
+change内のverify.mdとcoverage.mdを正式版として`specs/<capability>/`に昇格します。
+
+### 昇格対象の確認
+
+```bash
+# change内のverify.mdとcoverage.mdを確認
+ls openspec/changes/<change-id>/verify.md
+ls openspec/changes/<change-id>/coverage.md
+
+# 対象capabilityの確認
+ls openspec/changes/<change-id>/specs/
+
+# 期待: verify.mdとcoverage.mdが存在し、対象capabilityが明確
+```
+
+### 既存ファイルの確認
+
+```bash
+# 正式版verify.md/coverage.mdの存在確認
+for cap in $(ls openspec/changes/<change-id>/specs/); do
+  echo "=== $cap ==="
+  if [ -f "openspec/specs/$cap/verify.md" ]; then
+    echo "Existing verify.md found → マージ必要"
+  else
+    echo "No existing verify.md → 新規昇格"
+  fi
+  if [ -f "openspec/specs/$cap/coverage.md" ]; then
+    echo "Existing coverage.md found → 更新必要"
+  else
+    echo "No existing coverage.md → 新規昇格"
+  fi
+done
+```
+
+### ケース1: 既存ファイルなし（新規昇格）
+
+```bash
+# verify.mdとcoverage.mdを正式版にコピー
+cp openspec/changes/<change-id>/verify.md openspec/specs/<capability>/verify.md
+cp openspec/changes/<change-id>/coverage.md openspec/specs/<capability>/coverage.md
+
+# コミット
+git add openspec/specs/<capability>/verify.md
+git add openspec/specs/<capability>/coverage.md
+git commit -m "docs: promote verify.md and coverage.md to specs/<capability>"
+```
+
+### ケース2: 既存verify.mdあり（マージ必要）
+
+エージェントによるインテリジェントマージを実行:
+
+1. 両方のverify.mdを読み込み
+2. マージパターンを判定:
+   - **パターン1（新規追加）**: 新しいテストを既存の後に追加
+   - **パターン2（微調整）**: 同じシナリオの拡張 → 既存コマンドを更新
+   - **パターン3（置換）**: シナリオが根本的に変更 → 既存テストを置換
+3. セクション構造を維持してマージ
+4. 競合解決・レビュー
+
+詳細は [verify-promotion.md](verify-promotion.md) を参照。
+
+### ケース3: 既存coverage.mdあり（更新）
+
+coverage.mdはverify.mdマージ後に正式版spec.md + 正式版verify.mdから再生成します。既存のcoverage.mdは新しい内容で置き換えられます。
+
+### マージ後カバレッジ確認とcoverage.md更新
+
+マージ後の正式版verify.mdで改めてカバレッジを確認し、coverage.mdを更新:
+
+```bash
+# テスト一覧を確認
+runme list --filename openspec/specs/<capability>/verify.md
+
+# 全テスト実行
+runme run --all --filename openspec/specs/<capability>/verify.md
+
+# 期待: すべてのテストがGREEN
+```
+
+**ブロッキングルール**:
+- マージ後verify.mdが正式版spec.mdの全Scenarioをカバーしていること
+- 「Uncovered Items」が0であること
+- カバレッジ不足の場合はテストを追加
+
+詳細は [coverage-check.md](coverage-check.md) を参照。
+
+### 昇格コミット（マージの場合）
+
+```bash
+git add openspec/specs/<capability>/verify.md
+git add openspec/specs/<capability>/coverage.md
+git commit -m "docs: merge and promote verify.md and coverage.md to specs/<capability>"
+```
+
 ## Step 4: OpenSpecアーカイブ
+
+**前提条件**: Step 3.5（verify.md / coverage.md正式版昇格）が完了していること
 
 ### アーカイブ実行
 
@@ -155,6 +294,12 @@ ls openspec/changes/archive/
 openspec spec list --long
 
 # 期待: アーカイブしたchangeのrequirementsがspecsに反映されている
+
+# verify.md/coverage.md昇格確認
+ls openspec/specs/<capability>/verify.md
+ls openspec/specs/<capability>/coverage.md
+
+# 期待: verify.mdとcoverage.mdが正式版として配置されている
 ```
 
 ### アーカイブ後の検証
@@ -425,8 +570,11 @@ Step 5完了前に確認：
 - [ ] verify.mdがすべてGREEN（統合テスト）
 - [ ] テストピラミッド確認（ユニット >> 統合）
 - [ ] **coverage.md最終確認・100%カバレッジ達成**
+- [ ] **spec.md TBDチェック完了（TBD箇所なし）**
 - [ ] `openspec validate <change-id> --strict` がパス
 - [ ] フィーチャーフラグ動作確認（ON/OFF、フラグ使用時のみ）
+- [ ] **verify.md / coverage.md正式版昇格完了**
+- [ ] **マージ後カバレッジ100%確認済み（coverage.md更新済み）**
 - [ ] `openspec archive <change-id>` 実行済み
 - [ ] アーカイブ後の `openspec validate --strict` がパス
 - [ ] フィーチャーフラグ有効化（または削除、フラグ使用時のみ）
@@ -504,6 +652,10 @@ A: はい。OpenSpecアーカイブ、フィーチャーフラグパターン、
 ```bash
 git add openspec/changes/archive/ openspec/specs/
 git commit -m "docs: archive OpenSpec change for <feature-name>"
+
+# verify.md/coverage.md昇格もコミットに含める（まだコミットしていない場合）
+git add openspec/specs/<capability>/verify.md
+git add openspec/specs/<capability>/coverage.md
 ```
 
 詳細は [commit-strategy.md](commit-strategy.md) を参照。
