@@ -29,7 +29,7 @@
 - [x] 1.5 Cloud Run IAM設定
 - [x] 1.6 Cloud Run認証設定変更（--no-allow-unauthenticated）
 - [x] 1.7 gcloud proxy動作確認
-- [ ] 1.8 **PR作成**
+- [x] 1.8 **PR作成** → PR #14
 
 ## 2. スケルトン実装（Stage 2: PR #2b スケルトン）
 
