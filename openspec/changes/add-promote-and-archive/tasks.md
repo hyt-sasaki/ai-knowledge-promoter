@@ -24,7 +24,7 @@
 ## 2. スケルトン実装（Stage 2: PR #2b スケルトン）
 
 ### 2.1 verify.md作成
-- [ ] 2.1.1 verify.md作成（Runme.dev形式）
+- [x] 2.1.1 verify.md作成（Runme.dev形式）
 - [ ] 2.1.2 REDステータス確認
 
 ### 2.2 モデル・Repository拡張
