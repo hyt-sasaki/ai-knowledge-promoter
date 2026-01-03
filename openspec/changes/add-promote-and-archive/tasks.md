@@ -8,7 +8,7 @@
 - [x] 0.2 tasks.md作成
 - [x] 0.3 spec delta作成（specs/knowledge-gateway/spec.md）
 - [x] 0.4 `openspec validate add-promote-and-archive --strict`
-- [ ] 0.5 **PR #1作成**
+- [x] 0.5 **PR #1作成** https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/18
 
 ---
 
