@@ -14,9 +14,9 @@
 
 ## 1. インフラ基盤整備（Stage 2: PR #2a デプロイ基盤）
 
-- [ ] 1.1 scripts/create_archived_collection.py作成
-- [ ] 1.2 archived_knowledgeコレクション作成実行
-- [ ] 1.3 infra/README.md更新（archived_knowledgeコレクション作成手順追加）
+- [x] 1.1 scripts/create_archived_collection.py作成
+- [x] 1.2 archived-knowledgeコレクション作成実行
+- [x] 1.3 infra/README.md更新（archived-knowledgeコレクション作成手順追加）
 - [ ] 1.4 **PR #2a作成**
 
 ---
