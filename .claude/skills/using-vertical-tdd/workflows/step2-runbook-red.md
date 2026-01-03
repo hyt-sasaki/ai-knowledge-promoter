@@ -376,6 +376,75 @@ echo "⏳ Pending: test-save-knowledge (PR #2b)"
 
 **重要**: スキップしたテストごとに解除タスクを作成し、後続PRで確実に解除します。
 
+## Auto-Test Targets抽出ガイドライン
+
+verify.md作成時に、spec.mdの各Scenarioをユニットテスト候補として「Auto-Test Targets」セクションに記載します。
+
+### GIVEN/WHEN/THENからの抽出手順
+
+#### Step 1: spec.mdのScenarioをリスト化
+
+spec.mdからGIVEN/WHEN/THEN形式で記述されたScenarioを抽出します。
+
+```markdown
+Requirement: Save Knowledge Tool
+  Scenario 1: ナレッジ保存成功
+    - WHEN: save_knowledge ツールが呼び出される
+    - AND: content パラメータが提供される
+    - THEN: 成功レスポンスが返される
+
+  Scenario 2: ナレッジ保存失敗（必須パラメータ不足）
+    - WHEN: save_knowledge ツールが呼び出される
+    - AND: content パラメータが空
+    - THEN: エラーレスポンスが返される
+```
+
+#### Step 2: 各Scenarioのテストタイプを判定
+
+以下の判定基準で、統合テスト（verify.md）とユニットテスト（Auto-Test Targets）に分類します。
+
+| テストタイプ | 判定基準 | 例 |
+|-------------|----------|-----|
+| 統合テスト（verify.md） | 外部依存（DB/API/ファイルI/O）、複数コンポーネント結合 | API経由のCRUD操作 |
+| ユニットテスト（Auto-Test Targets） | 純粋関数、ビジネスロジック、バリデーション | 入力検証、変換処理 |
+
+**判定フローチャート**:
+
+```
+Scenarioを分析
+    ↓
+外部リソース（DB/API/ファイル）にアクセスする？
+    ├─ Yes → 統合テスト（verify.md）
+    └─ No
+         ↓
+    複数コンポーネントを結合する？
+    ├─ Yes → 統合テスト（verify.md）
+    └─ No → ユニットテスト（Auto-Test Targets）
+```
+
+#### Step 3: Auto-Test Targetsセクションへの記載
+
+verify.mdの「Auto-Test Targets」セクションに以下の形式で記載します。
+
+```markdown
+## Auto-Test Targets
+
+### Primary Test Cases（主要ケース - Step 2抽出）
+
+| Requirement | Scenario | WHEN/THEN | Priority | Reason |
+|-------------|----------|-----------|----------|--------|
+| Save Knowledge | 保存成功 | content提供 → 成功レスポンス | P1 | 正常系コアパス |
+| Save Knowledge | 空content | content空 → エラー | P2 | バリデーション |
+```
+
+**Priority（優先順位）の基準**:
+
+| 優先度 | 種類 | 説明 |
+|--------|------|------|
+| P1 | 正常系（コアパス） | ビジネスロジックの核となるケース |
+| P2 | 致命的境界値 | システム障害につながる可能性のあるケース |
+| P3 | ビジネス例外 | 業務上重要だが致命的ではないケース |
+
 ## カバレッジチェック（verify.md作成後）
 
 verify.md作成後、spec.mdとのカバレッジをチェックします。

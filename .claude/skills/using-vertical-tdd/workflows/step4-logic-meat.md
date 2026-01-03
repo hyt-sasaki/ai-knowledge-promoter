@@ -4,6 +4,72 @@
 
 スケルトンの内部を本物のロジックに置き換えます。ユニットTDDサイクル（Red-Green-Refactor）を使用して、各関数・メソッドを実装します。
 
+**前提条件**: [Step 2](step2-runbook-red.md) でverify.mdの「Auto-Test Targets」セクションに主要テストケースが記載済みであること。
+
+## テストケース選定制約（過剰生成防止）
+
+テストケースを作成する際は、以下の制約を適用して過剰なテスト生成を防止します。
+
+### 制約1: C1（分岐網羅）を満たす最小限
+
+すべての分岐（if/else、switch/case等）を少なくとも1回は通過するケースのみを選定します。同じ分岐を複数回通過するテストは冗長として削除します。
+
+**例**:
+```python
+def validate_content(content: str) -> bool:
+    if not content:           # Branch 1: 空チェック
+        return False
+    if len(content) > 10000:  # Branch 2: 長さチェック
+        return False
+    return True               # Branch 3: 正常
+```
+
+**最小限のテストケース（3件）**:
+1. `content=""` → Branch 1 → False
+2. `content="x" * 10001` → Branch 2 → False
+3. `content="valid"` → Branch 3 → True
+
+### 制約2: 同値分割法による冗長排除
+
+同じ結果をもたらす入力は1つの代表値のみテストします。
+
+**例**:
+```
+「空」の同値クラス:
+- "" (空文字列)
+- None
+- "   " (空白のみ)
+
+→ 代表値: "" のみテスト（他は冗長）
+```
+
+### 制約3: 優先順位による絞り込み
+
+| 優先度 | 種類 | 上限 | 例 |
+|--------|------|------|-----|
+| P1 | 正常系（コアパス） | 1件 | 保存成功 |
+| P2 | 致命的境界値 | 2件 | 最大長超過、空入力 |
+| P3 | ビジネス例外 | 1件 | 重複エラー |
+
+**原則**: P1正常系1件 + P2境界値2件 + P3例外1件 = 最大4件程度
+
+### 制約4: インターフェースの振る舞いに集中
+
+内部実装の詳細ではなく、外部から見た入出力をテストします。プライベートメソッドの直接テストは避けます。
+
+**NG例**（内部実装詳細）:
+```python
+def test_internal_hash_algorithm():
+    assert _calculate_hash("data") == "expected_hash"
+```
+
+**OK例**（振る舞い）:
+```python
+def test_password_is_not_stored_in_plaintext():
+    user = create_user(password="secret123")
+    assert user.hashed_password != "secret123"
+```
+
 ## テスト戦略：テストピラミッド
 
 ### テストの役割分担
@@ -37,6 +103,181 @@
 - システム全体の動作確認
 
 **原則**: 可能な限りユニットテストで検証し、外部依存や結合コストが高いものだけverify.mdで確認します。
+
+## テストケース合意フェーズ（assert Falseパターン）
+
+### 目的
+
+テスト実装前にテストケース（テスト関数名）をAIとユーザーで合意し、過剰なテスト生成を防止します。
+
+### ワークフロー
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Phase 1: テストケース名の提案                                    │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. Auto-Test Targets（Step 2で洗い出し済み）を確認               │
+│ 2. 追加の異常系ケースを洗い出し                                  │
+│ 3. テスト選定制約を適用してケースを絞り込み                      │
+│ 4. `assert False` のみのテスト関数を作成                         │
+│ 5. ユーザーに確認を依頼                                          │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ Phase 2: ユーザー確認                                            │
+├─────────────────────────────────────────────────────────────────┤
+│ ユーザーが以下を確認：                                           │
+│ - テストケース名は適切か？                                       │
+│ - 過不足はないか？                                               │
+│ - 優先順位は正しいか？                                           │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ Phase 3: 合意後のテスト実装                                      │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. 合意したテストケースを1件ずつRED-GREEN-REFACTOR              │
+│ 2. `assert False` を本物のアサーションに置き換え                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### assert Falseパターンの例
+
+#### Phase 1: テストケース名の提案
+
+```python
+# tests/test_save_knowledge.py
+"""Save Knowledge ツールのユニットテスト。
+
+テストケース一覧（合意待ち）:
+- test_save_with_content_returns_id: content提供で保存成功
+- test_save_empty_content_raises_error: 空contentでバリデーションエラー
+- test_save_auto_generates_title: タイトル未指定時の自動生成
+"""
+
+import pytest
+
+
+class TestSaveKnowledge:
+    """Save Knowledge ツールのテスト。"""
+
+    def test_save_with_content_returns_id(self):
+        """正常系: content提供で保存成功。
+
+        spec.md Scenario: ナレッジ保存成功
+        """
+        assert False  # TODO: 合意後に実装
+
+    def test_save_empty_content_raises_error(self):
+        """異常系: 空contentでバリデーションエラー。
+
+        spec.md Scenario: ナレッジ保存失敗（必須パラメータ不足）
+        """
+        assert False  # TODO: 合意後に実装
+
+    def test_save_auto_generates_title(self):
+        """正常系: タイトル未指定時の自動生成。
+
+        追加理由: UI/UXとして必要な機能
+        """
+        assert False  # TODO: 合意後に実装
+```
+
+#### ユーザーへの確認メッセージ
+
+```markdown
+## テストケース合意確認
+
+以下のテストケースを提案します。過不足があればご指摘ください。
+
+### tests/test_save_knowledge.py
+
+| No | テスト関数名 | カテゴリ | 説明 | 根拠 |
+|----|-------------|---------|------|------|
+| 1 | `test_save_with_content_returns_id` | Primary | 正常系: 保存成功 | spec.md Scenario 1 |
+| 2 | `test_save_empty_content_raises_error` | Primary | 異常系: 空content | spec.md Scenario 2 |
+| 3 | `test_save_auto_generates_title` | Secondary | 正常系: タイトル自動生成 | 実装仕様 |
+
+### 選定制約の適用結果
+
+| 制約 | 適用結果 |
+|------|---------|
+| C1網羅 | 3ケースで主要分岐カバー |
+| 同値分割 | 空は代表値1件に統合 |
+| 優先順位 | Primary 2件 + Secondary 1件 |
+| インターフェース集中 | 入出力のみテスト |
+
+合意いただけますか？修正・追加・削除のご要望があればお知らせください。
+```
+
+#### Phase 3: 合意後の実装
+
+```python
+# assert False を本物のアサーションに置き換え
+def test_save_with_content_returns_id(self):
+    """正常系: content提供で保存成功。"""
+    self.mock_repository.save.return_value = Knowledge(
+        id="generated-id",
+        title="Test Title",
+        content="Test content",
+    )
+
+    result = self.save_knowledge(
+        title="Test Title",
+        content="Test content",
+    )
+
+    assert result["status"] == "saved"
+    assert result["id"] == "generated-id"
+```
+
+### テストケース合意チェックリスト
+
+```
+テストケース合意:
+- [ ] Auto-Test Targets（Step 2）を確認
+- [ ] 追加の異常系ケースを洗い出し
+- [ ] テスト選定制約を適用
+- [ ] `assert False` テストファイル作成
+- [ ] ユーザーに確認を依頼
+- [ ] 合意を取得
+- [ ] 合意後に本実装を開始
+```
+
+## Step 2との連携ガイドライン
+
+### 入力
+
+1. **Auto-Test Targets（Step 2で洗い出し済み）**
+   - verify.mdの「Auto-Test Targets」セクションを参照
+   - spec.mdのGIVEN/WHEN/THENから抽出済みの主要ケース
+
+2. **追加で洗い出す異常系**
+   - spec.mdに明記されていないが、実装上必要な異常系
+   - ただし選定制約を適用して最小限に
+
+### 追加ケース洗い出しの観点
+
+| 観点 | 例 | 追加基準 |
+|------|-----|---------|
+| 型エラー | None渡し、型不一致 | 動的型付け言語の場合のみ |
+| 境界値 | 最大長+1、0、負数 | 仕様に明記がない致命的なもののみ |
+| 状態依存 | 初期化前呼び出し | クラスメソッドの場合のみ |
+| 並行性 | 競合状態 | 並行処理が仕様の場合のみ |
+
+### 追加ケースの記録形式
+
+verify.mdまたはテストファイル内で追加ケースを記録します：
+
+```markdown
+### Additional Test Cases（Step 4で追加）
+
+> spec.mdに明記されていないが、実装上必要な異常系。
+
+| テスト関数名 | 説明 | 追加理由 |
+|-------------|------|---------|
+| `test_save_whitespace_content_raises_error` | 空白のみでバリデーションエラー | 同値分割の境界 |
+| `test_save_none_tags_defaults_to_empty_list` | None tagsはデフォルト空リスト | 防御的プログラミング |
+```
 
 ## ユニットTDDサイクル
 

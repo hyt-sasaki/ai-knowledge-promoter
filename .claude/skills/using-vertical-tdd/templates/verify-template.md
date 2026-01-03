@@ -188,19 +188,32 @@ echo "✅✅✅ All tests completed ✅✅✅"
 
 > このセクションは、ユニットテストでカバーすべきシナリオを明示します。
 > verify.md（統合テスト）ではなく、各言語のテストフレームワークで実装します。
-> Step 4（Logic Meat）で自動テストを追加する際の参照として使用してください。
+> Step 4（Logic Meat）で `assert False` パターンによる合意後に実装してください。
+>
+> 詳細は [workflows/step4-logic-meat.md](../workflows/step4-logic-meat.md) を参照。
 
-### Unit Test Candidates
+### Primary Test Cases（主要ケース - Step 2抽出）
 
-| Requirement | Scenario | Test Type | Reason |
-|-------------|----------|-----------|--------|
-| [Requirement名] | [Scenario名] | Unit Test | 純粋関数・ビジネスロジック |
-| [Requirement名] | [Scenario名] | Unit Test | バリデーション・入力検証 |
+> spec.mdのGIVEN/WHEN/THENから抽出した主要ケース。
+> 抽出手順は [workflows/step2-runbook-red.md](../workflows/step2-runbook-red.md) の「Auto-Test Targets抽出ガイドライン」を参照。
+
+| Requirement | Scenario | WHEN/THEN | Priority | Reason |
+|-------------|----------|-----------|----------|--------|
+| [要件名] | [シナリオ名] | [条件 → 結果] | P1 | 正常系コアパス |
+| [要件名] | [シナリオ名] | [条件 → 結果] | P2 | バリデーション |
+
+### Test Selection Constraints（選定制約）
+
+Step 4でテストケースを追加する際は、以下の制約を適用して過剰生成を防止します。
+
+- [ ] **C1網羅**: 分岐網羅を満たす最小限のケースを抽出
+- [ ] **同値分割**: 冗長なテストケースを統合（例: `""`, `None`, `"   "` → 代表値1件）
+- [ ] **優先順位**: P1正常系1件 + P2境界値2件以内に絞る
+- [ ] **インターフェース集中**: 外部から見た振る舞いのみテスト（内部実装詳細は除外）
 
 ### Expected Test Files
 
 - `tests/test_xxx.py` - [テスト対象の説明]
-- `tests/test_yyy.py` - [テスト対象の説明]
 
 ### Coverage Expectations
 
