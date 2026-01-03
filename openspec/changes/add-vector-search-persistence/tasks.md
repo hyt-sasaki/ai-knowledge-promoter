@@ -75,11 +75,14 @@
   - [x] 既存 Collection 削除・新 Collection 作成実行
   - [x] infra/README.md 更新（Collection 再作成手順追記）
   - [x] roadmap.md に Phase 3/4 のarchived_knowledge情報を追記
-- [ ] 3.9 PR #16 更新
+- [x] 3.9 PR #16 更新
+  - [x] Cloud Run 再デプロイ
+  - [x] verify.md テスト実行（全パス）
+  - [x] verify.md にクリーンアップタスク追加
 
 ## 4. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
 
-- [ ] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
-- [ ] 4.2 全テスト検証（verify.md + ユニットテスト）
+- [x] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
+- [x] 4.2 全テスト検証（verify.md + ユニットテスト33件パス）
 - [ ] 4.3 `openspec archive add-vector-search-persistence --yes`
 - [ ] 4.4 **PR作成**
