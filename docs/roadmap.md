@@ -106,6 +106,13 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 
 - [ ] **3.1 Remote Knowledge Agent の構築 (Agent Engine)**
 - [ ] **3.2 高度なナレッジ操作ツールの追加**
+  - [ ] `promote_knowledge` ツール（昇格PR作成）
+  - [ ] Repository 拡張（find_by_github_path, find_by_pr_url, update_status）
+- [ ] **3.3 アーカイブ機能の実装**
+  - [ ] `archived_knowledge` コレクション作成
+  - [ ] `ArchivedKnowledge` モデル実装
+  - [ ] `ArchivedKnowledgeRepository` 実装
+  - [ ] `archive` メソッド（昇格完了時に元ナレッジを移動）
 - [ ] **[垂直統合Check 2]** AIが自発的にPR作成を提案してくるか確認
 
 ### Phase 4: チーム共有と同期メカニズムの完遂
@@ -114,6 +121,8 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 - [ ] **4.2 同期用エンドポイントの実装 (POST /sync)**
 - [ ] **4.3 GitHub Actions Workflow の作成**
 - [ ] **4.4 エンドツーエンド・シナリオテスト**
+- [ ] **4.5 昇格復元機能**
+  - [ ] `/revert-promotion` エンドポイント（archived_knowledge から復元）
 
 ### Optional: 開発体験向上
 

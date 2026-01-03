@@ -69,10 +69,17 @@
 - [x] 3.5 静的解析・テスト実行（33件パス）
 - [x] 3.6 verify.md で動作確認（health, save, search, delete パス）
 - [x] 3.7 **PR作成** → PR #16
+- [x] 3.8 Collection スキーマ更新（Vector Search 2.0は厳格なスキーマバリデーション）
+  - [x] delete_collection.py 作成
+  - [x] create_collection.py のスキーマ更新（path→github_path, pr_url, promoted_from_id追加）
+  - [x] 既存 Collection 削除・新 Collection 作成実行
+  - [x] infra/README.md 更新（Collection 再作成手順追記）
+  - [x] roadmap.md に Phase 3/4 のarchived_knowledge情報を追記
+- [ ] 3.9 PR #16 更新
 
 ## 4. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
 
-- [x] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
-- [x] 4.2 全テスト検証（verify.md + ユニットテスト29件）
+- [ ] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
+- [ ] 4.2 全テスト検証（verify.md + ユニットテスト）
 - [ ] 4.3 `openspec archive add-vector-search-persistence --yes`
 - [ ] 4.4 **PR作成**
