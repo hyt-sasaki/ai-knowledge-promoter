@@ -6,7 +6,7 @@ following the Dependency Inversion Principle (DIP).
 
 from typing import Protocol
 
-from .models import Knowledge, SearchResult
+from .models import ArchivedKnowledge, Knowledge, SearchResult
 
 
 class KnowledgeRepository(Protocol):
@@ -67,5 +67,71 @@ class KnowledgeRepository(Protocol):
 
         Returns:
             True if deleted, False if not found
+        """
+        ...
+
+    def find_by_github_path(self, path: str) -> Knowledge | None:
+        """Find knowledge by GitHub file path.
+
+        Args:
+            path: GitHub file path
+
+        Returns:
+            Knowledge if found, None otherwise
+        """
+        ...
+
+    def find_by_pr_url(self, url: str) -> Knowledge | None:
+        """Find knowledge by PR URL.
+
+        Args:
+            url: Pull request URL
+
+        Returns:
+            Knowledge if found, None otherwise
+        """
+        ...
+
+    def update_status(
+        self, id: str, status: str, *, pr_url: str = ""
+    ) -> Knowledge | None:
+        """Update knowledge status.
+
+        Args:
+            id: Knowledge identifier
+            status: New status ("draft", "proposed", "promoted")
+            pr_url: PR URL (optional, for proposed status)
+
+        Returns:
+            Updated knowledge if found, None otherwise
+        """
+        ...
+
+
+class ArchivedKnowledgeRepository(Protocol):
+    """Repository interface for archived knowledge.
+
+    Used for storing knowledge that has been promoted and archived.
+    """
+
+    def save(self, archived: ArchivedKnowledge) -> ArchivedKnowledge:
+        """Save archived knowledge.
+
+        Args:
+            archived: The archived knowledge to save
+
+        Returns:
+            The saved archived knowledge
+        """
+        ...
+
+    def get(self, id: str) -> ArchivedKnowledge | None:
+        """Get archived knowledge by ID.
+
+        Args:
+            id: Archived knowledge identifier (original knowledge ID)
+
+        Returns:
+            ArchivedKnowledge if found, None otherwise
         """
         ...
