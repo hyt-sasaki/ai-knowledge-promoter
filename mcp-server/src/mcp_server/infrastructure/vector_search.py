@@ -255,6 +255,76 @@ class VectorSearchKnowledgeRepository:
             # Not found or other error
             return False
 
+    def find_by_github_path(self, path: str) -> Knowledge | None:
+        """Find knowledge by GitHub file path.
+
+        Args:
+            path: GitHub file path
+
+        Returns:
+            Knowledge if found, None otherwise
+
+        Note:
+            Skeleton implementation - returns None.
+            Full implementation in Phase 3.
+        """
+        # Skeleton: return None (not implemented)
+        return None
+
+    def find_by_pr_url(self, url: str) -> Knowledge | None:
+        """Find knowledge by PR URL.
+
+        Args:
+            url: Pull request URL
+
+        Returns:
+            Knowledge if found, None otherwise
+
+        Note:
+            Skeleton implementation - returns None.
+            Full implementation in Phase 3.
+        """
+        # Skeleton: return None (not implemented)
+        return None
+
+    def update_status(
+        self, id: str, status: str, *, pr_url: str = ""
+    ) -> Knowledge | None:
+        """Update knowledge status.
+
+        Args:
+            id: Knowledge identifier
+            status: New status ("draft", "proposed", "promoted")
+            pr_url: PR URL (optional, for proposed status)
+
+        Returns:
+            Updated knowledge if found, None otherwise
+
+        Note:
+            Skeleton implementation - returns dummy knowledge.
+            Full implementation in Phase 3.
+        """
+        # Skeleton: return dummy knowledge with updated status
+        knowledge = self.get(id)
+        if knowledge is None:
+            return None
+
+        # Return knowledge with updated status (no actual DB update)
+        return Knowledge(
+            id=knowledge.id,
+            title=knowledge.title,
+            content=knowledge.content,
+            tags=knowledge.tags,
+            user_id=knowledge.user_id,
+            source=knowledge.source,
+            status=status,
+            github_path=knowledge.github_path,
+            pr_url=pr_url if pr_url else knowledge.pr_url,
+            promoted_from_id=knowledge.promoted_from_id,
+            created_at=knowledge.created_at,
+            updated_at=datetime.now(UTC),
+        )
+
     def _parse_datetime(self, value: str | None) -> datetime | None:
         """Parse ISO 8601 datetime string."""
         if not value:

@@ -66,3 +66,31 @@ class SearchResult:
 
     items: list[Knowledge]
     total: int
+
+
+@dataclass
+class ArchivedKnowledge:
+    """Archived knowledge domain model.
+
+    Represents a knowledge that has been promoted and archived.
+    Stored in the archived_knowledge collection for audit trail.
+
+    Attributes:
+        id: Original knowledge ID (before archival)
+        title: Title of the knowledge
+        content: Main content of the knowledge
+        tags: List of tags for categorization
+        user_id: Developer identifier
+        promoted_to_id: ID of the promoted team knowledge
+        archived_at: Archival timestamp (ISO 8601)
+        original_created_at: Original creation timestamp (ISO 8601)
+    """
+
+    id: str
+    title: str
+    content: str
+    tags: list[str] = field(default_factory=list)
+    user_id: str = "anonymous"
+    promoted_to_id: str = ""
+    archived_at: datetime | None = None
+    original_created_at: datetime | None = None
