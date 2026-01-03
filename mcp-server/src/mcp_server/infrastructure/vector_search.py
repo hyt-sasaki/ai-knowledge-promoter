@@ -255,6 +255,188 @@ class VectorSearchKnowledgeRepository:
             # Not found or other error
             return False
 
+    def find_by_github_path(self, path: str) -> Knowledge | None:
+        """Find knowledge by GitHub file path.
+
+        Args:
+            path: GitHub file path (e.g., "docs/knowledge/example.md")
+
+        Returns:
+            Knowledge if found, None otherwise
+        """
+        # Use filter search to find by github_path
+        request = vectorsearch_v1beta.SearchDataObjectsRequest(
+            parent=self._collection_path,
+            filter_search=vectorsearch_v1beta.FilterSearch(
+                filter=f'github_path = "{path}"',
+                top_k=1,
+                output_fields=vectorsearch_v1beta.OutputFields(
+                    data_fields=[
+                        "id",
+                        "title",
+                        "content",
+                        "tags",
+                        "user_id",
+                        "source",
+                        "status",
+                        "github_path",
+                        "pr_url",
+                        "promoted_from_id",
+                        "created_at",
+                        "updated_at",
+                    ]
+                ),
+            ),
+        )
+
+        response = self._search_client.search_data_objects(request=request)
+
+        for result in response.results:
+            data = result.data_object.data
+            return Knowledge(
+                id=data.get("id", ""),
+                title=data.get("title", ""),
+                content=data.get("content", ""),
+                tags=list(data.get("tags", [])),
+                user_id=data.get("user_id", "anonymous"),
+                source=data.get("source", "personal"),
+                status=data.get("status", "draft"),
+                github_path=data.get("github_path", ""),
+                pr_url=data.get("pr_url", ""),
+                promoted_from_id=data.get("promoted_from_id", ""),
+                created_at=self._parse_datetime(data.get("created_at")),
+                updated_at=self._parse_datetime(data.get("updated_at")),
+            )
+
+        return None
+
+    def find_by_pr_url(self, url: str) -> Knowledge | None:
+        """Find knowledge by promotion PR URL.
+
+        Args:
+            url: GitHub PR URL (e.g., "https://github.com/org/repo/pull/123")
+
+        Returns:
+            Knowledge if found, None otherwise
+        """
+        # Use filter search to find by pr_url
+        request = vectorsearch_v1beta.SearchDataObjectsRequest(
+            parent=self._collection_path,
+            filter_search=vectorsearch_v1beta.FilterSearch(
+                filter=f'pr_url = "{url}"',
+                top_k=1,
+                output_fields=vectorsearch_v1beta.OutputFields(
+                    data_fields=[
+                        "id",
+                        "title",
+                        "content",
+                        "tags",
+                        "user_id",
+                        "source",
+                        "status",
+                        "github_path",
+                        "pr_url",
+                        "promoted_from_id",
+                        "created_at",
+                        "updated_at",
+                    ]
+                ),
+            ),
+        )
+
+        response = self._search_client.search_data_objects(request=request)
+
+        for result in response.results:
+            data = result.data_object.data
+            return Knowledge(
+                id=data.get("id", ""),
+                title=data.get("title", ""),
+                content=data.get("content", ""),
+                tags=list(data.get("tags", [])),
+                user_id=data.get("user_id", "anonymous"),
+                source=data.get("source", "personal"),
+                status=data.get("status", "draft"),
+                github_path=data.get("github_path", ""),
+                pr_url=data.get("pr_url", ""),
+                promoted_from_id=data.get("promoted_from_id", ""),
+                created_at=self._parse_datetime(data.get("created_at")),
+                updated_at=self._parse_datetime(data.get("updated_at")),
+            )
+
+        return None
+
+    def update_status(
+        self,
+        id: str,
+        status: str,
+        *,
+        pr_url: str | None = None,
+        github_path: str | None = None,
+    ) -> Knowledge:
+        """Update knowledge status and optional fields.
+
+        Args:
+            id: Knowledge identifier
+            status: New status ("draft", "proposed", or "promoted")
+            pr_url: Optional PR URL to set (for proposed status)
+            github_path: Optional GitHub path to set (for promoted status)
+
+        Returns:
+            Updated knowledge
+
+        Raises:
+            ValueError: If knowledge not found or invalid status transition
+        """
+        # Get current knowledge
+        knowledge = self.get(id)
+        if knowledge is None:
+            raise ValueError(f"knowledge not found: {id}")
+
+        now = datetime.now(UTC)
+
+        # Prepare updated data
+        data = {
+            "id": knowledge.id,
+            "title": knowledge.title,
+            "content": knowledge.content,
+            "tags": knowledge.tags,
+            "user_id": knowledge.user_id,
+            "source": knowledge.source,
+            "status": status,
+            "github_path": github_path if github_path is not None else knowledge.github_path,
+            "pr_url": pr_url if pr_url is not None else knowledge.pr_url,
+            "promoted_from_id": knowledge.promoted_from_id,
+            "created_at": knowledge.created_at.isoformat() if knowledge.created_at else now.isoformat(),
+            "updated_at": now.isoformat(),
+        }
+
+        # Update using UpdateDataObject
+        request = vectorsearch_v1beta.UpdateDataObjectRequest(
+            data_object=vectorsearch_v1beta.DataObject(
+                name=f"{self._collection_path}/dataObjects/{id}",
+                data=data,
+                vectors={},
+            ),
+        )
+
+        self._data_object_client.update_data_object(request=request)
+
+        # Return updated knowledge
+        return Knowledge(
+            id=knowledge.id,
+            title=knowledge.title,
+            content=knowledge.content,
+            tags=knowledge.tags,
+            user_id=knowledge.user_id,
+            source=knowledge.source,
+            status=status,
+            github_path=data["github_path"],
+            pr_url=data["pr_url"],
+            promoted_from_id=knowledge.promoted_from_id,
+            created_at=knowledge.created_at,
+            updated_at=now,
+        )
+
     def _parse_datetime(self, value: str | None) -> datetime | None:
         """Parse ISO 8601 datetime string."""
         if not value:
