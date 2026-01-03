@@ -84,20 +84,20 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 
 ### Phase 1: 垂直スケルトンの構築 (Local to Agent)
 
-- [ ] **1.1 GCP プロジェクト基盤の整備**
-- [ ] **1.2 MCP サーバーのハローワールド** (FastAPI等のWebフレームワークを内包)
-- [ ] **1.3 AIエージェントとの結合テスト**
+- [x] **1.1 GCP プロジェクト基盤の整備**
+- [x] **1.2 MCP サーバーのハローワールド** (FastAPI等のWebフレームワークを内包)
+- [x] **1.3 AIエージェントとの結合テスト**
 
 ### Phase 2: 個人ナレッジの永続化と検索
 
-- [ ] **2.1 Vector Search 2.0 データモデリングと実装**
-  - [ ] Collection作成（Auto-Embeddings設定含む）
-  - [ ] Cloud Run Invoker認証の有効化
-  - [ ] Repositoryパターンによるインフラ層の抽象化
-- [ ] **2.2 セマンティック検索の実装**
-  - [ ] save_knowledgeツールでVector Search 2.0に永続化
-  - [ ] search_knowledgeツールでセマンティック検索
-- [ ] **[垂直統合Check 1]** 保存したメモがセマンティック検索結果として返ってくるか確認
+- [x] **2.1 Vector Search 2.0 データモデリングと実装**
+  - [x] Collection作成（Auto-Embeddings設定含む）
+  - [x] Cloud Run Invoker認証の有効化
+  - [x] Repositoryパターンによるインフラ層の抽象化
+- [x] **2.2 セマンティック検索の実装**
+  - [x] save_knowledgeツールでVector Search 2.0に永続化
+  - [x] search_knowledgeツールでセマンティック検索
+- [x] **[垂直統合Check 1]** 保存したメモがセマンティック検索結果として返ってくるか確認
 
 **Phase 2での制限事項（後続Phaseで対応）:**
 - `user_id`: 固定値 "anonymous" を使用（Phase 3で実ユーザーID対応）
