@@ -262,7 +262,7 @@ runme tui
    - 「Uncovered Items」セクションが空であることを確認
    - 「Auto-Test Targets」の項目はStep 4で対応予定であることを確認
 
-詳細は [coverage-check.md](../references/coverage-check.md) を参照。
+詳細は `.claude/skills/verify-and-coverage/` を参照。
 
 ## PR #2 作成
 

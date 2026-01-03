@@ -327,7 +327,7 @@ runme run --all --filename openspec/specs/<capability>/verify.md
 - 「Uncovered Items」が0であること
 - カバレッジ不足の場合はマージを見直し、テストを追加
 
-詳細は [coverage-check.md](coverage-check.md) を参照。
+詳細は `.claude/skills/verify-and-coverage/` を参照。
 
 ## coverage.md更新ロジック
 
@@ -369,7 +369,7 @@ coverage.mdは正式版spec.mdと正式版verify.mdに基づいて再生成さ�
 2. 正式版verify.md: openspec/specs/<capability>/verify.md
 
 ## 出力
-templates/coverage-template.md のフォーマットに従ったcoverage.mdを生成してください。
+verify-and-coverage Skill のテンプレートフォーマットに従ったcoverage.mdを生成してください。
 
 ## 要件
 - すべてのRequirementが「Covered」であること

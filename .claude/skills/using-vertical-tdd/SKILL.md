@@ -55,11 +55,10 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
   - verify.md / coverage.md正式版昇格 → [references/verify-promotion.md](references/verify-promotion.md)
   - 全テスト検証、アーカイブ、フィーチャーフラグ有効化、**PR #N**（リリース）
 
-## テンプレート
+## 関連スキル
 
-- **verify.md**: [templates/verify-template.md](templates/verify-template.md)
-- **tech-spike.md**: [templates/tech-spike-template.md](templates/tech-spike-template.md)
-- **coverage.md**: [templates/coverage-template.md](templates/coverage-template.md)
+- **tech-spike**: [.claude/skills/tech-spike/](./../tech-spike/) - 技術検証ワークフロー
+- **verify-and-coverage**: [.claude/skills/verify-and-coverage/](./../verify-and-coverage/) - 実行可能テスト&カバレッジ管理
 
 ## コミット戦略
 

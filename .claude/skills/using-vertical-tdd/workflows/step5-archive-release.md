@@ -79,7 +79,7 @@ runme run verify-all
    - すべてのRequirementが「Covered」
    - 「Auto-Test Targets」に記載された項目は自動テストでカバー済みであること
 
-詳細は [coverage-check.md](../references/coverage-check.md) を参照。
+詳細は `.claude/skills/verify-and-coverage/` を参照。
 
 ## Step 1.5: spec.md TBDチェック
 
@@ -253,7 +253,7 @@ runme run --all --filename openspec/specs/<capability>/verify.md
 - 「Uncovered Items」が0であること
 - カバレッジ不足の場合はテストを追加
 
-詳細は [coverage-check.md](../references/coverage-check.md) を参照。
+詳細は `.claude/skills/verify-and-coverage/` を参照。
 
 ### 昇格コミット（マージの場合）
 

@@ -46,9 +46,9 @@ runme --help
 
 ### テンプレート使用
 
-[../templates/verify-template.md](../templates/verify-template.md) をコピーして開始します。
+**verify-and-coverage Skill** のテンプレートを使用します。
 
-詳細な実装ガイドは [verify-implementation-guide.md](../references/verify-implementation-guide.md) を参照してください。
+詳細は `.claude/skills/verify-and-coverage/` を参照してください。
 
 ### 名前付きコードブロックの形式
 
@@ -465,7 +465,7 @@ verify.md作成後、spec.mdとのカバレッジをチェックします。
    - 「Not Covered」が0であること
    - または「Auto-Test Targets」に明示的に記載されていること
 
-詳細は [coverage-check.md](../references/coverage-check.md) を参照。
+詳細は `.claude/skills/verify-and-coverage/` を参照。
 
 ### カバレッジチェックリスト
 
