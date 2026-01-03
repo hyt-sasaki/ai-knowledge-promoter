@@ -472,7 +472,7 @@ verify.md作成後、spec.mdとのカバレッジをチェックします。
 ```
 カバレッジ確認:
 - [ ] coverage.md生成完了
-- [ ] 未カバー項目の対応完了（verify.mdに追加 or Auto-Test Targetsに記載）
+- [ ] 未カバー項目の対応完了（verify.mdに追加、またはAuto-Test Targetsへ延期を明記）
 - [ ] 「Uncovered Items」セクションが空
 ```
 
