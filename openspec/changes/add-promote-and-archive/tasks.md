@@ -23,22 +23,25 @@
 
 ## 2. スケルトン実装（Stage 2: PR #2b スケルトン）
 
+> **スケルトン原則**: シグネチャと型定義のみ。中身はハードコード/ダミー。
+> ビジネスロジック・実際のDB操作は Phase 3 で実装。
+
 ### 2.1 verify.md作成
 - [ ] 2.1.1 verify.md作成（Runme.dev形式）
 - [ ] 2.1.2 REDステータス確認
 
-### 2.2 モデル・Repository拡張
-- [ ] 2.2.1 ArchivedKnowledge モデル追加（domain/models.py）
-- [ ] 2.2.2 KnowledgeRepository Protocol拡張
+### 2.2 モデル・Repository スケルトン
+- [ ] 2.2.1 ArchivedKnowledge モデル追加（型定義のみ）
+- [ ] 2.2.2 KnowledgeRepository Protocol拡張（シグネチャのみ）
   - find_by_github_path
   - find_by_pr_url
   - update_status
-- [ ] 2.2.3 ArchivedKnowledgeRepository Protocol追加（domain/repositories.py）
-- [ ] 2.2.4 VectorSearchKnowledgeRepository に新メソッド実装
-- [ ] 2.2.5 VectorSearchArchivedKnowledgeRepository 実装（infrastructure/archive_repository.py）
+- [ ] 2.2.3 ArchivedKnowledgeRepository Protocol追加（シグネチャのみ）
+- [ ] 2.2.4 VectorSearchKnowledgeRepository スケルトン（中身はダミー: return None）
+- [ ] 2.2.5 VectorSearchArchivedKnowledgeRepository スケルトン（中身はダミー）
 
-### 2.3 ツール実装
-- [ ] 2.3.1 promote_knowledge.py作成（スケルトン）
+### 2.3 ツール スケルトン
+- [ ] 2.3.1 promote_knowledge.py スケルトン（ハードコードレスポンス）
 - [ ] 2.3.2 main.pyにツール登録
 
 ### 2.4 GREEN確認
@@ -49,14 +52,32 @@
 
 ## 3. ロジック実装（Stage 2: PR #3+）
 
-- [ ] 3.1 promote_knowledge バリデーションロジック
-  - personal/draftのみ昇格可能
-  - 存在しないIDエラー
-- [ ] 3.2 ユニットテスト追加
+> **ユニットTDDサイクル**: Red-Green-Refactor を各機能ごとに繰り返す。
+> テストケースは事前合意（assert Falseパターン）で過剰生成を防止。
+
+### 3.1 テストケース合意フェーズ
+- [ ] 3.1.1 Auto-Test Targets（verify.md）を確認
+- [ ] 3.1.2 テスト選定制約を適用（C1網羅、同値分割、優先順位）
+- [ ] 3.1.3 `assert False` テストファイル作成
   - test_promote_knowledge.py
   - test_archive_repository.py
   - test_models.py（ArchivedKnowledge）
-- [ ] 3.3 **PR #3作成**
+- [ ] 3.1.4 テストケース合意確認
+
+### 3.2 promote_knowledge ロジック実装
+- [ ] 3.2.1 test_promote_success → 実装（Red-Green-Refactor）
+- [ ] 3.2.2 test_promote_not_found → 実装
+- [ ] 3.2.3 test_promote_invalid_state → 実装
+- [ ] 3.2.4 test_promote_empty_id → 実装
+
+### 3.3 Repository 本実装
+- [ ] 3.3.1 VectorSearchKnowledgeRepository.update_status 本実装
+- [ ] 3.3.2 VectorSearchArchivedKnowledgeRepository.save 本実装
+
+### 3.4 検証
+- [ ] 3.4.1 ユニットテスト全パス
+- [ ] 3.4.2 verify.md GREEN維持確認
+- [ ] 3.4.3 **PR #3作成**
 
 ---
 
