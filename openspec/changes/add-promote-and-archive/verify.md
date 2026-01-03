@@ -12,9 +12,9 @@
 
 ## Setup
 
-```sh {"cwd":"../../..","name":"promote-archive-deploy"}
+```sh {"cwd":"../../../mcp-server","name":"promote-archive-deploy"}
 # Cloud Runにデプロイ（最新コードを反映）
-cd mcp-server && gcloud run deploy knowledge-mcp-server \
+gcloud run deploy knowledge-mcp-server \
   --source . \
   --region us-central1 \
   --no-allow-unauthenticated \
