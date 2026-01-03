@@ -17,7 +17,7 @@
 - [x] 1.1 scripts/create_archived_collection.py作成
 - [x] 1.2 archived-knowledgeコレクション作成実行
 - [x] 1.3 infra/README.md更新（archived-knowledgeコレクション作成手順追加）
-- [ ] 1.4 **PR #2a作成**
+- [x] 1.4 **PR #2a作成** https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/19
 
 ---
 
