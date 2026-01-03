@@ -49,9 +49,27 @@
 - [x] 2.15 エラーハンドリング強化
 - [x] 2.16 **PR作成** → PR #15
 
-## 3. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
+## 3. Knowledgeフィールド整理（Stage 2: PR #16）
 
-- [x] 3.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
-- [x] 3.2 全テスト検証（verify.md + ユニットテスト29件）
-- [ ] 3.3 `openspec archive add-vector-search-persistence --yes`
-- [ ] 3.4 **PR作成**
+`source` フィールドは `status` から導出可能なため削除し、スキーマを簡素化する。
+
+- [ ] 3.1 OpenSpecドキュメント更新
+  - [ ] design.md: データモデルから `source` 削除
+  - [ ] design.md: 有効な状態の組み合わせ表を追加
+  - [ ] specs/knowledge-gateway/spec.md: レスポンスフィールドから `source` 削除
+  - [ ] docs/roadmap.md: データモデル表から `source` 削除
+- [ ] 3.2 実装更新
+  - [ ] domain/models.py: `source` フィールド削除
+  - [ ] infrastructure/vector_search.py: `source` の保存・取得を削除
+- [ ] 3.3 テスト更新
+  - [ ] 既存テストから `source` 関連の検証を削除
+- [ ] 3.4 Vector Search Collection更新（既存データのマイグレーション不要）
+- [ ] 3.5 verify.md で動作確認
+- [ ] 3.6 **PR作成** → PR #16
+
+## 4. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
+
+- [x] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
+- [x] 4.2 全テスト検証（verify.md + ユニットテスト29件）
+- [ ] 4.3 `openspec archive add-vector-search-persistence --yes`
+- [ ] 4.4 **PR作成**
