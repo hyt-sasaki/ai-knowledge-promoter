@@ -6,6 +6,8 @@ from fastmcp import FastMCP
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from .infrastructure.vector_search import VectorSearchKnowledgeRepository
+from .tools.delete_knowledge import register as register_delete_knowledge
 from .tools.save_knowledge import register as register_save_knowledge
 from .tools.search_knowledge import register as register_search_knowledge
 
@@ -19,9 +21,13 @@ async def health_check(request: Request) -> JSONResponse:
     return JSONResponse({"status": "healthy"})
 
 
-# Register MCP tools
-register_save_knowledge(mcp)
-register_search_knowledge(mcp)
+# Initialize repository with DI
+repository = VectorSearchKnowledgeRepository()
+
+# Register MCP tools with repository
+register_save_knowledge(mcp, repository)
+register_search_knowledge(mcp, repository)
+register_delete_knowledge(mcp, repository)
 
 
 if __name__ == "__main__":

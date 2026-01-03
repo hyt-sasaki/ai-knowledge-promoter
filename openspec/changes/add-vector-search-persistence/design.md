@@ -424,6 +424,10 @@ class KnowledgeRepository(Protocol):
     def get(self, id: str) -> Knowledge | None:
         """IDでナレッジを取得する。存在しない場合はNone"""
         ...
+
+    def delete(self, id: str) -> bool:
+        """IDでナレッジを削除する。削除成功時はTrue、存在しない場合はFalse"""
+        ...
 ```
 
 ## Infrastructure Changes

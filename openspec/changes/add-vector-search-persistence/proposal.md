@@ -21,6 +21,7 @@ Vertex AI Vector Search 2.0を使って実際にデータを永続化・検索�
 
 - save_knowledgeツールがVector Search 2.0 Collectionにナレッジを永続化する
 - search_knowledgeツールがセマンティック検索を実行する
+- delete_knowledgeツールを新規追加（ナレッジの削除機能）
 - Repositoryパターンによるインフラ層の抽象化（将来のデータストア変更に備える）
 - Cloud Run認証を`--no-allow-unauthenticated`に変更
 - ローカルからは`gcloud run services proxy`で接続
@@ -34,6 +35,7 @@ Vertex AI Vector Search 2.0を使って実際にデータを永続化・検索�
 - Affected code:
   - `mcp-server/src/mcp_server/tools/save_knowledge.py`
   - `mcp-server/src/mcp_server/tools/search_knowledge.py`
+  - `mcp-server/src/mcp_server/tools/delete_knowledge.py`（新規）
   - `mcp-server/pyproject.toml`
 - New files:
   - `mcp-server/src/mcp_server/domain/__init__.py`

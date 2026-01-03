@@ -44,6 +44,30 @@ Local Agentが蓄積されたナレッジを検索するためのエントリポ
 - **THEN** エラーレスポンスが返される
 - **AND** エラーメッセージに「query is required」が含まれる
 
+### Requirement: Delete Knowledge Tool
+MCPサーバーは `delete_knowledge` ツールを提供しなければならない（SHALL）。
+Local Agentがナレッジを削除するためのエントリポイントとなる。
+
+#### Scenario: ナレッジ削除成功
+- **WHEN** `delete_knowledge` ツールが呼び出される
+- **AND** id パラメータが提供される
+- **AND** 指定されたIDのナレッジが存在する
+- **THEN** 成功レスポンスが返される
+- **AND** ナレッジが削除される
+
+#### Scenario: ナレッジ削除失敗（存在しないID）
+- **WHEN** `delete_knowledge` ツールが呼び出される
+- **AND** id パラメータが提供される
+- **AND** 指定されたIDのナレッジが存在しない
+- **THEN** エラーレスポンスが返される
+- **AND** エラーメッセージに「knowledge not found」が含まれる
+
+#### Scenario: ナレッジ削除失敗（必須パラメータ不足）
+- **WHEN** `delete_knowledge` ツールが呼び出される
+- **AND** id パラメータが空または未提供
+- **THEN** エラーレスポンスが返される
+- **AND** エラーメッセージに「id is required」が含まれる
+
 ### Requirement: Cloud Run Deployment
 MCPサーバーはCloud Run上でホスティングされなければならない（SHALL）。
 

@@ -33,30 +33,43 @@
 
 ## 2. スケルトン実装（Stage 2: PR #2b スケルトン）
 
-- [ ] 2.1 verify.md作成（Runme.dev形式）
-- [ ] 2.2 REDステータス確認
-- [ ] 2.3 google-cloud-vectorsearch依存をpyproject.tomlに追加
-- [ ] 2.4 domain/パッケージ作成（__init__.py含む）
-- [ ] 2.5 domain/models.py作成（Knowledge, SearchResult dataclass）
-- [ ] 2.6 domain/repositories.py作成（KnowledgeRepository Protocol: save, search, get）
-- [ ] 2.7 infrastructure/パッケージ作成（__init__.py含む）
-- [ ] 2.8 infrastructure/vector_search.py作成（VectorSearchKnowledgeRepository）
-- [ ] 2.9 save_knowledge.pyをRepository経由で保存に更新
-- [ ] 2.10 search_knowledge.pyをRepository経由で検索に更新
-- [ ] 2.11 GREENステータス確認（verify.md全パス）
-- [ ] 2.12 **PR作成**
+- [x] 2.1 verify.md作成（Runme.dev形式）
+- [x] 2.2 REDステータス確認
+- [x] 2.3 google-cloud-vectorsearch依存をpyproject.tomlに追加（PR #14で完了済み）
+- [x] 2.4 domain/パッケージ作成（__init__.py含む）
+- [x] 2.5 domain/models.py作成（Knowledge, SearchResult dataclass）
+- [x] 2.6 domain/repositories.py作成（KnowledgeRepository Protocol: save, search, get, delete）
+- [x] 2.7 infrastructure/パッケージ作成（__init__.py含む）
+- [x] 2.8 infrastructure/vector_search.py作成（VectorSearchKnowledgeRepository）
+- [x] 2.9 save_knowledge.pyをRepository経由で保存に更新
+- [x] 2.10 search_knowledge.pyをRepository経由で検索に更新
+- [x] 2.11 delete_knowledge.py新規作成（Repository経由で削除）
+- [x] 2.12 GREENステータス確認（verify.md全パス）
+- [x] 2.14 ユニットテスト追加
+- [x] 2.15 エラーハンドリング強化
+- [x] 2.16 **PR作成** → PR #15
 
-## 3. ロジック実装（Stage 2: PR #3 ロジック）
+## 3. Knowledgeフィールド整理（Stage 2: PR #16）
 
-- [ ] 3.1 セマンティック検索の実装
-- [ ] 3.2 created_at, updated_at, user_id等の自動付与
-- [ ] 3.3 エラーハンドリング強化
-- [ ] 3.4 ユニットテスト追加
-- [ ] 3.5 **PR作成**
+`source` フィールドは `status` から導出可能なため削除し、スキーマを簡素化する。
+
+- [ ] 3.1 OpenSpecドキュメント更新
+  - [ ] design.md: データモデルから `source` 削除
+  - [ ] design.md: 有効な状態の組み合わせ表を追加
+  - [ ] specs/knowledge-gateway/spec.md: レスポンスフィールドから `source` 削除
+  - [ ] docs/roadmap.md: データモデル表から `source` 削除
+- [ ] 3.2 実装更新
+  - [ ] domain/models.py: `source` フィールド削除
+  - [ ] infrastructure/vector_search.py: `source` の保存・取得を削除
+- [ ] 3.3 テスト更新
+  - [ ] 既存テストから `source` 関連の検証を削除
+- [ ] 3.4 Vector Search Collection更新（既存データのマイグレーション不要）
+- [ ] 3.5 verify.md で動作確認
+- [ ] 3.6 **PR作成** → PR #16
 
 ## 4. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
 
-- [ ] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
-- [ ] 4.2 全テスト検証
+- [x] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
+- [x] 4.2 全テスト検証（verify.md + ユニットテスト29件）
 - [ ] 4.3 `openspec archive add-vector-search-persistence --yes`
 - [ ] 4.4 **PR作成**

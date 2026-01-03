@@ -1,19 +1,26 @@
-"""Save knowledge tool stub implementation."""
+"""Save knowledge tool implementation."""
 
-import uuid
+from ..domain.models import Knowledge
+from ..domain.repositories import KnowledgeRepository
 
 
-def register(mcp):
-    """Register save_knowledge tool to the MCP server."""
+def register(mcp, repository: KnowledgeRepository):
+    """Register save_knowledge tool to the MCP server.
+
+    Args:
+        mcp: The MCP server instance
+        repository: Knowledge repository for persistence
+    """
 
     @mcp.tool
-    def save_knowledge(title: str, content: str, tags: list[str] | None = None) -> dict:
-        """
-        Save knowledge to the system.
+    def save_knowledge(
+        title: str | None = None, content: str = "", tags: list[str] | None = None
+    ) -> dict:
+        """Save knowledge to the system.
 
         Args:
-            title: The title of the knowledge
-            content: The content of the knowledge
+            title: Title of the knowledge (optional, auto-generated if not provided)
+            content: The content of the knowledge (required)
             tags: Optional list of tags
 
         Returns:
@@ -24,11 +31,29 @@ def register(mcp):
         """
         if not content or not content.strip():
             raise ValueError("content is required")
+
+        # Auto-generate title from content if not provided
+        if not title or not title.strip():
+            title = content[:30].strip()
+            if len(content) > 30:
+                title += "..."
+
         if tags is None:
             tags = []
-        # Phase 1: Stub implementation
+
+        # Create knowledge model
+        knowledge = Knowledge(
+            id="",  # Will be auto-generated
+            title=title,
+            content=content,
+            tags=tags,
+        )
+
+        # Save via repository
+        saved = repository.save(knowledge)
+
         return {
             "status": "saved",
-            "id": "stub-id-" + str(uuid.uuid4())[:8],
-            "title": title,
+            "id": saved.id,
+            "title": saved.title,
         }
