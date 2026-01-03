@@ -68,7 +68,7 @@
   - [x] infrastructure/vector_search.py: 新フィールド対応
 - [x] 3.5 静的解析・テスト実行（33件パス）
 - [x] 3.6 verify.md で動作確認（health, save, search, delete パス）
-- [ ] 3.7 **PR作成** → PR #16
+- [x] 3.7 **PR作成** → PR #16
 
 ## 4. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
 
