@@ -29,11 +29,11 @@
 
 ### 2.2 モデル・Repository拡張
 - [x] 2.2.1 ArchivedKnowledge モデル追加（domain/models.py）
-- [ ] 2.2.2 KnowledgeRepository Protocol拡張
+- [x] 2.2.2 KnowledgeRepository Protocol拡張
   - find_by_github_path
   - find_by_pr_url
   - update_status
-- [ ] 2.2.3 ArchivedKnowledgeRepository Protocol追加（domain/repositories.py）
+- [x] 2.2.3 ArchivedKnowledgeRepository Protocol追加（domain/repositories.py）
 - [ ] 2.2.4 VectorSearchKnowledgeRepository に新メソッド実装
 - [ ] 2.2.5 VectorSearchArchivedKnowledgeRepository 実装（infrastructure/archive_repository.py）
 
