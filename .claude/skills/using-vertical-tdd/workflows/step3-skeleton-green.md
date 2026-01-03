@@ -6,7 +6,7 @@ verify.mdがパスする最小限の実装（ハードコードやモック可�
 
 ## 実装パターンの選択
 
-状況に応じて適切なパターンを選択します。詳細は [pr-splitting-guide.md](pr-splitting-guide.md) を参照。
+状況に応じて適切なパターンを選択します。詳細は [pr-splitting-guide.md](../references/pr-splitting-guide.md) を参照。
 
 ### パターンA: アプリケーション型
 
@@ -262,7 +262,7 @@ runme tui
    - 「Uncovered Items」セクションが空であることを確認
    - 「Auto-Test Targets」の項目はStep 4で対応予定であることを確認
 
-詳細は [coverage-check.md](coverage-check.md) を参照。
+詳細は [coverage-check.md](../references/coverage-check.md) を参照。
 
 ## PR #2 作成
 
@@ -442,4 +442,4 @@ git add .
 git commit -m "feat: add skeleton implementation for <feature-name>"
 ```
 
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+詳細は [commit-strategy.md](../references/commit-strategy.md) を参照。

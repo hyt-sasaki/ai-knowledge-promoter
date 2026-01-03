@@ -191,7 +191,7 @@ def benchmark_approach_b():
 
 spike/results.mdのテンプレートは [../templates/tech-spike-template.md](../templates/tech-spike-template.md) を参照してください。
 
-詳細な実装ガイドは [tech-spike-guide.md](tech-spike-guide.md) を参照してください。
+詳細な実装ガイドは [tech-spike-guide.md](../references/tech-spike-guide.md) を参照してください。
 
 ### 記録例
 
@@ -357,4 +357,4 @@ git commit -m "docs: add tech spike results for <feature-name>"
 
 このアプローチは実験が1-2時間程度で完了する場合に適しています。
 
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+詳細は [commit-strategy.md](../references/commit-strategy.md) を参照。

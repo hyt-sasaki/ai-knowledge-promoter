@@ -9,7 +9,7 @@
 3. verify.mdおよび自動テストとのマッピングを分析
 4. カバレッジ状況を記録
 
-詳細は [workflows/coverage-check.md](../workflows/coverage-check.md) を参照してください。
+詳細は [references/coverage-check.md](../references/coverage-check.md) を参照してください。
 
 ---
 

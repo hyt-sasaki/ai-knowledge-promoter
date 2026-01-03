@@ -9,7 +9,7 @@
 3. 各コードブロックの `{"name":"..."}` 属性を適切な名前に変更
 4. `runme run verify-all` ですべてのテストを実行
 
-詳細な実装ガイドは [workflows/verify-implementation-guide.md](../workflows/verify-implementation-guide.md) を参照してください。
+詳細な実装ガイドは [references/verify-implementation-guide.md](../references/verify-implementation-guide.md) を参照してください。
 
 ---
 

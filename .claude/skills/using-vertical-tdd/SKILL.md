@@ -51,8 +51,8 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 ### Stage 3: Archiving Changes（アーカイブ）
 
 - **Step 5: Archive & Release** → [workflows/step5-archive-release.md](workflows/step5-archive-release.md)
-  - spec.md TBDチェック → [workflows/tbd-check.md](workflows/tbd-check.md)
-  - verify.md / coverage.md正式版昇格 → [workflows/verify-promotion.md](workflows/verify-promotion.md)
+  - spec.md TBDチェック → [references/tbd-check.md](references/tbd-check.md)
+  - verify.md / coverage.md正式版昇格 → [references/verify-promotion.md](references/verify-promotion.md)
   - 全テスト検証、アーカイブ、フィーチャーフラグ有効化、**PR #N**（リリース）
 
 ## テンプレート
@@ -63,7 +63,7 @@ OpenSpecの3ステージに垂直TDDステップをマッピング：
 
 ## コミット戦略
 
-安定チェックポイントでこまめにコミット。詳細は [workflows/commit-strategy.md](workflows/commit-strategy.md) を参照。
+安定チェックポイントでこまめにコミット。詳細は [references/commit-strategy.md](references/commit-strategy.md) を参照。
 
 ## 実装再開時
 
@@ -149,7 +149,7 @@ Step 1a（Tech Spike）でライブラリ調査、Step 1b（Design）でベス�
 
 ## 実装フェーズのバリエーション
 
-状況に応じて実装フェーズのPR構成を選択します。詳細は [workflows/pr-splitting-guide.md](workflows/pr-splitting-guide.md) を参照。
+状況に応じて実装フェーズのPR構成を選択します。詳細は [references/pr-splitting-guide.md](references/pr-splitting-guide.md) を参照。
 
 ### パターンA: アプリケーション型（従来通り）
 

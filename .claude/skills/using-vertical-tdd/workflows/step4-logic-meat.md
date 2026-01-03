@@ -708,7 +708,7 @@ git commit -m "feat: implement <specific-feature> logic"
 git commit -m "feat: complete logic implementation for <feature-name>"
 ```
 
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+詳細は [commit-strategy.md](../references/commit-strategy.md) を参照。
 
 ## 次のステップ
 

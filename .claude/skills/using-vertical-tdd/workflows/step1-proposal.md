@@ -350,7 +350,7 @@ tasks.mdの内容に応じて次のステップを決定：
 
 **OpenSpec検証パス後 → PR #1作成**
 
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+詳細は [commit-strategy.md](../references/commit-strategy.md) を参照。
 
 ## 参考コマンド
 

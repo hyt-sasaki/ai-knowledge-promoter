@@ -423,4 +423,4 @@ A: 2-3個までなら許容。それ以上ある場合は、追加の技術検�
 
 **design.md完成後 → PR #1b作成（任意）**
 
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+詳細は [commit-strategy.md](../references/commit-strategy.md) を参照。

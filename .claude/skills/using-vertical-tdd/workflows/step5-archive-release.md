@@ -79,7 +79,7 @@ runme run verify-all
    - すべてのRequirementが「Covered」
    - 「Auto-Test Targets」に記載された項目は自動テストでカバー済みであること
 
-詳細は [coverage-check.md](coverage-check.md) を参照。
+詳細は [coverage-check.md](../references/coverage-check.md) を参照。
 
 ## Step 1.5: spec.md TBDチェック
 
@@ -115,7 +115,7 @@ grep -rn -E "(TBD|tbd|To Be Determined|TODO:|FIXME:)" \
 3. コミット: `git commit -m "docs: resolve TBD in spec.md"`
 4. 再チェック
 
-詳細は [tbd-check.md](tbd-check.md) を参照。
+詳細は [tbd-check.md](../references/tbd-check.md) を参照。
 
 ## Step 2: OpenSpec検証
 
@@ -228,7 +228,7 @@ git commit -m "docs: promote verify.md and coverage.md to specs/<capability>"
 3. セクション構造を維持してマージ
 4. 競合解決・レビュー
 
-詳細は [verify-promotion.md](verify-promotion.md) を参照。
+詳細は [verify-promotion.md](../references/verify-promotion.md) を参照。
 
 ### ケース3: 既存coverage.mdあり（更新）
 
@@ -253,7 +253,7 @@ runme run --all --filename openspec/specs/<capability>/verify.md
 - 「Uncovered Items」が0であること
 - カバレッジ不足の場合はテストを追加
 
-詳細は [coverage-check.md](coverage-check.md) を参照。
+詳細は [coverage-check.md](../references/coverage-check.md) を参照。
 
 ### 昇格コミット（マージの場合）
 
@@ -658,7 +658,7 @@ git add openspec/specs/<capability>/verify.md
 git add openspec/specs/<capability>/coverage.md
 ```
 
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+詳細は [commit-strategy.md](../references/commit-strategy.md) を参照。
 
 ## 完了
 

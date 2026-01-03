@@ -48,7 +48,7 @@ runme --help
 
 [../templates/verify-template.md](../templates/verify-template.md) をコピーして開始します。
 
-詳細な実装ガイドは [verify-implementation-guide.md](verify-implementation-guide.md) を参照してください。
+詳細な実装ガイドは [verify-implementation-guide.md](../references/verify-implementation-guide.md) を参照してください。
 
 ### 名前付きコードブロックの形式
 
@@ -315,7 +315,7 @@ print(response.json())
 
 インフラ先行型パターンなど、verify.mdが部分的にREDの状態でPRをマージする場合のテスト管理方法です。
 
-詳細は [pr-splitting-guide.md](pr-splitting-guide.md) を参照してください。
+詳細は [pr-splitting-guide.md](../references/pr-splitting-guide.md) を参照してください。
 
 ### pytest等のテストフレームワーク
 
@@ -465,7 +465,7 @@ verify.md作成後、spec.mdとのカバレッジをチェックします。
    - 「Not Covered」が0であること
    - または「Auto-Test Targets」に明示的に記載されていること
 
-詳細は [coverage-check.md](coverage-check.md) を参照。
+詳細は [coverage-check.md](../references/coverage-check.md) を参照。
 
 ### カバレッジチェックリスト
 
@@ -539,4 +539,4 @@ git add openspec/changes/<change-id>/verify.md
 git commit -m "test: add integration tests for <feature-name>"
 ```
 
-詳細は [commit-strategy.md](commit-strategy.md) を参照。
+詳細は [commit-strategy.md](../references/commit-strategy.md) を参照。

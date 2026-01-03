@@ -165,4 +165,4 @@
 
 ---
 
-詳細なガイドは [workflows/tech-spike-guide.md](../workflows/tech-spike-guide.md) を参照してください。
+詳細なガイドは [references/tech-spike-guide.md](../references/tech-spike-guide.md) を参照してください。
