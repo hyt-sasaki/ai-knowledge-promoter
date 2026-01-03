@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime
 
-from mcp_server.domain.models import Knowledge, SearchResult
+from mcp_server.domain.models import ArchivedKnowledge, Knowledge, SearchResult
 
 
 class TestKnowledge:
@@ -152,3 +152,38 @@ class TestSearchResult:
         assert result.total == 2
         assert result.items[0].title == "First"
         assert result.items[1].title == "Second"
+
+
+class TestArchivedKnowledge:
+    """Tests for ArchivedKnowledge dataclass.
+
+    This is Phase 3.1: Test case agreement phase.
+    All tests use `assert False` pattern to confirm test cases before implementation.
+    """
+
+    def test_init_with_required_fields(self):
+        """[P1] ArchivedKnowledge can be initialized with required fields.
+
+        WHEN: Created with id, title, content
+        THEN: All default fields are set correctly
+        """
+        # Act & Assert
+        assert False, "TEST CASE AGREEMENT: Implement test logic for ArchivedKnowledge initialization"
+
+    def test_init_with_all_fields(self):
+        """[P2] ArchivedKnowledge can be initialized with all fields.
+
+        WHEN: Created with all fields including optional ones
+        THEN: All fields are set correctly
+        """
+        # Act & Assert
+        assert False, "TEST CASE AGREEMENT: Implement test logic for full initialization"
+
+    def test_archived_state(self):
+        """[P2] Archived knowledge has promoted_to_id and timestamps.
+
+        WHEN: Knowledge is archived after promotion
+        THEN: promoted_to_id, archived_at, original_created_at are set
+        """
+        # Act & Assert
+        assert False, "TEST CASE AGREEMENT: Implement test logic for archived state"

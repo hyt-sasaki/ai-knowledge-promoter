@@ -56,13 +56,13 @@
 > テストケースは事前合意（assert Falseパターン）で過剰生成を防止。
 
 ### 3.1 テストケース合意フェーズ
-- [ ] 3.1.1 Auto-Test Targets（verify.md）を確認
-- [ ] 3.1.2 テスト選定制約を適用（C1網羅、同値分割、優先順位）
-- [ ] 3.1.3 `assert False` テストファイル作成
-  - test_promote_knowledge.py
-  - test_archive_repository.py
-  - test_models.py（ArchivedKnowledge）
-- [ ] 3.1.4 テストケース合意確認
+- [x] 3.1.1 Auto-Test Targets（verify.md）を確認
+- [x] 3.1.2 テスト選定制約を適用（C1網羅、同値分割、優先順位）
+- [x] 3.1.3 `assert False` テストファイル作成
+  - test_promote_knowledge.py (4件: promote_success, empty_id, not_found, invalid_state)
+  - test_archive_repository.py (3件: save, get, get_not_found)
+  - test_models.py（ArchivedKnowledge 3件: init_required, init_all, archived_state）
+- [x] 3.1.4 テストケース合意確認（すべて意図通りにFAIL）
 
 ### 3.2 promote_knowledge ロジック実装
 - [ ] 3.2.1 test_promote_success → 実装（Red-Green-Refactor）
