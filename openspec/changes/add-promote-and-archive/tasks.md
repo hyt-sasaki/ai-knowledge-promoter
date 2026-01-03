@@ -39,7 +39,7 @@
 
 ### 2.3 ツール実装
 - [x] 2.3.1 promote_knowledge.py作成（スケルトン）
-- [ ] 2.3.2 main.pyにツール登録
+- [x] 2.3.2 main.pyにツール登録
 
 ### 2.4 GREEN確認
 - [ ] 2.4.1 GREENステータス確認（verify.md全パス）
