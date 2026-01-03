@@ -219,3 +219,56 @@ GCP_PROJECT_ID=ai-knowledge-promoter uv run python scripts/delete_collection.py
 # 新しいスキーマでCollectionを再作成
 GCP_PROJECT_ID=ai-knowledge-promoter uv run python scripts/create_collection.py
 ```
+
+---
+
+# Phase 3: アーカイブ機能セットアップ
+
+Phase 3では昇格完了時に元ナレッジをアーカイブする機能を実装します。
+アーカイブ用の専用Collection `archived-knowledge` を使用します。
+
+## Phase 3 設定情報
+
+| 項目 | 値 |
+|------|-----|
+| Collection名 | `archived-knowledge` |
+| リージョン | `us-central1`（knowledgeと同一） |
+| 用途 | 昇格済み元ナレッジの保管（監査・追跡用） |
+
+## Phase 3.1 Archived Knowledge Collection作成
+
+アーカイブ用のCollection作成スクリプトを実行します（初回1回のみ）。
+
+```sh {"cwd":"../mcp-server","name":"create-archived-collection"}
+GCP_PROJECT_ID=ai-knowledge-promoter uv run python scripts/create_archived_collection.py
+```
+
+## Phase 3 トラブルシューティング
+
+### Archived Collectionの状態を確認
+
+```sh {"cwd":"../mcp-server","excludeFromRunAll":"true","name":"check-archived-collection"}
+GCP_PROJECT_ID=ai-knowledge-promoter uv run python -c "
+import os
+from google.cloud import vectorsearch_v1beta
+project_id = os.environ['GCP_PROJECT_ID']
+location = os.environ.get('GCP_LOCATION', 'us-central1')
+client = vectorsearch_v1beta.VectorSearchServiceClient()
+collections = client.list_collections(parent=f'projects/{project_id}/locations/{location}')
+for c in collections:
+    if 'archived' in c.name:
+        print(f'{c.name}')
+"
+```
+
+### Archived Collection再作成
+
+```sh {"cwd":"../mcp-server","excludeFromRunAll":"true","name":"delete-archived-collection"}
+# 既存のCollectionを削除
+GCP_PROJECT_ID=ai-knowledge-promoter COLLECTION_ID=archived-knowledge uv run python scripts/delete_collection.py
+```
+
+```sh {"cwd":"../mcp-server","excludeFromRunAll":"true","name":"recreate-archived-collection"}
+# 再作成
+GCP_PROJECT_ID=ai-knowledge-promoter uv run python scripts/create_archived_collection.py
+```
