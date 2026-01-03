@@ -48,9 +48,20 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 | `user_id` | string | `system:github` または開発者の識別子 |
 | `source` | string | `personal` / `team` |
 | `status` | string | `draft` / `proposed` / `promoted` |
-| `path` | string | GitHub上のファイルパス (同期時のキー) |
+| `github_path` | string | GitHubファイルパス（team/promotedのみ） |
+| `pr_url` | string | 昇格PR URL（personal/proposedのみ） |
+| `promoted_from_id` | string | 昇格元ナレッジID（team/promotedのみ） |
 | `created_at` | string | 作成日時（ISO 8601） |
 | `updated_at` | string | 最終更新日時（ISO 8601） |
+
+#### 有効な状態の組み合わせ
+
+| source | status | github_path | pr_url | promoted_from_id | 説明 |
+|--------|--------|-------------|--------|------------------|------|
+| personal | draft | "" | "" | "" | 個人の下書き |
+| personal | proposed | "" | PR URL | "" | 昇格PR作成済み |
+| team | promoted | ファイルパス | "" | 元ID | 昇格済み（個人から） |
+| team | promoted | ファイルパス | "" | "" | GitHub直接作成 |
 
 #### ベクトルスキーマ
 
@@ -73,20 +84,20 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 
 ### Phase 1: 垂直スケルトンの構築 (Local to Agent)
 
-- [ ] **1.1 GCP プロジェクト基盤の整備**
-- [ ] **1.2 MCP サーバーのハローワールド** (FastAPI等のWebフレームワークを内包)
-- [ ] **1.3 AIエージェントとの結合テスト**
+- [x] **1.1 GCP プロジェクト基盤の整備**
+- [x] **1.2 MCP サーバーのハローワールド** (FastAPI等のWebフレームワークを内包)
+- [x] **1.3 AIエージェントとの結合テスト**
 
 ### Phase 2: 個人ナレッジの永続化と検索
 
-- [ ] **2.1 Vector Search 2.0 データモデリングと実装**
-  - [ ] Collection作成（Auto-Embeddings設定含む）
-  - [ ] Cloud Run Invoker認証の有効化
-  - [ ] Repositoryパターンによるインフラ層の抽象化
-- [ ] **2.2 セマンティック検索の実装**
-  - [ ] save_knowledgeツールでVector Search 2.0に永続化
-  - [ ] search_knowledgeツールでセマンティック検索
-- [ ] **[垂直統合Check 1]** 保存したメモがセマンティック検索結果として返ってくるか確認
+- [x] **2.1 Vector Search 2.0 データモデリングと実装**
+  - [x] Collection作成（Auto-Embeddings設定含む）
+  - [x] Cloud Run Invoker認証の有効化
+  - [x] Repositoryパターンによるインフラ層の抽象化
+- [x] **2.2 セマンティック検索の実装**
+  - [x] save_knowledgeツールでVector Search 2.0に永続化
+  - [x] search_knowledgeツールでセマンティック検索
+- [x] **[垂直統合Check 1]** 保存したメモがセマンティック検索結果として返ってくるか確認
 
 **Phase 2での制限事項（後続Phaseで対応）:**
 - `user_id`: 固定値 "anonymous" を使用（Phase 3で実ユーザーID対応）
@@ -95,6 +106,13 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 
 - [ ] **3.1 Remote Knowledge Agent の構築 (Agent Engine)**
 - [ ] **3.2 高度なナレッジ操作ツールの追加**
+  - [ ] `promote_knowledge` ツール（昇格PR作成）
+  - [ ] Repository 拡張（find_by_github_path, find_by_pr_url, update_status）
+- [ ] **3.3 アーカイブ機能の実装**
+  - [ ] `archived_knowledge` コレクション作成
+  - [ ] `ArchivedKnowledge` モデル実装
+  - [ ] `ArchivedKnowledgeRepository` 実装
+  - [ ] `archive` メソッド（昇格完了時に元ナレッジを移動）
 - [ ] **[垂直統合Check 2]** AIが自発的にPR作成を提案してくるか確認
 
 ### Phase 4: チーム共有と同期メカニズムの完遂
@@ -103,6 +121,8 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 - [ ] **4.2 同期用エンドポイントの実装 (POST /sync)**
 - [ ] **4.3 GitHub Actions Workflow の作成**
 - [ ] **4.4 エンドツーエンド・シナリオテスト**
+- [ ] **4.5 昇格復元機能**
+  - [ ] `/revert-promotion` エンドポイント（archived_knowledge から復元）
 
 ### Optional: 開発体験向上
 

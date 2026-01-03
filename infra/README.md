@@ -203,3 +203,19 @@ for c in collections:
     print(f'{c.name}: {c.state}')
 "
 ```
+
+### Collection再作成（スキーマ変更時）
+
+Vector Search 2.0は厳格なスキーマバリデーションを適用するため、スキーマ変更時はCollectionを再作成する必要があります。
+
+> **注意**: この操作は既存のデータをすべて削除します。本番環境では事前にデータのバックアップを検討してください。
+
+```sh {"cwd":"../mcp-server","excludeFromRunAll":"true","name":"delete-collection"}
+# 既存のCollectionを削除（データも含めて削除）
+GCP_PROJECT_ID=ai-knowledge-promoter uv run python scripts/delete_collection.py
+```
+
+```sh {"cwd":"../mcp-server","excludeFromRunAll":"true","name":"recreate-collection"}
+# 新しいスキーマでCollectionを再作成
+GCP_PROJECT_ID=ai-knowledge-promoter uv run python scripts/create_collection.py
+```

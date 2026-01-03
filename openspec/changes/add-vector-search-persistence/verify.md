@@ -341,6 +341,50 @@ echo "=== Integration Test Complete ==="
 
 ## Cleanup
 
+```sh {"name":"vs-cleanup-test-data"}
+export SERVICE_URL="http://localhost:3000"
+# テストデータをクリーンアップ（検索して削除）
+echo "Searching for test data..."
+SEARCH_RESPONSE=$(curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 90,
+    "method": "tools/call",
+    "params": {
+      "name": "search_knowledge",
+      "arguments": {
+        "query": "Vector Search Test",
+        "limit": 10
+      }
+    }
+  }')
+echo "Search response: $SEARCH_RESPONSE"
+
+# IDを抽出して削除
+IDS=$(echo "$SEARCH_RESPONSE" | grep -oE '"id":"[^"]*"' | sed 's/"id":"//g' | sed 's/"//g')
+for ID in $IDS; do
+  echo "Deleting: $ID"
+  curl -s -X POST "${SERVICE_URL}/mcp" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json, text/event-stream" \
+    -d "{
+      \"jsonrpc\": \"2.0\",
+      \"id\": 91,
+      \"method\": \"tools/call\",
+      \"params\": {
+        \"name\": \"delete_knowledge\",
+        \"arguments\": {
+          \"id\": \"$ID\"
+        }
+      }
+    }"
+  echo ""
+done
+echo "Cleanup complete"
+```
+
 ```sh {"name":"vs-stop-proxy"}
 # プロキシ停止（バックグラウンドで起動している場合）
 pkill -f "gcloud run services proxy" || true
