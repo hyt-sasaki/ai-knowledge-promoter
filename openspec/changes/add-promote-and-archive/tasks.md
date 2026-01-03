@@ -27,25 +27,25 @@
 > ビジネスロジック・実際のDB操作は Phase 3 で実装。
 
 ### 2.1 verify.md作成
-- [ ] 2.1.1 verify.md作成（Runme.dev形式）
-- [ ] 2.1.2 REDステータス確認
+- [x] 2.1.1 verify.md作成（Runme.dev形式）
+- [x] 2.1.2 REDステータス確認
 
 ### 2.2 モデル・Repository スケルトン
-- [ ] 2.2.1 ArchivedKnowledge モデル追加（型定義のみ）
-- [ ] 2.2.2 KnowledgeRepository Protocol拡張（シグネチャのみ）
+- [x] 2.2.1 ArchivedKnowledge モデル追加（型定義のみ）
+- [x] 2.2.2 KnowledgeRepository Protocol拡張（シグネチャのみ）
   - find_by_github_path
   - find_by_pr_url
   - update_status
-- [ ] 2.2.3 ArchivedKnowledgeRepository Protocol追加（シグネチャのみ）
-- [ ] 2.2.4 VectorSearchKnowledgeRepository スケルトン（中身はダミー: return None）
-- [ ] 2.2.5 VectorSearchArchivedKnowledgeRepository スケルトン（中身はダミー）
+- [x] 2.2.3 ArchivedKnowledgeRepository Protocol追加（シグネチャのみ）
+- [x] 2.2.4 VectorSearchKnowledgeRepository スケルトン（中身はダミー: return None）
+- [x] 2.2.5 VectorSearchArchivedKnowledgeRepository スケルトン（中身はダミー）
 
 ### 2.3 ツール スケルトン
-- [ ] 2.3.1 promote_knowledge.py スケルトン（ハードコードレスポンス）
-- [ ] 2.3.2 main.pyにツール登録
+- [x] 2.3.1 promote_knowledge.py スケルトン（ハードコードレスポンス）
+- [x] 2.3.2 main.pyにツール登録
 
 ### 2.4 GREEN確認
-- [ ] 2.4.1 GREENステータス確認（verify.md全パス）
+- [x] 2.4.1 GREENステータス確認（verify.md全パス）
 - [ ] 2.4.2 **PR #2b作成**
 
 ---
