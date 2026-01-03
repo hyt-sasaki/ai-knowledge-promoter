@@ -25,10 +25,10 @@
 
 ### 2.1 verify.md作成
 - [x] 2.1.1 verify.md作成（Runme.dev形式）
-- [ ] 2.1.2 REDステータス確認
+- [x] 2.1.2 REDステータス確認（promote_knowledge未実装のためRED）
 
 ### 2.2 モデル・Repository拡張
-- [ ] 2.2.1 ArchivedKnowledge モデル追加（domain/models.py）
+- [x] 2.2.1 ArchivedKnowledge モデル追加（domain/models.py）
 - [ ] 2.2.2 KnowledgeRepository Protocol拡張
   - find_by_github_path
   - find_by_pr_url

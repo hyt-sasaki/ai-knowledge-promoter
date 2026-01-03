@@ -56,6 +56,55 @@ class Knowledge:
 
 
 @dataclass
+class ArchivedKnowledge:
+    """Archived knowledge domain model.
+
+    Represents a knowledge that has been archived after promotion.
+    When a personal knowledge is promoted to team knowledge,
+    the original is moved to archived_knowledge collection.
+
+    Attributes:
+        id: Original knowledge ID
+        title: Title of the knowledge
+        content: Main content of the knowledge
+        tags: List of tags for categorization
+        user_id: Developer identifier
+        source: Origin of knowledge (always "personal" for archived)
+        status: Status at archival time (typically "proposed")
+        github_path: GitHub file path (if any)
+        pr_url: Promotion PR URL
+        promoted_from_id: Not used for archived
+        created_at: Original creation timestamp
+        updated_at: Last update before archival
+        archived_at: Archival timestamp
+        promoted_to_id: ID of the team knowledge created from this
+    """
+
+    id: str
+    title: str
+    content: str
+    tags: list[str] = field(default_factory=list)
+    user_id: str = "anonymous"
+
+    # Lifecycle management
+    source: str = "personal"
+    status: str = "proposed"
+
+    # GitHub integration
+    github_path: str = ""
+    pr_url: str = ""
+    promoted_from_id: str = ""
+
+    # Timestamps
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+    # Archive-specific
+    archived_at: datetime | None = None
+    promoted_to_id: str = ""
+
+
+@dataclass
 class SearchResult:
     """Search result container.
 
