@@ -38,7 +38,7 @@
 - [x] 2.2.5 VectorSearchArchivedKnowledgeRepository 実装（infrastructure/archive_repository.py）
 
 ### 2.3 ツール実装
-- [ ] 2.3.1 promote_knowledge.py作成（スケルトン）
+- [x] 2.3.1 promote_knowledge.py作成（スケルトン）
 - [ ] 2.3.2 main.pyにツール登録
 
 ### 2.4 GREEN確認
