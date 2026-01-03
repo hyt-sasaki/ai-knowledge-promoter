@@ -75,13 +75,25 @@ gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 | user_id | string | 開発者識別子（Phase 2では固定値 "anonymous"） |
 | source | string | personal / team |
 | status | string | draft / proposed / promoted |
-| path | string | GitHubファイルパス（個人ナレッジでは空文字列） |
+| github_path | string | GitHubファイルパス（team/promotedのみ） |
+| pr_url | string | 昇格PR URL（personal/proposedのみ） |
+| promoted_from_id | string | 昇格元ナレッジID（team/promotedのみ） |
 | created_at | string | 作成日時（ISO 8601） |
 | updated_at | string | 更新日時（ISO 8601） |
 
 **フィールド補足**:
-- `path`: 個人ナレッジ（source: personal）では空文字列 `""` を使用。Vector Search 2.0のスキーマではnullable/requiredの明示的サポートが確認できないため、空文字列をnull相当として扱う。
+- `github_path`: 旧 `path` をリネーム。team/promotedナレッジのGitHubファイルパス。個人ナレッジでは空文字列。
+- `pr_url`: 昇格PRのURL。personal/proposedの間のみ設定。
+- `promoted_from_id`: 昇格元の個人ナレッジID。team/promotedナレッジで設定。GitHub直接作成の場合は空文字列。
 - `created_at` / `updated_at`: ISO 8601形式の文字列（例: `"2026-01-02T15:30:00Z"`）を採用。型選択の詳細は後述の「時刻フィールドの型選択」を参照。
+
+**有効な状態の組み合わせ**:
+| source | status | github_path | pr_url | promoted_from_id | 説明 |
+|--------|--------|-------------|--------|------------------|------|
+| personal | draft | "" | "" | "" | 個人の下書き |
+| personal | proposed | "" | PR URL | "" | 昇格PR作成済み |
+| team | promoted | ファイルパス | "" | 元ID | 昇格済み（個人から） |
+| team | promoted | ファイルパス | "" | "" | GitHub直接作成 |
 
 **時刻フィールドの型選択（created_at / updated_at）**:
 
@@ -110,22 +122,68 @@ gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 
 **ナレッジステータス遷移**:
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     ステータス遷移図                          │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   [draft]  ──────────────►  [proposed]  ──────►  [promoted] │
-│     ▲                           │                    │      │
-│     │                           │                    │      │
-│   保存時                    Remote Agent           GitHub    │
-│   自動付与                  が昇格候補選択         にマージ   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│  個人ナレッジの昇格フロー                                              │
+│                                                                      │
+│  (personal, draft) ──► (personal, proposed)                          │
+│                         pr_url=PR URL                                │
+│                              │                                       │
+│                              │ PR マージ                             │
+│                              ▼                                       │
+│    ┌─────────────────────────┴─────────────────────┐                 │
+│    ▼                                               ▼                 │
+│  archived_knowledge に移動              knowledge に新規作成          │
+│  (promoted_to_id=新ID)                  (team, promoted)             │
+│                                         (promoted_from_id=元ID)       │
+│                                         (github_path=ファイルパス)    │
+├──────────────────────────────────────────────────────────────────────┤
+│  GitHub 直接作成                                                      │
+│                                                                      │
+│  GitHub Actions → (team, promoted, promoted_from_id="")              │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 - **draft**: 保存直後の初期状態。開発者個人の断片的なメモ
-- **proposed**: Remote Agentが価値ありと判断し、昇格候補として選択した状態
-- **promoted**: PRレビューを経てGitHubにマージされた状態（チームナレッジ）
+- **proposed**: Remote Agentが昇格PRを作成した状態。pr_urlにPR URLを保持
+- **promoted**: PRマージ後のチームナレッジ。github_pathにファイルパスを保持
+
+**アーカイブ方式**:
+
+論理削除（status: archived）は「WHERE句地獄」問題を引き起こすため、
+アーカイブ専用コレクション `archived_knowledge` を採用：
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  knowledge コレクション（アクティブなデータのみ）                    │
+│  - personal/draft, personal/proposed, team/promoted             │
+│                                                                 │
+│  delete_knowledge → 物理削除（完全消去）                          │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  archived_knowledge コレクション（昇格済み元ナレッジ）              │
+│  - 昇格完了時に元ナレッジをここに移動                              │
+│  - promoted_to_id で新ナレッジを参照                             │
+│  - 検索対象外、追跡・監査用途                                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**メリット**:
+1. 検索がシンプル（knowledge コレクションはアクティブなもののみ）
+2. delete と archive の意味が明確（削除は消去、アーカイブは保管）
+3. WHERE句地獄回避（status != 'archived' が不要）
+
+**ArchivedKnowledge モデル**（Phase 3/4で実装）:
+| フィールド | 型 | 説明 |
+|-----------|-----|------|
+| id | string | 元のナレッジID |
+| title | string | タイトル |
+| content | string | 本文 |
+| tags | array | タグ |
+| user_id | string | 作成者 |
+| promoted_to_id | string | 昇格先のナレッジID |
+| archived_at | string | アーカイブ日時（ISO 8601） |
+| original_created_at | string | 元の作成日時（ISO 8601） |
 
 **ベクトルスキーマ（vector_schema）**:
 ```python
@@ -295,7 +353,9 @@ request = vectorsearch_v1beta.CreateCollectionRequest(
                 "user_id": {"type": "string"},
                 "source": {"type": "string"},
                 "status": {"type": "string"},
-                "path": {"type": "string"},
+                "github_path": {"type": "string"},
+                "pr_url": {"type": "string"},
+                "promoted_from_id": {"type": "string"},
                 "created_at": {"type": "string"},
                 "updated_at": {"type": "string"},
             },
@@ -333,7 +393,9 @@ request = vectorsearch_v1beta.CreateDataObjectRequest(
             "user_id": user_id,
             "source": source,
             "status": status,
-            "path": path,
+            "github_path": github_path,
+            "pr_url": pr_url,
+            "promoted_from_id": promoted_from_id,
             "created_at": created_at,
             "updated_at": updated_at,
         },
@@ -367,7 +429,6 @@ results = data_object_search_service_client.search_data_objects(request)
 # domain/models.py
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 
 @dataclass
 class Knowledge:
@@ -376,13 +437,23 @@ class Knowledge:
     title: str
     content: str
     tags: list[str] = field(default_factory=list)
-    user_id: str = ""
+    user_id: str = "anonymous"
+
+    # ライフサイクル管理
     source: str = "personal"  # 'personal' | 'team'
     status: str = "draft"     # 'draft' | 'proposed' | 'promoted'
-    path: Optional[str] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-    score: Optional[float] = None  # 検索スコア
+
+    # GitHub 連携
+    github_path: str = ""       # GitHubファイルパス（team/promotedのみ）
+    pr_url: str = ""            # 昇格PR URL（personal/proposedのみ）
+    promoted_from_id: str = ""  # 昇格元ID（team/promotedのみ）
+
+    # タイムスタンプ
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+    # 検索専用
+    score: float | None = None
 
 @dataclass
 class SearchResult:

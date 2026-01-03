@@ -51,21 +51,25 @@
 
 ## 3. Knowledgeフィールド整理（Stage 2: PR #16）
 
-`source` フィールドは `status` から導出可能なため削除し、スキーマを簡素化する。
+昇格フローを詳細に検討した結果、フィールド構成を以下のように変更：
+- `path` → `github_path` にリネーム（意図明確化）
+- `pr_url` 追加（昇格PR URL）
+- `promoted_from_id` 追加（昇格元ID）
+- アーカイブ専用コレクション方式を採用（Phase 3/4で実装）
 
-- [ ] 3.1 OpenSpecドキュメント更新
-  - [ ] design.md: データモデルから `source` 削除
-  - [ ] design.md: 有効な状態の組み合わせ表を追加
-  - [ ] specs/knowledge-gateway/spec.md: レスポンスフィールドから `source` 削除
-  - [ ] docs/roadmap.md: データモデル表から `source` 削除
-- [ ] 3.2 実装更新
-  - [ ] domain/models.py: `source` フィールド削除
-  - [ ] infrastructure/vector_search.py: `source` の保存・取得を削除
-- [ ] 3.3 テスト更新
-  - [ ] 既存テストから `source` 関連の検証を削除
-- [ ] 3.4 Vector Search Collection更新（既存データのマイグレーション不要）
-- [ ] 3.5 verify.md で動作確認
-- [ ] 3.6 **PR作成** → PR #16
+- [x] 3.1 OpenSpecドキュメント更新
+  - [x] design.md: データモデル更新、状態遷移図更新、アーカイブ方式追加
+  - [x] docs/roadmap.md: データモデル表更新
+- [ ] 3.2 tasks.md更新・コミット
+- [ ] 3.3 テストコードファースト（実装より先にテストを書く）
+  - [ ] tests/test_models.py: 新フィールドのテスト追加
+  - [ ] tests/test_vector_search_repository.py: 必要に応じて更新
+- [ ] 3.4 実装更新（テストをパスさせる）
+  - [ ] domain/models.py: path→github_path リネーム、pr_url・promoted_from_id 追加
+  - [ ] infrastructure/vector_search.py: 新フィールド対応
+- [ ] 3.5 静的解析・テスト実行
+- [ ] 3.6 verify.md で動作確認
+- [ ] 3.7 **PR作成** → PR #16
 
 ## 4. 垂直統合チェック・リリース（Stage 3: PR #N アーカイブ）
 

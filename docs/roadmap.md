@@ -48,9 +48,20 @@ Vector Search 2.0 Collection で以下の構造を維持する。Auto-Embeddings
 | `user_id` | string | `system:github` または開発者の識別子 |
 | `source` | string | `personal` / `team` |
 | `status` | string | `draft` / `proposed` / `promoted` |
-| `path` | string | GitHub上のファイルパス (同期時のキー) |
+| `github_path` | string | GitHubファイルパス（team/promotedのみ） |
+| `pr_url` | string | 昇格PR URL（personal/proposedのみ） |
+| `promoted_from_id` | string | 昇格元ナレッジID（team/promotedのみ） |
 | `created_at` | string | 作成日時（ISO 8601） |
 | `updated_at` | string | 最終更新日時（ISO 8601） |
+
+#### 有効な状態の組み合わせ
+
+| source | status | github_path | pr_url | promoted_from_id | 説明 |
+|--------|--------|-------------|--------|------------------|------|
+| personal | draft | "" | "" | "" | 個人の下書き |
+| personal | proposed | "" | PR URL | "" | 昇格PR作成済み |
+| team | promoted | ファイルパス | "" | 元ID | 昇格済み（個人から） |
+| team | promoted | ファイルパス | "" | "" | GitHub直接作成 |
 
 #### ベクトルスキーマ
 
