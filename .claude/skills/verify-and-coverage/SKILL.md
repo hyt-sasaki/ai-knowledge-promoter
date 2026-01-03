@@ -38,6 +38,7 @@ allowed-tools: Read, Bash(runme:*), Bash(curl:*), Bash(git:*)
 ## テンプレート
 
 - **verify.md**: [templates/verify-template.md](templates/verify-template.md)
+- **README.md**: [templates/README-template.md](templates/README-template.md)
 - **coverage.md**: [templates/coverage-template.md](templates/coverage-template.md)
 
 ## 詳細ガイド
@@ -53,12 +54,14 @@ verify.mdはRunme.devで直接実行可能です：
 # テスト一覧を確認
 runme list --filename verify.md
 
-# 特定のテストを実行
-runme run test-create-resource --filename verify.md
+# 特定のテストを実行（<prefix>はchange-idに置き換え）
+runme run <prefix>-test-create-resource --filename verify.md
 
-# 全テストを実行
-runme run verify-all --filename verify.md
+# 全テストを一括実行
+runme run --all --filename verify.md
 ```
+
+**注意**: コマンド名はプロジェクト内でユニークである必要があります。`<prefix>`には`change-id`または機能名を使用してください。
 
 ## テストピラミッドにおける位置づけ
 
