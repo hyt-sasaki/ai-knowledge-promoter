@@ -22,10 +22,12 @@ verify.mdは**統合テスト/E2Eテスト**として機能します：
 個別のコマンドを実行：
 
 ```bash
-runme list                    # コマンド一覧表示
-runme run setup-database      # 個別実行
-runme run verify-all          # 一括実行
+runme list --filename verify.md              # コマンド一覧表示
+runme run <prefix>-setup-database            # 個別実行
+runme run --all --filename verify.md         # 一括実行
 ```
+
+**注意**: `<prefix>`には`change-id`または機能名を使用してください（例: `add-auth-setup-database`）。
 
 **メリット**:
 - CI/CDパイプラインで使用可能
@@ -63,28 +65,34 @@ runme tui                     # 対話式メニュー起動
 Runme.devは名前付きコードブロックを認識します：
 
 ```markdown
-```sh {"name":"command-name"}
+```sh {"name":"<prefix>-command-name"}
 # コマンド内容
 \```
 ```
 
-- `{"name":"..."}` 属性が必須
+- `{"name":"<prefix>-..."}` 属性が必須
+- `<prefix>`には`change-id`または機能名を使用（プロジェクト内でユニークにするため）
 - `runme list` でこの名前が表示される
-- `runme run command-name` で実行可能
+- `runme run <prefix>-command-name` で実行可能
+
+**命名規則**:
+- `<change-id>-<operation>-<target>` 形式を推奨
+- 例: `add-auth-setup-database`, `add-auth-test-create-user`, `add-auth-cleanup`
 
 ## テンプレートカスタマイズのヒント
 
 ### 1. 名前付きコードブロック
 
-明確で短い名前を付ける：
+明確で短い名前を付ける（prefixを含む）：
 
 ✅ Good:
-- `{"name":"setup-database"}`
-- `{"name":"test-create-user"}`
-- `{"name":"cleanup-test-data"}`
+- `{"name":"add-auth-setup-database"}`
+- `{"name":"add-auth-test-create-user"}`
+- `{"name":"add-auth-cleanup-test-data"}`
 
 ❌ Bad:
-- `{"name":"test1"}` （何のテストか不明）
+- `{"name":"test1"}` （何のテストか不明、prefixなし）
+- `{"name":"setup-database"}` （prefixなし、名前衝突の可能性）
 - `{"name":"this-is-a-very-long-descriptive-name-that-is-hard-to-type"}` （長すぎる）
 
 ### 2. 期待値の明記
@@ -101,7 +109,7 @@ Runme.devは名前付きコードブロックを認識します：
 
 `.env` ファイルでAPIトークン等を管理：
 
-```sh {"name":"test-with-env"}
+```sh {"name":"<prefix>-test-with-env"}
 # .envファイルから環境変数を読み込み
 export API_TOKEN=$(cat .env | grep API_TOKEN | cut -d '=' -f2)
 
@@ -113,7 +121,7 @@ curl -X GET http://localhost:3000/api/protected \
 
 `jq`、`grep`、`test` コマンドで検証を追加：
 
-```sh {"name":"test-with-assertion"}
+```sh {"name":"<prefix>-test-with-assertion"}
 RESPONSE=$(curl -s -X GET http://localhost:3000/api/users/123)
 
 # jqでレスポンスを検証
@@ -123,27 +131,11 @@ echo $RESPONSE | jq -e '.email == "test@example.com"' || (echo "❌ Email mismat
 echo "✅ Assertions passed"
 ```
 
-### 5. 並列実行
-
-独立したテストは `&` で並列実行可能：
-
-```sh {"name":"parallel-tests"}
-# 複数のテストを並列実行
-runme run test-create-user &
-runme run test-create-product &
-runme run test-create-order &
-
-# すべての並列ジョブが完了するまで待機
-wait
-
-echo "✅ All parallel tests completed"
-```
-
 ## 高度な使用例
 
 ### Python スクリプトでのテスト
 
-```python {"name":"test-with-python"}
+```python {"name":"<prefix>-test-with-python"}
 import requests
 
 response = requests.post(
@@ -161,7 +153,7 @@ print(f"Response: {response.json()}")
 
 ### JavaScript/TypeScript でのテスト
 
-```typescript {"name":"test-with-typescript"}
+```typescript {"name":"<prefix>-test-with-typescript"}
 const response = await fetch("http://localhost:3000/api/users", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -178,7 +170,7 @@ console.log(`Status: ${response.status}`, data);
 
 ### 複雑なセットアップ
 
-```sh {"name":"setup-with-fixtures"}
+```sh {"name":"<prefix>-setup-with-fixtures"}
 # データベースリセット
 npm run db:reset
 
@@ -201,7 +193,7 @@ echo "✅ Setup completed"
 
 ### サーバーが起動しない場合
 
-```sh {"name":"check-server-status"}
+```sh {"name":"<prefix>-check-server-status"}
 # プロセス確認
 ps aux | grep "npm run dev"
 
@@ -219,7 +211,7 @@ tail -f server.log
 
 ### データベース接続エラー
 
-```sh {"name":"check-database"}
+```sh {"name":"<prefix>-check-database"}
 # PostgreSQL接続テスト
 psql -U postgres -c "SELECT 1"
 
@@ -237,7 +229,7 @@ sqlite3 db.sqlite3 "SELECT 1"
 
 ### テストデータが残っている場合
 
-```sh {"name":"force-cleanup"}
+```sh {"name":"<prefix>-force-cleanup"}
 # 強制クリーンアップ
 npm run test:cleanup --force
 
@@ -253,7 +245,7 @@ npm run migrate
 
 テストの前後で環境をクリーンな状態に保つ：
 
-```sh {"name":"setup-clean-state"}
+```sh {"name":"<prefix>-setup-clean-state"}
 # データベースリセット
 npm run db:reset
 
@@ -261,7 +253,7 @@ npm run db:reset
 npm run db:seed
 ```
 
-```sh {"name":"cleanup-after-test"}
+```sh {"name":"<prefix>-cleanup-after-test"}
 # テストデータ削除
 npm run db:cleanup
 
@@ -273,48 +265,34 @@ pkill -f "npm run dev"
 
 同じテストを何度実行しても同じ結果になるようにする：
 
-```sh {"name":"idempotent-test"}
+```sh {"name":"<prefix>-idempotent-test"}
 # 既存データを削除してから作成
 curl -X DELETE http://localhost:3000/api/users/test@example.com
 curl -X POST http://localhost:3000/api/users \
   -d '{"email": "test@example.com", ...}'
 ```
 
-### 3. 依存関係を明示
+### 3. 一括実行
 
-テスト間の依存関係を `verify-all` で明示的に記述：
+`runme run --all` で verify.md 内のすべてのテストを一括実行できます：
 
-```sh {"name":"verify-all"}
-# Setup（順序が重要）
-runme run setup-database
-runme run start-server
-runme run setup-test-data
-
-# Tests（依存順）
-runme run test-create-user  # 先にユーザー作成
-runme run test-create-order # ユーザーが必要
+```bash
+runme run --all --filename verify.md
 ```
 
-### 4. エラーハンドリング
+特定のテストをスキップしたい場合は `excludeFromRunAll` 属性を使用：
 
-テスト失敗時に即座に停止：
-
-```sh {"name":"verify-all-with-error-handling"}
-set -e  # エラーで即座に停止
-
-runme run setup-database
-runme run start-server
-runme run test-create-user || (echo "❌ User creation failed" && exit 1)
-runme run test-get-user || (echo "❌ User retrieval failed" && exit 1)
-
-echo "✅ All tests passed"
+```markdown
+```sh {"excludeFromRunAll":"true","name":"<prefix>-test-optional"}
+# このテストは --all では実行されない
+```
 ```
 
-### 5. タイムアウトの設定
+### 4. タイムアウトの設定
 
 長時間かかる操作にはタイムアウトを設定：
 
-```sh {"name":"test-with-timeout"}
+```sh {"name":"<prefix>-test-with-timeout"}
 # 10秒でタイムアウト
 timeout 10s curl -X GET http://localhost:3000/api/slow-endpoint
 
@@ -345,14 +323,12 @@ A:
 # GitHub Actions例
 - name: Run integration tests
   run: |
-    runme run setup-database
-    runme run start-server
-    runme run verify-all
+    runme run --all --filename verify.md
 ```
 
 **Q: verify.mdのテストはどれくらいの時間で完了すべきか？**
 
-A: 理想は1-5分以内。それ以上かかる場合、テストを分割するか、並列実行を検討します。
+A: 理想は1-5分以内。それ以上かかる場合、テストを分割することを検討します。
 
 **Q: verify.mdのテストが不安定（flaky）な場合は？**
 
