@@ -35,7 +35,7 @@
   - update_status
 - [x] 2.2.3 ArchivedKnowledgeRepository Protocol追加（domain/repositories.py）
 - [x] 2.2.4 VectorSearchKnowledgeRepository に新メソッド実装
-- [ ] 2.2.5 VectorSearchArchivedKnowledgeRepository 実装（infrastructure/archive_repository.py）
+- [x] 2.2.5 VectorSearchArchivedKnowledgeRepository 実装（infrastructure/archive_repository.py）
 
 ### 2.3 ツール実装
 - [ ] 2.3.1 promote_knowledge.py作成（スケルトン）
