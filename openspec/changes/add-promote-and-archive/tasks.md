@@ -46,7 +46,7 @@
 
 ### 2.4 GREEN確認
 - [x] 2.4.1 GREENステータス確認（verify.md全パス）
-- [ ] 2.4.2 **PR #2b作成**
+- [x] 2.4.2 **PR #2b作成** https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/21
 
 ---
 
