@@ -84,5 +84,8 @@
 
 - [x] 4.1 保存したナレッジがセマンティック検索結果として返ってくるか確認
 - [x] 4.2 全テスト検証（verify.md + ユニットテスト33件パス）
-- [ ] 4.3 `openspec archive add-vector-search-persistence --yes`
-- [ ] 4.4 **PR作成**
+- [x] 4.3 `openspec archive add-vector-search-persistence --yes`
+- [x] 4.4 verify.md / coverage.md 正式版昇格
+- [ ] 4.5 **PR作成**
+
+✅✅✅ アーカイブ完了 ✅✅✅
