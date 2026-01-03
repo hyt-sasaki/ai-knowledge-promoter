@@ -263,13 +263,20 @@ class VectorSearchKnowledgeRepository:
 
         Returns:
             Knowledge if found, None otherwise
+
+        Note:
+            This is a skeleton implementation using semantic search with filtering.
+            A more efficient filter-only search may be added in the future.
         """
-        # Use filter search to find by github_path
+        # Use semantic search with filter to find by github_path
         request = vectorsearch_v1beta.SearchDataObjectsRequest(
             parent=self._collection_path,
-            filter_search=vectorsearch_v1beta.FilterSearch(
+            semantic_search=vectorsearch_v1beta.SemanticSearch(
+                search_text=path,
+                search_field="content_embedding",
+                task_type="QUESTION_ANSWERING",
+                top_k=50,
                 filter=f'github_path = "{path}"',
-                top_k=1,
                 output_fields=vectorsearch_v1beta.OutputFields(
                     data_fields=[
                         "id",
@@ -293,20 +300,21 @@ class VectorSearchKnowledgeRepository:
 
         for result in response.results:
             data = result.data_object.data
-            return Knowledge(
-                id=data.get("id", ""),
-                title=data.get("title", ""),
-                content=data.get("content", ""),
-                tags=list(data.get("tags", [])),
-                user_id=data.get("user_id", "anonymous"),
-                source=data.get("source", "personal"),
-                status=data.get("status", "draft"),
-                github_path=data.get("github_path", ""),
-                pr_url=data.get("pr_url", ""),
-                promoted_from_id=data.get("promoted_from_id", ""),
-                created_at=self._parse_datetime(data.get("created_at")),
-                updated_at=self._parse_datetime(data.get("updated_at")),
-            )
+            if data.get("github_path") == path:
+                return Knowledge(
+                    id=data.get("id", ""),
+                    title=data.get("title", ""),
+                    content=data.get("content", ""),
+                    tags=list(data.get("tags", [])),
+                    user_id=data.get("user_id", "anonymous"),
+                    source=data.get("source", "personal"),
+                    status=data.get("status", "draft"),
+                    github_path=data.get("github_path", ""),
+                    pr_url=data.get("pr_url", ""),
+                    promoted_from_id=data.get("promoted_from_id", ""),
+                    created_at=self._parse_datetime(data.get("created_at")),
+                    updated_at=self._parse_datetime(data.get("updated_at")),
+                )
 
         return None
 
@@ -318,13 +326,20 @@ class VectorSearchKnowledgeRepository:
 
         Returns:
             Knowledge if found, None otherwise
+
+        Note:
+            This is a skeleton implementation using semantic search with filtering.
+            A more efficient filter-only search may be added in the future.
         """
-        # Use filter search to find by pr_url
+        # Use semantic search with filter to find by pr_url
         request = vectorsearch_v1beta.SearchDataObjectsRequest(
             parent=self._collection_path,
-            filter_search=vectorsearch_v1beta.FilterSearch(
+            semantic_search=vectorsearch_v1beta.SemanticSearch(
+                search_text=url,
+                search_field="content_embedding",
+                task_type="QUESTION_ANSWERING",
+                top_k=50,
                 filter=f'pr_url = "{url}"',
-                top_k=1,
                 output_fields=vectorsearch_v1beta.OutputFields(
                     data_fields=[
                         "id",
@@ -348,20 +363,21 @@ class VectorSearchKnowledgeRepository:
 
         for result in response.results:
             data = result.data_object.data
-            return Knowledge(
-                id=data.get("id", ""),
-                title=data.get("title", ""),
-                content=data.get("content", ""),
-                tags=list(data.get("tags", [])),
-                user_id=data.get("user_id", "anonymous"),
-                source=data.get("source", "personal"),
-                status=data.get("status", "draft"),
-                github_path=data.get("github_path", ""),
-                pr_url=data.get("pr_url", ""),
-                promoted_from_id=data.get("promoted_from_id", ""),
-                created_at=self._parse_datetime(data.get("created_at")),
-                updated_at=self._parse_datetime(data.get("updated_at")),
-            )
+            if data.get("pr_url") == url:
+                return Knowledge(
+                    id=data.get("id", ""),
+                    title=data.get("title", ""),
+                    content=data.get("content", ""),
+                    tags=list(data.get("tags", [])),
+                    user_id=data.get("user_id", "anonymous"),
+                    source=data.get("source", "personal"),
+                    status=data.get("status", "draft"),
+                    github_path=data.get("github_path", ""),
+                    pr_url=data.get("pr_url", ""),
+                    promoted_from_id=data.get("promoted_from_id", ""),
+                    created_at=self._parse_datetime(data.get("created_at")),
+                    updated_at=self._parse_datetime(data.get("updated_at")),
+                )
 
         return None
 
@@ -403,10 +419,16 @@ class VectorSearchKnowledgeRepository:
             "user_id": knowledge.user_id,
             "source": knowledge.source,
             "status": status,
-            "github_path": github_path if github_path is not None else knowledge.github_path,
+            "github_path": (
+                github_path if github_path is not None else knowledge.github_path
+            ),
             "pr_url": pr_url if pr_url is not None else knowledge.pr_url,
             "promoted_from_id": knowledge.promoted_from_id,
-            "created_at": knowledge.created_at.isoformat() if knowledge.created_at else now.isoformat(),
+            "created_at": (
+                knowledge.created_at.isoformat()
+                if knowledge.created_at
+                else now.isoformat()
+            ),
             "updated_at": now.isoformat(),
         }
 
@@ -421,6 +443,12 @@ class VectorSearchKnowledgeRepository:
 
         self._data_object_client.update_data_object(request=request)
 
+        # Compute final values for optional fields
+        final_github_path = (
+            github_path if github_path is not None else knowledge.github_path
+        )
+        final_pr_url = pr_url if pr_url is not None else knowledge.pr_url
+
         # Return updated knowledge
         return Knowledge(
             id=knowledge.id,
@@ -430,8 +458,8 @@ class VectorSearchKnowledgeRepository:
             user_id=knowledge.user_id,
             source=knowledge.source,
             status=status,
-            github_path=data["github_path"],
-            pr_url=data["pr_url"],
+            github_path=final_github_path,
+            pr_url=final_pr_url,
             promoted_from_id=knowledge.promoted_from_id,
             created_at=knowledge.created_at,
             updated_at=now,

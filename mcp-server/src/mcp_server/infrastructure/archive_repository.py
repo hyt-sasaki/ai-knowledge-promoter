@@ -99,8 +99,16 @@ class VectorSearchArchivedKnowledgeRepository:
             "github_path": archived.github_path,
             "pr_url": archived.pr_url,
             "promoted_from_id": archived.promoted_from_id,
-            "created_at": archived.created_at.isoformat() if archived.created_at else now.isoformat(),
-            "updated_at": archived.updated_at.isoformat() if archived.updated_at else now.isoformat(),
+            "created_at": (
+                archived.created_at.isoformat()
+                if archived.created_at
+                else now.isoformat()
+            ),
+            "updated_at": (
+                archived.updated_at.isoformat()
+                if archived.updated_at
+                else now.isoformat()
+            ),
             "archived_at": archived_at.isoformat(),
             "promoted_to_id": archived.promoted_to_id,
         }
