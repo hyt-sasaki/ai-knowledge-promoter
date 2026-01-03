@@ -18,10 +18,18 @@ class Knowledge:
         user_id: Developer identifier (fixed "anonymous" in Phase 2)
         source: Origin of knowledge ("personal" or "team")
         status: Lifecycle status ("draft", "proposed", or "promoted")
-        path: GitHub file path (empty string for personal knowledge)
+        github_path: GitHub file path (team/promoted only)
+        pr_url: Promotion PR URL (personal/proposed only)
+        promoted_from_id: Original knowledge ID (team/promoted only)
         created_at: Creation timestamp (ISO 8601)
         updated_at: Last update timestamp (ISO 8601)
         score: Search relevance score (only for search results)
+
+    Valid state combinations:
+        - personal/draft: github_path="", pr_url="", promoted_from_id=""
+        - personal/proposed: github_path="", pr_url=URL, promoted_from_id=""
+        - team/promoted: github_path=path, pr_url="", promoted_from_id=ID
+        - team/promoted (GitHub direct): github_path=path, promoted_from_id=""
     """
 
     id: str
@@ -29,11 +37,21 @@ class Knowledge:
     content: str
     tags: list[str] = field(default_factory=list)
     user_id: str = "anonymous"
+
+    # Lifecycle management
     source: str = "personal"
     status: str = "draft"
-    path: str = ""
+
+    # GitHub integration
+    github_path: str = ""
+    pr_url: str = ""
+    promoted_from_id: str = ""
+
+    # Timestamps
     created_at: datetime | None = None
     updated_at: datetime | None = None
+
+    # Search-only
     score: float | None = None
 
 

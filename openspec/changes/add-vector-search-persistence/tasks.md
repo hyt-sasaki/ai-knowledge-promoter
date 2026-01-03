@@ -60,14 +60,13 @@
 - [x] 3.1 OpenSpecドキュメント更新
   - [x] design.md: データモデル更新、状態遷移図更新、アーカイブ方式追加
   - [x] docs/roadmap.md: データモデル表更新
-- [ ] 3.2 tasks.md更新・コミット
-- [ ] 3.3 テストコードファースト（実装より先にテストを書く）
-  - [ ] tests/test_models.py: 新フィールドのテスト追加
-  - [ ] tests/test_vector_search_repository.py: 必要に応じて更新
-- [ ] 3.4 実装更新（テストをパスさせる）
-  - [ ] domain/models.py: path→github_path リネーム、pr_url・promoted_from_id 追加
-  - [ ] infrastructure/vector_search.py: 新フィールド対応
-- [ ] 3.5 静的解析・テスト実行
+- [x] 3.2 tasks.md更新・コミット
+- [x] 3.3 テストコードファースト（実装より先にテストを書く）
+  - [x] tests/test_models.py: 新フィールドのテスト追加
+- [x] 3.4 実装更新（テストをパスさせる）
+  - [x] domain/models.py: path→github_path リネーム、pr_url・promoted_from_id 追加
+  - [x] infrastructure/vector_search.py: 新フィールド対応
+- [x] 3.5 静的解析・テスト実行（33件パス）
 - [ ] 3.6 verify.md で動作確認
 - [ ] 3.7 **PR作成** → PR #16
 
