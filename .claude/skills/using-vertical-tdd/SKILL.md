@@ -3,7 +3,7 @@ name: using-vertical-tdd
 description: |
   OpenSpec駆動の垂直TDDスケルトン戦略。提案作成・技術検証・設計・実装・アーカイブの全ライフサイクルをサポート。
   使用タイミング:
-  (1) OpenSpecスラッシュコマンド実行時（/openspec:proposal, /openspec:apply, /openspec:archive）
+  (1) OpenSpecスラッシュコマンド実行時（`OpenSpec: Propose`, `OpenSpec: Apply`, `OpenSpec: Archive`）
   (2) 新機能開発の開始時（「新機能を追加」「〜を実装」リクエスト、OpenSpec提案がまだ存在しない場合）
   (3) 提案の修正・継続（openspec/changes/配下にファイルが存在、「提案を修正」「設計を見直し」リクエスト）
   (4) 実装の再開（tasks.mdに未完了タスクがある、「実装を続ける」「次のステップ」リクエスト）
