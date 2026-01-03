@@ -257,7 +257,7 @@ client = vectorsearch_v1beta.VectorSearchServiceClient()
 collections = client.list_collections(parent=f'projects/{project_id}/locations/{location}')
 for c in collections:
     if 'archived' in c.name:
-        print(f'{c.name}: {c.state}')
+        print(f'{c.name}')
 "
 ```
 
