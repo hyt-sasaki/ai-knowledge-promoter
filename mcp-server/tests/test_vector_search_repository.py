@@ -129,7 +129,7 @@ class TestVectorSearchKnowledgeRepositoryErrorHandling:
             self.repo.search("test query")
 
     def test_update_status_success(self):
-        """update_status() updates status and persists to DB."""
+        """update_status() updates status using update API."""
         # Mock get_data_object to return existing knowledge
         mock_get_response = MagicMock()
         mock_get_response.data = {
@@ -153,10 +153,8 @@ class TestVectorSearchKnowledgeRepositoryErrorHandling:
         assert result is not None
         assert result.status == "proposed"
         assert result.id == "test-id"
-        # Verify delete was called (for delete + create pattern)
-        self.repo._data_object_client.delete_data_object.assert_called_once()
-        # Verify create was called with new status
-        self.repo._data_object_client.create_data_object.assert_called_once()
+        # Verify update_data_object was called (safe in-place update)
+        self.repo._data_object_client.update_data_object.assert_called_once()
 
     def test_update_status_returns_none_when_not_found(self):
         """update_status() returns None when knowledge not found."""
@@ -167,6 +165,5 @@ class TestVectorSearchKnowledgeRepositoryErrorHandling:
         result = self.repo.update_status("nonexistent-id", "proposed")
 
         assert result is None
-        # Verify delete and create were not called
-        self.repo._data_object_client.delete_data_object.assert_not_called()
-        self.repo._data_object_client.create_data_object.assert_not_called()
+        # Verify update was not called
+        self.repo._data_object_client.update_data_object.assert_not_called()

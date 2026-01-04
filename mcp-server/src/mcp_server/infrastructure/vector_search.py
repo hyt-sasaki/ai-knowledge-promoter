@@ -307,8 +307,26 @@ class VectorSearchKnowledgeRepository:
 
         now = datetime.now(UTC)
 
-        # Create updated knowledge object
-        updated = Knowledge(
+        # Build update data (only fields that change)
+        update_data = {
+            "status": status,
+            "updated_at": now.isoformat(),
+        }
+        if pr_url:
+            update_data["pr_url"] = pr_url
+
+        # Use update API to safely update in place
+        request = vectorsearch_v1beta.UpdateDataObjectRequest(
+            data_object=vectorsearch_v1beta.DataObject(
+                name=f"{self._collection_path}/dataObjects/{id}",
+                data=update_data,
+            ),
+        )
+
+        self._data_object_client.update_data_object(request=request)
+
+        # Return updated knowledge object
+        return Knowledge(
             id=knowledge.id,
             title=knowledge.title,
             content=knowledge.content,
@@ -322,40 +340,6 @@ class VectorSearchKnowledgeRepository:
             created_at=knowledge.created_at,
             updated_at=now,
         )
-
-        # Delete existing and create new (Vector Search doesn't have update API)
-        self.delete(id)
-
-        # Prepare data object
-        data = {
-            "id": updated.id,
-            "title": updated.title,
-            "content": updated.content,
-            "tags": updated.tags,
-            "user_id": updated.user_id,
-            "source": updated.source,
-            "status": updated.status,
-            "github_path": updated.github_path,
-            "pr_url": updated.pr_url,
-            "promoted_from_id": updated.promoted_from_id,
-            "created_at": (
-                updated.created_at.isoformat() if updated.created_at else None
-            ),
-            "updated_at": now.isoformat(),
-        }
-
-        request = vectorsearch_v1beta.CreateDataObjectRequest(
-            parent=self._collection_path,
-            data_object_id=updated.id,
-            data_object=vectorsearch_v1beta.DataObject(
-                data=data,
-                vectors={},  # Auto-Embeddings will generate vectors
-            ),
-        )
-
-        self._data_object_client.create_data_object(request=request)
-
-        return updated
 
     def _parse_datetime(self, value: str | None) -> datetime | None:
         """Parse ISO 8601 datetime string."""
