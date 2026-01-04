@@ -163,6 +163,46 @@ gcloud run deploy knowledge-mcp-server \
 gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 ```
 
+### プロキシの停止
+
+```sh {"excludeFromRunAll":"true","name":"stop-proxy"}
+pkill -f "gcloud run services proxy" || echo "No proxy process found"
+```
+
+### ポート3000を占有しているプロセスの確認と停止
+
+前回のプロキシが残っている場合に使用します。
+
+```sh {"excludeFromRunAll":"true","name":"check-port-3000"}
+# ポート3000を使用しているプロセスを確認
+lsof -i :3000 || echo "Port 3000 is free"
+```
+
+```sh {"excludeFromRunAll":"true","name":"kill-proxy-on-port-3000"}
+# ポート3000を占有しているgcloud proxyプロセスのみを停止
+PID=$(lsof -ti :3000)
+if [ -n "$PID" ]; then
+  PROCESS_NAME=$(ps -p $PID -o comm= 2>/dev/null)
+  if echo "$PROCESS_NAME" | grep -q "gcloud\|python"; then
+    # gcloud proxyはpythonプロセスとして動作する場合がある
+    FULL_CMD=$(ps -p $PID -o args= 2>/dev/null)
+    if echo "$FULL_CMD" | grep -q "gcloud.*proxy\|run.*services.*proxy"; then
+      echo "Killing gcloud proxy process (PID: $PID)"
+      kill $PID
+      echo "Done"
+    else
+      echo "Port 3000 is used by non-proxy process: $FULL_CMD"
+      echo "Skipping..."
+    fi
+  else
+    echo "Port 3000 is used by: $PROCESS_NAME (PID: $PID)"
+    echo "This doesn't look like gcloud proxy. Skipping..."
+  fi
+else
+  echo "Port 3000 is free"
+fi
+```
+
 ## Phase 2.6 プロキシ経由でヘルスチェック
 
 ```sh {"name":"test-health-via-proxy"}
