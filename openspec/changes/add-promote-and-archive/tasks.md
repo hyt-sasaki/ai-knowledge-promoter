@@ -1,8 +1,20 @@
 # Tasks: ナレッジ昇格とアーカイブ機能の追加
 
-垂直TDD: インフラ先行型パターンB
+> ⚠️ **このタスクは using-vertical-tdd スキルに従って作業しています**
+>
+> 再開時は必ず `.claude/skills/using-vertical-tdd/SKILL.md` を参照してください。
+> 各ステージの詳細ワークフローは下記リンクを確認してください。
+
+パターン: B（インフラ先行型）
+
+---
 
 ## 0. 提案フェーズ（Stage 1: Creating Changes）
+
+> 📖 参照: [step1-proposal.md](.claude/skills/using-vertical-tdd/workflows/step1-proposal.md)
+
+| Branch | `feat/add-promote-and-archive` |
+|--------|--------------------------------|
 
 - [x] 0.1 proposal.md作成
 - [x] 0.2 tasks.md作成
@@ -14,6 +26,11 @@
 
 ## 1. インフラ基盤整備（Stage 2: PR #2a デプロイ基盤）
 
+> 📖 参照: [step3-skeleton-green.md](.claude/skills/using-vertical-tdd/workflows/step3-skeleton-green.md)
+
+| Branch | `feat/add-archived-collection` |
+|--------|--------------------------------|
+
 - [x] 1.1 scripts/create_archived_collection.py作成
 - [x] 1.2 archived-knowledgeコレクション作成実行
 - [x] 1.3 infra/README.md更新（archived-knowledgeコレクション作成手順追加）
@@ -22,6 +39,11 @@
 ---
 
 ## 2. スケルトン実装（Stage 2: PR #2b スケルトン）
+
+> 📖 参照: [step2-runbook-red.md](.claude/skills/using-vertical-tdd/workflows/step2-runbook-red.md), [step3-skeleton-green.md](.claude/skills/using-vertical-tdd/workflows/step3-skeleton-green.md)
+
+| Branch | `feat/add-promote-and-archive-skeleton` |
+|--------|----------------------------------------|
 
 > **スケルトン原則**: シグネチャと型定義のみ。中身はハードコード/ダミー。
 > ビジネスロジック・実際のDB操作は Phase 3 で実装。
@@ -51,6 +73,11 @@
 ---
 
 ## 3. ロジック実装（Stage 2: PR #3+）
+
+> 📖 参照: [step4-logic-meat.md](.claude/skills/using-vertical-tdd/workflows/step4-logic-meat.md)
+
+| Branch | `feat/add-promote-and-archive-skeleton` |
+|--------|----------------------------------------|
 
 > **ユニットTDDサイクル**: Red-Green-Refactor を各機能ごとに繰り返す。
 > テストケースは事前合意（assert Falseパターン）で過剰生成を防止。
@@ -82,6 +109,11 @@
 ---
 
 ## 4. 垂直統合チェック・アーカイブ（Stage 3: PR #N）
+
+> 📖 参照: [step5-archive-release.md](.claude/skills/using-vertical-tdd/workflows/step5-archive-release.md)
+
+| Branch | `release/add-promote-and-archive` |
+|--------|-----------------------------------|
 
 - [ ] 4.1 promote → search で proposed 状態確認
 - [ ] 4.2 全テスト検証

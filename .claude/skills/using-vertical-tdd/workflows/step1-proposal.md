@@ -82,34 +82,15 @@ openspec/changes/<change-id>/
 
 ## 手順3: tasks.md作成
 
-`openspec/changes/<change-id>/tasks.md` を作成し、実装タスクをチェックリスト形式で記述：
+`openspec/changes/<change-id>/tasks.md` を作成し、実装タスクをチェックリスト形式で記述します。
 
-```markdown
-## 1. 提案フェーズ
-- [ ] proposal.md作成
-- [ ] spec deltas作成
-- [ ] PR #1作成・マージ
-- [ ] 技術検証（spike/results.md完成） ← 必要な場合のみ
-- [ ] design.md作成 ← 必要な場合のみ
-- [ ] PR #1a作成・マージ ← Tech Spike実施した場合のみ
-- [ ] PR #1b作成・マージ ← design.md作成した場合のみ
+テンプレートは [tasks-template.md](../templates/tasks-template.md) を参照してください。
 
-## 2. 実装フェーズ
-- [ ] verify.md作成（Runme.dev形式）
-- [ ] REDステータス確認
-- [ ] スケルトン実装
-- [ ] PR #2作成・マージ
-- [ ] ロジック実装
-- [ ] ユニットテスト実装
-- [ ] PR #3作成・マージ
+### テンプレート使用時の注意
 
-## 3. リリースフェーズ
-- [ ] 全テスト検証
-- [ ] openspec validate --strict 実行
-- [ ] openspec archive <change-id> 実行
-- [ ] フィーチャーフラグ有効化
-- [ ] PR #N作成・マージ
-```
+- **技術検証・設計が不要な場合**: セクション1, 2を削除
+- **パターンAの場合**: セクション3（インフラ基盤整備）を削除
+- **既にマージ済みのPRがある場合**: PRリンクを記載し、タスクにチェックを入れる
 
 ### 技術検証タスクの判断基準
 
