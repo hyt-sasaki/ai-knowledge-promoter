@@ -1,7 +1,4 @@
-"""Tests for promote_knowledge tool.
-
-Phase 3: Assert False skeleton - test cases to be agreed upon before implementation.
-"""
+"""Tests for promote_knowledge tool."""
 
 from unittest.mock import MagicMock
 
