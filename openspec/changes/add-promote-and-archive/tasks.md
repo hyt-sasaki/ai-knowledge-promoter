@@ -71,11 +71,11 @@
 - [x] 3.2.4 test_promote_empty_id → 実装
 
 ### 3.3 Repository 本実装
-- [ ] 3.3.1 VectorSearchKnowledgeRepository.update_status 本実装
+- [x] 3.3.1 VectorSearchKnowledgeRepository.update_status 本実装
 - [x] 3.3.2 VectorSearchArchivedKnowledgeRepository.save 本実装
 
 ### 3.4 検証
-- [x] 3.4.1 ユニットテスト全パス（44件）
+- [x] 3.4.1 ユニットテスト全パス（46件）
 - [ ] 3.4.2 verify.md GREEN維持確認
 - [ ] 3.4.3 **PR #3作成**
 
