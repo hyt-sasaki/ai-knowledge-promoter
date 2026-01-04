@@ -29,6 +29,7 @@ npm run deploy
 | `name` | タスク名（`runme run <name>`で実行） | `{"name":"deploy"}` |
 | `cwd` | 作業ディレクトリ（mdファイルからの相対パス） | `{"cwd":"../mcp-server"}` |
 | `excludeFromRunAll` | `runme run --all`から除外 | `{"excludeFromRunAll":"true"}` |
+| `ignore` | CLI・ノートブック変換から完全除外（runme listにも表示されない） | `{"ignore":"true"}` |
 
 ## フォーマット
 

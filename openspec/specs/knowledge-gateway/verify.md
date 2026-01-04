@@ -103,6 +103,82 @@ echo "$RESPONSE"
 # - 各結果にid, title, scoreが含まれる
 ```
 
+### promote_knowledge: ナレッジ昇格成功
+
+```sh {"name":"vs-test-promote-success"}
+export SERVICE_URL="http://localhost:3000"
+
+# 1. テスト用ナレッジを保存（personal/draft状態）
+echo "Step 1: Creating test knowledge..."
+SAVE_RESPONSE=$(curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "save_knowledge",
+      "arguments": {
+        "title": "Promote Test Knowledge",
+        "content": "This knowledge will be promoted from draft to proposed",
+        "tags": ["test", "promote"]
+      }
+    }
+  }')
+echo "Save response: $SAVE_RESPONSE"
+
+# IDを抽出
+KNOWLEDGE_ID=$(echo "$SAVE_RESPONSE" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p' | head -1)
+echo "Knowledge ID: $KNOWLEDGE_ID"
+
+# 2. promote_knowledge ツールで昇格
+echo "Step 2: Promoting knowledge..."
+PROMOTE_RESPONSE=$(curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d "{
+    \"jsonrpc\": \"2.0\",
+    \"id\": 2,
+    \"method\": \"tools/call\",
+    \"params\": {
+      \"name\": \"promote_knowledge\",
+      \"arguments\": {
+        \"id\": \"$KNOWLEDGE_ID\"
+      }
+    }
+  }")
+echo "Promote response: $PROMOTE_RESPONSE"
+
+# 期待値:
+# - status: "proposed"
+# - id: 昇格されたナレッジのID
+if echo "$PROMOTE_RESPONSE" | grep -q '"proposed"'; then
+  echo "PASS: Knowledge promoted to proposed status"
+else
+  echo "FAIL: Expected status 'proposed'"
+  exit 1
+fi
+
+# 3. クリーンアップ
+echo "Step 3: Cleanup..."
+curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d "{
+    \"jsonrpc\": \"2.0\",
+    \"id\": 3,
+    \"method\": \"tools/call\",
+    \"params\": {
+      \"name\": \"delete_knowledge\",
+      \"arguments\": {
+        \"id\": \"$KNOWLEDGE_ID\"
+      }
+    }
+  }"
+echo "Cleanup complete"
+```
+
 ### delete_knowledge: ナレッジ削除成功
 
 ```sh {"name":"vs-test-delete-knowledge"}
@@ -223,6 +299,39 @@ if echo "$RESPONSE" | grep -q "query is required"; then
   echo "PASS: Error message contains 'query is required'"
 else
   echo "FAIL: Expected error message 'query is required'"
+  exit 1
+fi
+```
+
+### promote_knowledge: idが空の場合エラー
+
+```sh {"name":"vs-test-promote-empty-id"}
+export SERVICE_URL="http://localhost:3000"
+# idが空の場合のエラーテスト
+RESPONSE=$(curl -s -X POST "${SERVICE_URL}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 10,
+    "method": "tools/call",
+    "params": {
+      "name": "promote_knowledge",
+      "arguments": {
+        "id": ""
+      }
+    }
+  }')
+
+echo "$RESPONSE"
+
+# 期待値:
+# - エラーレスポンス
+# - エラーメッセージに "id is required" が含まれる
+if echo "$RESPONSE" | grep -q "id is required"; then
+  echo "PASS: Error message contains 'id is required'"
+else
+  echo "FAIL: Unexpected response"
   exit 1
 fi
 ```
@@ -410,15 +519,22 @@ echo "Proxy stopped"
 | Delete Knowledge | 正常削除 | Unit Test | Repository.delete()のモック検証 |
 | Delete Knowledge | id空エラー | Unit Test | バリデーションロジック |
 | Delete Knowledge | 存在しないID | Unit Test | エラーハンドリング |
+| Promote Knowledge | 昇格成功 | Unit Test | personal/draft → proposed |
+| Promote Knowledge | id空エラー | Unit Test | バリデーションロジック |
+| Promote Knowledge | 存在しないID | Unit Test | エラーハンドリング |
+| Promote Knowledge | 昇格不可状態 | Unit Test | ビジネスルール |
 | Knowledge Model | dataclass初期化 | Unit Test | モデル検証 |
+| ArchivedKnowledge Model | dataclass初期化 | Unit Test | モデル検証 |
 
 ### Expected Test Files
 
 - `tests/test_save_knowledge.py` - save_knowledgeツールのユニットテスト
 - `tests/test_search_knowledge.py` - search_knowledgeツールのユニットテスト
 - `tests/test_delete_knowledge.py` - delete_knowledgeツールのユニットテスト
-- `tests/test_models.py` - ドメインモデルのユニットテスト
-- `tests/test_vector_search_repository.py` - VectorSearchKnowledgeRepositoryの統合テスト
+- `tests/test_promote_knowledge.py` - promote_knowledgeツールのユニットテスト
+- `tests/test_models.py` - ドメインモデル(Knowledge, ArchivedKnowledge)のユニットテスト
+- `tests/test_vector_search_repository.py` - VectorSearchKnowledgeRepositoryのユニットテスト
+- `tests/test_archive_repository.py` - ArchivedKnowledgeRepositoryのユニットテスト
 
 ### Coverage Expectations
 
@@ -503,6 +619,32 @@ claude -p "search_knowledge ツールを使って、'イタリア料理のレシ
 ```sh {"name":"cc-test-cleanup-knowledge"}
 # テストで保存したナレッジを削除
 claude -p "search_knowledge ツールで 'Pythonの非同期処理入門' と 'おいしいパスタの作り方' をそれぞれ検索し、見つかったナレッジを delete_knowledge ツールで削除してください。" \
+  --allowedTools "mcp__knowledge-mcp__search_knowledge,mcp__knowledge-mcp__delete_knowledge"
+```
+
+### ナレッジ昇格ワークフローの検証
+
+```sh {"name":"cc-test-promote-workflow"}
+# ナレッジを保存し、昇格するワークフローをテスト
+
+claude -p "以下の手順でナレッジ昇格をテストしてください:
+
+1. save_knowledge ツールで以下のナレッジを保存:
+   - タイトル: 'Claude Code昇格テスト'
+   - 内容: 'このナレッジはClaude Code経由で保存され、昇格されます。ナレッジ管理システムの統合テストです。'
+   - タグ: ['test', 'claude-code', 'promote']
+
+2. 保存したナレッジのIDを使って promote_knowledge ツールで昇格
+
+3. 結果を報告（昇格前後のステータス変化を含む）" \
+  --allowedTools "mcp__knowledge-mcp__save_knowledge,mcp__knowledge-mcp__promote_knowledge"
+```
+
+#### ナレッジ昇格テストのクリーンアップ
+
+```sh {"name":"cc-test-promote-cleanup"}
+# テストで保存したナレッジを削除
+claude -p "search_knowledge ツールで 'Claude Code昇格テスト' を検索し、見つかったナレッジを delete_knowledge ツールで削除してください。" \
   --allowedTools "mcp__knowledge-mcp__search_knowledge,mcp__knowledge-mcp__delete_knowledge"
 ```
 

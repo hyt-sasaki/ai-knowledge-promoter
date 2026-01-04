@@ -115,8 +115,8 @@
 | Branch | `release/add-promote-and-archive` |
 |--------|-----------------------------------|
 
-- [ ] 4.1 promote → search で proposed 状態確認
-- [ ] 4.2 全テスト検証
-- [ ] 4.3 `openspec archive add-promote-and-archive --yes`
-- [ ] 4.4 verify.md / coverage.md 正式版昇格
-- [ ] 4.5 **PR #N作成**
+- [x] 4.1 promote → search で proposed 状態確認
+- [x] 4.2 全テスト検証（ユニットテスト46件パス + verify.md GREEN）
+- [x] 4.3 `openspec archive add-promote-and-archive --yes`
+- [x] 4.4 verify.md / coverage.md 正式版昇格
+- [x] 4.5 **PR #23作成** https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/23
