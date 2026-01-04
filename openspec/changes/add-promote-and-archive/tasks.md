@@ -56,28 +56,28 @@
 > テストケースは事前合意（assert Falseパターン）で過剰生成を防止。
 
 ### 3.1 テストケース合意フェーズ
-- [ ] 3.1.1 Auto-Test Targets（verify.md）を確認
-- [ ] 3.1.2 テスト選定制約を適用（C1網羅、同値分割、優先順位）
-- [ ] 3.1.3 `assert False` テストファイル作成
+- [x] 3.1.1 Auto-Test Targets（verify.md）を確認
+- [x] 3.1.2 テスト選定制約を適用（C1網羅、同値分割、優先順位）
+- [x] 3.1.3 `assert False` テストファイル作成
   - test_promote_knowledge.py
   - test_archive_repository.py
   - test_models.py（ArchivedKnowledge）
-- [ ] 3.1.4 テストケース合意確認
+- [x] 3.1.4 テストケース合意確認
 
 ### 3.2 promote_knowledge ロジック実装
-- [ ] 3.2.1 test_promote_success → 実装（Red-Green-Refactor）
-- [ ] 3.2.2 test_promote_not_found → 実装
-- [ ] 3.2.3 test_promote_invalid_state → 実装
-- [ ] 3.2.4 test_promote_empty_id → 実装
+- [x] 3.2.1 test_promote_success → 実装（Red-Green-Refactor）
+- [x] 3.2.2 test_promote_not_found → 実装
+- [x] 3.2.3 test_promote_invalid_state → 実装
+- [x] 3.2.4 test_promote_empty_id → 実装
 
 ### 3.3 Repository 本実装
-- [ ] 3.3.1 VectorSearchKnowledgeRepository.update_status 本実装
-- [ ] 3.3.2 VectorSearchArchivedKnowledgeRepository.save 本実装
+- [x] 3.3.1 VectorSearchKnowledgeRepository.update_status 本実装
+- [x] 3.3.2 VectorSearchArchivedKnowledgeRepository.save 本実装
 
 ### 3.4 検証
-- [ ] 3.4.1 ユニットテスト全パス
-- [ ] 3.4.2 verify.md GREEN維持確認
-- [ ] 3.4.3 **PR #3作成**
+- [x] 3.4.1 ユニットテスト全パス（46件）
+- [x] 3.4.2 verify.md GREEN維持確認
+- [x] 3.4.3 **PR #3作成** https://github.com/hyt-sasaki/ai-knowledge-promoter/pull/22
 
 ---
 

@@ -26,16 +26,27 @@ def register(mcp, repository: KnowledgeRepository):
 
         Raises:
             ValueError: If id is empty or not provided
+            ValueError: If knowledge is not found
+            ValueError: If knowledge is not in draft status
         """
         if not id or not id.strip():
             raise ValueError("id is required")
 
-        # Skeleton implementation: return hardcoded response
-        # Full implementation in Phase 3 will:
         # 1. Check if knowledge exists
-        # 2. Check if knowledge is in personal/draft state
+        knowledge = repository.get(id)
+        if knowledge is None:
+            raise ValueError("knowledge not found")
+
+        # 2. Check if knowledge is in draft state
+        if knowledge.status != "draft":
+            raise ValueError("only draft knowledge can be promoted")
+
         # 3. Update status to "proposed"
+        updated = repository.update_status(id, "proposed")
+        if updated is None:
+            raise ValueError("failed to update knowledge status")
+
         return {
-            "status": "proposed",
-            "id": id,
+            "status": updated.status,
+            "id": updated.id,
         }

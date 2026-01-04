@@ -299,17 +299,33 @@ class VectorSearchKnowledgeRepository:
 
         Returns:
             Updated knowledge if found, None otherwise
-
-        Note:
-            Skeleton implementation - returns dummy knowledge.
-            Full implementation in Phase 3.
         """
-        # Skeleton: return dummy knowledge with updated status
+        # Get existing knowledge
         knowledge = self.get(id)
         if knowledge is None:
             return None
 
-        # Return knowledge with updated status (no actual DB update)
+        now = datetime.now(UTC)
+
+        # Build update data (only fields that change)
+        update_data = {
+            "status": status,
+            "updated_at": now.isoformat(),
+        }
+        if pr_url:
+            update_data["pr_url"] = pr_url
+
+        # Use update API to safely update in place
+        request = vectorsearch_v1beta.UpdateDataObjectRequest(
+            data_object=vectorsearch_v1beta.DataObject(
+                name=f"{self._collection_path}/dataObjects/{id}",
+                data=update_data,
+            ),
+        )
+
+        self._data_object_client.update_data_object(request=request)
+
+        # Return updated knowledge object
         return Knowledge(
             id=knowledge.id,
             title=knowledge.title,
@@ -322,7 +338,7 @@ class VectorSearchKnowledgeRepository:
             pr_url=pr_url if pr_url else knowledge.pr_url,
             promoted_from_id=knowledge.promoted_from_id,
             created_at=knowledge.created_at,
-            updated_at=datetime.now(UTC),
+            updated_at=now,
         )
 
     def _parse_datetime(self, value: str | None) -> datetime | None:

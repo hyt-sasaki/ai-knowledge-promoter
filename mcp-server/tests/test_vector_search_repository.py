@@ -127,3 +127,43 @@ class TestVectorSearchKnowledgeRepositoryErrorHandling:
 
         with pytest.raises(Exception):  # Should raise RepositoryError
             self.repo.search("test query")
+
+    def test_update_status_success(self):
+        """update_status() updates status using update API."""
+        # Mock get_data_object to return existing knowledge
+        mock_get_response = MagicMock()
+        mock_get_response.data = {
+            "id": "test-id",
+            "title": "Test Title",
+            "content": "Test content",
+            "tags": ["tag1"],
+            "user_id": "user-123",
+            "source": "personal",
+            "status": "draft",
+            "github_path": "",
+            "pr_url": "",
+            "promoted_from_id": "",
+            "created_at": "2024-01-01T00:00:00+00:00",
+            "updated_at": "2024-01-01T00:00:00+00:00",
+        }
+        self.repo._data_object_client.get_data_object.return_value = mock_get_response
+
+        result = self.repo.update_status("test-id", "proposed")
+
+        assert result is not None
+        assert result.status == "proposed"
+        assert result.id == "test-id"
+        # Verify update_data_object was called (safe in-place update)
+        self.repo._data_object_client.update_data_object.assert_called_once()
+
+    def test_update_status_returns_none_when_not_found(self):
+        """update_status() returns None when knowledge not found."""
+        self.repo._data_object_client.get_data_object.side_effect = NotFound(
+            "Not found"
+        )
+
+        result = self.repo.update_status("nonexistent-id", "proposed")
+
+        assert result is None
+        # Verify update was not called
+        self.repo._data_object_client.update_data_object.assert_not_called()
