@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime
 
-from mcp_server.domain.models import Knowledge, SearchResult
+from mcp_server.domain.models import ArchivedKnowledge, Knowledge, SearchResult
 
 
 class TestKnowledge:
@@ -152,3 +152,57 @@ class TestSearchResult:
         assert result.total == 2
         assert result.items[0].title == "First"
         assert result.items[1].title == "Second"
+
+
+class TestArchivedKnowledge:
+    """Tests for ArchivedKnowledge dataclass.
+
+    Phase 3: Assert False skeleton - test cases to be agreed upon before implementation.
+
+    Test selection constraints applied:
+    - C1 coverage: Minimum cases for branch coverage
+    - Equivalence partitioning: Consolidated redundant cases
+    - Priority: P1 normal case only (model is simple dataclass)
+    """
+
+    # P1: 正常系 - 生成
+    def test_archived_knowledge_creation(self):
+        """ArchivedKnowledge can be created with all fields.
+
+        WHEN: 必須フィールドとオプションフィールドで ArchivedKnowledge を生成
+        THEN: 全フィールドが正しく設定される
+        """
+        now = datetime.now(UTC)
+        archived = ArchivedKnowledge(
+            id="original-id",
+            title="Archived Title",
+            content="Archived content",
+            tags=["tag1", "tag2"],
+            user_id="user-123",
+            promoted_to_id="promoted-id",
+            archived_at=now,
+            original_created_at=now,
+        )
+
+        assert archived.id == "original-id"
+        assert archived.title == "Archived Title"
+        assert archived.content == "Archived content"
+        assert archived.tags == ["tag1", "tag2"]
+        assert archived.user_id == "user-123"
+        assert archived.promoted_to_id == "promoted-id"
+        assert archived.archived_at == now
+        assert archived.original_created_at == now
+
+    def test_archived_knowledge_defaults(self):
+        """ArchivedKnowledge has correct default values."""
+        archived = ArchivedKnowledge(
+            id="id",
+            title="Title",
+            content="Content",
+        )
+
+        assert archived.tags == []
+        assert archived.user_id == "anonymous"
+        assert archived.promoted_to_id == ""
+        assert archived.archived_at is None
+        assert archived.original_created_at is None
