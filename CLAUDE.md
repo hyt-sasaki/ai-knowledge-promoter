@@ -32,6 +32,38 @@ Progressive Disclosureにより、必要な時だけ詳細な指示が読み込�
 
 Runme.dev形式のマークダウン編集時は `.claude/skills/runme-conventions/` を参照してください。
 
+## Runmeタスク活用戦略
+
+このプロジェクトでは多くの操作が Runme タスクとして定義されています。**コマンドを実行する前に、まず既存のタスク一覧を確認してください。**
+
+### タスク一覧の確認方法
+
+```bash
+# プロジェクト全体のタスク一覧を表示
+runme list
+
+# 特定のファイルのタスク一覧を表示
+runme list --filename <filepath>
+
+# キーワードでフィルタリング（例: deploy関連）
+runme list deploy
+```
+
+### コマンド実行時の戦略
+
+1. **まずタスク一覧を確認**: `runme list` で既存タスクを検索
+2. **既存タスクがあれば使用**: `runme run <task-name>` で実行
+3. **なければ直接コマンド実行**: 既存タスクがない場合のみ直接コマンドを実行
+
+### よく使うタスクの例
+
+| カテゴリ | タスク名 | 説明 |
+|---------|---------|------|
+| 静的解析 | `check-all` | lint + format + type check |
+| テスト | `run-tests` | pytest実行 |
+| デプロイ | `deploy-cloud-run` | Cloud Runへデプロイ |
+| インフラ | `start-proxy` | Cloud Runへのローカルプロキシ起動 |
+
 ## 静的解析の実行方法
 
 ### 個別タスクの実行
