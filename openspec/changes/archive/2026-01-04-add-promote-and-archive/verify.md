@@ -1,5 +1,7 @@
 # Verification: ナレッジ昇格とアーカイブ機能
 
+> **ARCHIVED**: このファイルはアーカイブ済みです。正式版は `openspec/specs/knowledge-gateway/verify.md` を参照してください。
+
 このファイルは、Phase 3で実装するナレッジ昇格（promote_knowledge）機能の受け入れテストをRunme.dev形式で記述します。
 
 ## 前提条件
@@ -12,7 +14,7 @@
 
 ## Setup
 
-```sh {"cwd":"../../../mcp-server","name":"promote-archive-deploy"}
+```sh {"cwd":"../../../mcp-server","ignore":"true","name":"promote-archive-deploy"}
 # Cloud Runにデプロイ（最新コードを反映）
 gcloud run deploy knowledge-mcp-server \
   --source . \
@@ -21,12 +23,12 @@ gcloud run deploy knowledge-mcp-server \
   --quiet
 ```
 
-```sh {"background":"true","name":"promote-archive-setup-proxy"}
+```sh {"background":"true","ignore":"true","name":"promote-archive-setup-proxy"}
 # gcloud proxyをバックグラウンドで起動
 gcloud run services proxy knowledge-mcp-server --region us-central1 --port=3000
 ```
 
-```sh {"name":"promote-archive-wait-proxy"}
+```sh {"ignore":"true","name":"promote-archive-wait-proxy"}
 # プロキシ起動を待機
 sleep 5
 export SERVICE_URL="http://localhost:3000"
@@ -40,7 +42,7 @@ curl -s "$SERVICE_URL/health" | jq .
 
 ### promote_knowledge: ナレッジ昇格成功
 
-```sh {"name":"promote-archive-test-promote-success"}
+```sh {"ignore":"true","name":"promote-archive-test-promote-success"}
 export SERVICE_URL="http://localhost:3000"
 
 # 1. テスト用ナレッジを保存（personal/draft状態）
@@ -120,7 +122,7 @@ echo "Cleanup complete"
 
 ### promote_knowledge: idが空の場合エラー
 
-```sh {"name":"promote-archive-test-promote-empty-id"}
+```sh {"ignore":"true","name":"promote-archive-test-promote-empty-id"}
 export SERVICE_URL="http://localhost:3000"
 # idが空の場合のエラーテスト
 RESPONSE=$(curl -s -X POST "${SERVICE_URL}/mcp" \
@@ -156,7 +158,7 @@ fi
 
 ### promote_knowledge: 存在しないIDの場合エラー
 
-```sh {"name":"promote-archive-test-promote-not-found","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","ignore":"true","name":"promote-archive-test-promote-not-found"}
 export SERVICE_URL="http://localhost:3000"
 # 存在しないIDの場合のエラーテスト
 RESPONSE=$(curl -s -X POST "${SERVICE_URL}/mcp" \
@@ -189,7 +191,7 @@ fi
 
 ### promote_knowledge: 昇格不可状態の場合エラー
 
-```sh {"name":"promote-archive-test-promote-invalid-state","excludeFromRunAll":"true"}
+```sh {"excludeFromRunAll":"true","ignore":"true","name":"promote-archive-test-promote-invalid-state"}
 export SERVICE_URL="http://localhost:3000"
 # 昇格不可状態（already proposed）のテスト
 # NOTE: このテストはPhase 3で本実装後に有効化
@@ -206,7 +208,7 @@ echo "Expected: Error message 'only draft knowledge can be promoted'"
 
 ## Cleanup
 
-```sh {"name":"promote-archive-cleanup-test-data"}
+```sh {"ignore":"true","name":"promote-archive-cleanup-test-data"}
 export SERVICE_URL="http://localhost:3000"
 # テストデータをクリーンアップ（検索して削除）
 echo "Searching for test data..."
@@ -250,7 +252,7 @@ done
 echo "Cleanup complete"
 ```
 
-```sh {"name":"promote-archive-stop-proxy"}
+```sh {"ignore":"true","name":"promote-archive-stop-proxy"}
 # プロキシ停止（バックグラウンドで起動している場合）
 pkill -f "gcloud run services proxy" || true
 echo "Proxy stopped"
@@ -265,7 +267,7 @@ echo "Proxy stopped"
 
 ### MCP Server Setup
 
-```sh {"name":"promote-archive-cc-setup-mcp"}
+```sh {"ignore":"true","name":"promote-archive-cc-setup-mcp"}
 # MCPサーバーを登録（初回のみ）
 # gcloud proxyが起動している状態で実行
 
@@ -279,7 +281,7 @@ echo "MCP server registered"
 
 ### ナレッジ昇格ワークフローの検証
 
-```sh {"name":"promote-archive-cc-test-promote-workflow"}
+```sh {"ignore":"true","name":"promote-archive-cc-test-promote-workflow"}
 # ナレッジを保存し、昇格するワークフローをテスト
 
 claude -p "以下の手順でナレッジ昇格をテストしてください:
@@ -297,7 +299,7 @@ claude -p "以下の手順でナレッジ昇格をテストしてください:
 
 ### Claude Code結合テスト クリーンアップ
 
-```sh {"name":"promote-archive-cc-cleanup"}
+```sh {"ignore":"true","name":"promote-archive-cc-cleanup"}
 # テストで保存したナレッジを削除
 claude -p "search_knowledge ツールで 'Claude Code昇格テスト' を検索し、見つかったナレッジを delete_knowledge ツールで削除してください。" \
   --allowedTools "mcp__knowledge-mcp__search_knowledge,mcp__knowledge-mcp__delete_knowledge"
@@ -305,7 +307,7 @@ claude -p "search_knowledge ツールで 'Claude Code昇格テスト' を検索�
 
 ### MCP Server Cleanup
 
-```sh {"name":"promote-archive-cc-cleanup-mcp"}
+```sh {"ignore":"true","name":"promote-archive-cc-cleanup-mcp"}
 # テスト後のクリーンアップ（必要に応じて）
 claude mcp remove knowledge-mcp
 echo "MCP server removed"

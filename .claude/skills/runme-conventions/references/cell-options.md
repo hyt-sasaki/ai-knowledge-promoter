@@ -36,6 +36,20 @@ npm run dev
 rm -rf node_modules
 ```
 
+### ignore
+
+コードブロックをCLIおよびノートブック変換から完全に除外。
+
+| 項目 | 値 |
+|------|-----|
+| デフォルト | `false` |
+| 用途 | アーカイブ済みドキュメント、サンプルコード |
+
+```bash {"ignore":"true","name":"archived-task"}
+# このセルはrunme listに表示されない
+echo "archived"
+```
+
 ### skipPrompts
 
 インタラクティブプロンプトをバイパス。

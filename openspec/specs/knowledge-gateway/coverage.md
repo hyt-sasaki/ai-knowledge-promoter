@@ -4,16 +4,16 @@
 
 ---
 
-**Generated**: 2026-01-03
+**Generated**: 2026-01-04
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Covered | 6 |
+| Covered | 7 |
 | Partially Covered | 0 |
 | Not Covered | 0 |
-| **Total** | **6** |
+| **Total** | **7** |
 
 **Coverage Rate**: 100%
 
@@ -110,6 +110,37 @@
 - **ナレッジ削除失敗（必須パラメータ不足）**
   - verify.md: `vs-test-delete-empty-id` (id空でエラー検証)
   - Unit Test: `test_delete_knowledge.py::test_delete_knowledge_empty_id`
+
+---
+
+### Requirement: Promote Knowledge Tool
+
+**Status**: Covered (100%)
+
+| Scenario | verify.md | Unit Tests | Status |
+|----------|-----------|------------|--------|
+| ナレッジ昇格成功 | vs-test-promote-success | test_promote_knowledge.py | Covered |
+| ナレッジ昇格失敗（必須パラメータ不足） | vs-test-promote-empty-id | test_promote_knowledge.py | Covered |
+| ナレッジ昇格失敗（存在しないID） | - | test_promote_knowledge.py | Covered |
+| ナレッジ昇格失敗（昇格不可状態） | - | test_promote_knowledge.py | Covered |
+
+**Mapping Details**:
+
+- **ナレッジ昇格成功**
+  - verify.md: `vs-test-promote-success` (MCP経由でpromote_knowledge呼び出し)
+  - verify.md: `cc-test-promote-workflow` (Claude Code結合テスト)
+  - Unit Test: `test_promote_knowledge.py::test_promote_success`
+
+- **ナレッジ昇格失敗（必須パラメータ不足）**
+  - verify.md: `vs-test-promote-empty-id` (id空でエラー検証)
+  - Unit Test: `test_promote_knowledge.py::test_promote_empty_id`
+  - Unit Test: `test_promote_knowledge.py::test_promote_whitespace_id`
+
+- **ナレッジ昇格失敗（存在しないID）**
+  - Unit Test: `test_promote_knowledge.py::test_promote_not_found`
+
+- **ナレッジ昇格失敗（昇格不可状態）**
+  - Unit Test: `test_promote_knowledge.py::test_promote_invalid_state`
 
 ---
 
